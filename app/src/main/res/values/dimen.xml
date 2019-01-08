@@ -136,5 +136,6 @@
     <dimen name="icon_text_size">36px</dimen>
     <dimen name="elephant_width">330px</dimen>
     <dimen name="elephant_height">295px</dimen>
+    <dimen name="ripple_width">200px</dimen>
 
 </resources>

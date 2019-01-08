@@ -9,5 +9,13 @@
     <string name="scplaza">深圳印力中心</string>
     <string name="scplaza_welcome">印像欢迎您！</string>
     <string name="weather_default">晴</string>
+    <string name="weather_place_default">深圳.晴</string>
+    <string name="weather_place_default_trans">ShenZhen.Sunny</string>
     <string name="time_default">2019/1/7 下午6:11:18</string>
+    <string name="title_1">导航导视</string>
+    <string name="title_2">优惠活动</string>
+    <string name="title_3">停车缴费</string>
+    <string name="title_4">人脸签到抽奖</string>
+    <string name="title_5">电子会员卡</string>
+    <string name="title_6">表情帝舞蹈机</string>
 </resources>
