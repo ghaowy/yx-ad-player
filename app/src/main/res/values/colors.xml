@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="ad_bgcolor1">#FFDB4F </color>
+    <color name="ad_bgcolor2">#FFA22B</color>
+    <color name="hands_bg_color">#19000000</color>
+    <color name="guide_bg_color">#09000000</color>
+    <color name="white">#FFFFFF</color>
+
+
+
+</resources>

@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_ad"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ad_bgcolor1"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/weather_height"
+        android:background="@drawable/gradient_bg">
+
+        <ImageView
+            android:id="@+id/iv_cloud_1"
+            android:layout_width="340px"
+            android:layout_height="160px"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="32px"
+            android:layout_marginEnd="44px"
+            android:src="@drawable/cloud_2" />
+
+        <ImageView
+            android:id="@+id/iv_cloud_2"
+            android:layout_width="340px"
+            android:layout_height="160px"
+            android:layout_marginStart="281px"
+            android:layout_marginTop="134px"
+            android:src="@drawable/cloud_1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_cloud_3"
+                android:layout_width="340px"
+                android:layout_height="160px"
+                android:layout_gravity="bottom"
+                android:layout_marginStart="856px"
+                android:layout_marginTop="32px"
+                android:src="@drawable/cloud_3" />
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/pinan_building"
+            android:layout_width="@dimen/pingan_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/pingan_margin_end"
+            android:layout_marginBottom="@dimen/pingan_margin_bottom"
+            android:src="@drawable/pinan_building" />
+
+        <ImageView
+            android:id="@+id/iv_sun"
+            android:layout_width="@dimen/sun_width"
+            android:layout_height="@dimen/sun_width"
+            android:layout_marginTop="10px"
+            android:layout_marginEnd="@dimen/sun_margin_end"
+            android:layout_toStartOf="@+id/pinan_building"
+            android:src="@drawable/sun" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50px">
+
+            <com.imprexion.aiscreen.tools.IconFontTextView
+                android:id="@+id/tv_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/left_right_margin"
+                android:gravity="center_vertical"
+                android:text="&#xe649;"
+                android:textSize="@dimen/icon_text_size" />
+
+            <com.imprexion.aiscreen.tools.IconFontTextView
+                android:id="@+id/tv_destination_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/hands_text_margin"
+                android:layout_toEndOf="@+id/tv_icon"
+                android:gravity="center_vertical"
+                android:text="&#xe648;"
+                android:textSize="@dimen/hands_text_size" />
+
+            <TextView
+                android:id="@+id/tv_destination_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@+id/tv_destination_icon"
+                android:gravity="center_vertical"
+                android:text="@string/scplaza"
+                android:textSize="@dimen/hands_text_size" />
+
+            <TextView
+                android:id="@+id/tv_welcome_text"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical"
+                android:text="@string/scplaza_welcome"
+                android:textSize="@dimen/hands_text_size" />
+
+            <TextView
+                android:id="@+id/tv_current_time"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/left_right_margin"
+                android:gravity="center_vertical"
+                android:text="@string/time_default"
+                android:textSize="@dimen/hands_text_size" />
+
+            <TextView
+                android:id="@+id/tv_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/left_right_margin"
+                android:layout_toStartOf="@+id/tv_current_time"
+                android:gravity="center_vertical"
+                android:text="@string/weather_default"
+                android:textSize="@dimen/hands_text_size" />
+
+
+            <com.imprexion.aiscreen.tools.IconFontTextView
+                android:id="@+id/tv_weather_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toStartOf="@+id/tv_weather"
+                android:gravity="center_vertical"
+                android:text="&#xe644;"
+                android:textSize="@dimen/hands_text_size" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/bg_pic_height"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/weather_bg"></ImageView>
+
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toutiao_height"
+        android:layout_marginStart="@dimen/left_right_margin"
+        android:layout_marginTop="@dimen/top_margin"
+        android:layout_marginEnd="@dimen/left_right_margin">
+
+        <ImageView
+            android:layout_width="@dimen/toutiao_text_width"
+            android:layout_height="match_parent"
+            android:src="@drawable/imprexion_toutiao" />
+
+        <ImageView
+            android:layout_width="@dimen/toutiao_icon_width"
+            android:layout_height="@dimen/toutiao_icon_width"
+            android:layout_gravity="center"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/news" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@string/imprexion_toutiao"
+            android:textSize="@dimen/text_size" />
+    </LinearLayout>
+
+    <VideoView
+        android:id="@+id/ad_video"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/video_height"
+        android:layout_marginStart="@dimen/left_right_margin"
+        android:layout_marginTop="@dimen/video_top_margin"
+        android:layout_marginEnd="@dimen/left_right_margin" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/constellation_height"
+        android:layout_marginStart="@dimen/left_right_margin"
+        android:layout_marginTop="@dimen/constellation_top_margin"
+        android:layout_marginEnd="@dimen/left_right_margin"
+        android:scaleType="fitXY"
+        android:src="@drawable/mojiezuo" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/hands_height"
+        android:layout_marginStart="@dimen/left_right_margin"
+        android:layout_marginTop="@dimen/hands_top_margin"
+        android:layout_marginEnd="@dimen/left_right_margin"
+        android:background="@drawable/guide_bg">
+
+        <RelativeLayout
+            android:layout_width="@dimen/hands_bg"
+            android:layout_height="@dimen/hands_bg"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/hands_margin_left"
+            android:background="@drawable/hands_bg"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="@dimen/hands"
+                android:layout_height="@dimen/hands"
+                android:src="@drawable/hand" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/hands_text_margin"
+            android:text="@string/hands_move"
+            android:textSize="@dimen/hands_text_size" />
+
+        <RelativeLayout
+            android:layout_width="@dimen/hands_bg"
+            android:layout_height="@dimen/hands_bg"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/hands_hands_margin"
+            android:background="@drawable/hands_bg"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="@dimen/hands"
+                android:layout_height="@dimen/hands"
+                android:src="@drawable/fist" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/hands_text_margin"
+            android:text="@string/fist_select"
+            android:textSize="@dimen/hands_text_size" />
+
+
+        <com.imprexion.aiscreen.tools.IconFontTextView
+            android:id="@+id/iftv"
+            android:layout_width="@dimen/hands_why_width"
+            android:layout_height="@dimen/hands_why_width"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/hands_hands_margin"
+            android:gravity="center"
+            android:text="&#xe640;"
+            android:textColor="@color/white"
+            android:textSize="@dimen/hands_why_text_size" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/elephant_top_margin">
+
+        <RelativeLayout
+            android:id="@+id/rl_elephant_talk"
+            android:layout_width="@dimen/elephant_talk_width"
+            android:layout_height="@dimen/elephant_talk_height"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/elephant_talk_bg">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="@string/elephant_talk_1"
+                android:textSize="@dimen/text_size" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/elephant_animation"
+            android:layout_width="@dimen/elephant_width"
+            android:layout_height="@dimen/elephant_height"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="45px"
+            android:src="@drawable/elephant_animation_list" />
+
+        <ImageView
+            android:id="@+id/iv_fist"
+            android:layout_width="@dimen/fist_width"
+            android:layout_height="@dimen/fist_height"
+            android:layout_below="@+id/rl_elephant_talk"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/fist_margin_top"
+            android:src="@drawable/hands_light" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_fist"
+            android:layout_centerHorizontal="true"
+            android:text="@string/fist_select_2"
+            android:textSize="@dimen/text_size" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

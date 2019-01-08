@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">AIScreen</string>
+    <string name="history_today">历史上的今天</string>
+    <string name="hands_move">手掌移动选择</string>
+    <string name="fist_select">保持握拳选中</string>
+    <string name="elephant_talk_1">Hi~你们好~我叫小像~很高兴认识你们喔~</string>
+    <string name="fist_select_2">保持握拳进入主界面</string>
+    <string name="imprexion_toutiao">最新的Mirror已经上线了哦~快打开看看吧~</string>
+    <string name="scplaza">深圳印力中心</string>
+    <string name="scplaza_welcome">印像欢迎您！</string>
+    <string name="weather_default">晴</string>
+    <string name="time_default">2019/1/7 下午6:11:18</string>
+</resources>
