@@ -35,7 +35,9 @@ public class StatusFragment extends Fragment {
             switch (msg.what) {
                 case 1:
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-                    tvCurrentTime.setText(simpleDateFormat.format(new Date()));
+                    if (tvCurrentTime != null) {
+                        tvCurrentTime.setText(simpleDateFormat.format(new Date()));
+                    }
                     break;
                 default:
                     break;
