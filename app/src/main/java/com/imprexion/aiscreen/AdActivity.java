@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.imprexion.aiscreen.main.MainActivity;
-import com.imprexion.aiscreen.navigation.StatusFragment;
+import com.imprexion.aiscreen.status.StatusFragment;
 import com.imprexion.aiscreen.tools.IconFontTextView;
 
 import butterknife.BindView;
@@ -45,6 +45,8 @@ public class AdActivity extends AppCompatActivity {
     private ObjectAnimator mObjectAnimatorSun;
     private AnimatorSet mAnimatorSet = new AnimatorSet();
     private StatusFragment mStatusFragment;
+    private float mCurrentpositionY;
+    private float mCurrentpositionX;
 
 
     @Override
@@ -53,6 +55,19 @@ public class AdActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ad);
         ButterKnife.bind(this);
         initStatus();
+        ivFist.post(new Runnable() {
+            @Override
+            public void run() {
+                mCurrentpositionY = ivFist.getTranslationY();
+            }
+        });
+        ivSun.post(new Runnable() {
+            @Override
+            public void run() {
+                mCurrentpositionX = ivSun.getTranslationX();
+            }
+        });
+
     }
 
     private void initStatus() {
@@ -89,9 +104,8 @@ public class AdActivity extends AppCompatActivity {
         ivFist.post(new Runnable() {
             @Override
             public void run() {
-                float currentpositionY = ivFist.getTranslationY();
                 mObjectAnimator = ObjectAnimator.ofFloat(ivFist, "translationY",
-                        currentpositionY, currentpositionY - 50, currentpositionY);
+                        mCurrentpositionY, mCurrentpositionY - 50, mCurrentpositionY);
                 mObjectAnimator.setInterpolator(new BounceInterpolator());
                 mObjectAnimator.setDuration(1500);
                 mObjectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
@@ -116,8 +130,7 @@ public class AdActivity extends AppCompatActivity {
         ivSun.post(new Runnable() {
             @Override
             public void run() {
-                float currentpositionX = ivSun.getTranslationX();
-                mObjectAnimatorSun = ObjectAnimator.ofFloat(ivSun, "translationX", currentpositionX, currentpositionX - 300, currentpositionX);
+                mObjectAnimatorSun = ObjectAnimator.ofFloat(ivSun, "translationX", mCurrentpositionX, mCurrentpositionX - 300, mCurrentpositionX);
                 mObjectAnimatorSun.setInterpolator(new LinearInterpolator());
                 mObjectAnimatorSun.setDuration(40000);
                 mObjectAnimatorSun.setRepeatCount(ObjectAnimator.INFINITE);

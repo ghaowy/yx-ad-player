@@ -3,39 +3,39 @@
     android:oneshot="false">
 
     <item
-        android:drawable="@drawable/elephant1_1"
+        android:drawable="@drawable/elephant_1"
         android:duration="200" />
     <item
-        android:drawable="@drawable/elephant1_2"
+        android:drawable="@drawable/elephant_2"
         android:duration="200" />
     <item
-        android:drawable="@drawable/elephant1_3"
+        android:drawable="@drawable/elephant_3"
         android:duration="200" />
     <item
-        android:drawable="@drawable/elephant1_4"
+        android:drawable="@drawable/elephant_4"
         android:duration="200" />
     <item
-        android:drawable="@drawable/elephant1_5"
+        android:drawable="@drawable/elephant_5"
         android:duration="200" />
     <item
-        android:drawable="@drawable/elephant1_6"
+        android:drawable="@drawable/elephant_6"
         android:duration="200" />
     <item
-        android:drawable="@drawable/elephant1_7"
+        android:drawable="@drawable/elephant_7"
         android:duration="200" />
     <item
-        android:drawable="@drawable/elephant1_8"
+        android:drawable="@drawable/elephant_8"
         android:duration="200" />
     <item
-        android:drawable="@drawable/elephant1_9"
+        android:drawable="@drawable/elephant_9"
         android:duration="200" />
     <item
-        android:drawable="@drawable/elephant1_10"
+        android:drawable="@drawable/elephant_10"
         android:duration="200" />
     <item
-        android:drawable="@drawable/elephant1_11"
+        android:drawable="@drawable/elephant_11"
         android:duration="200" />
     <item
-        android:drawable="@drawable/elephant1_12"
+        android:drawable="@drawable/elephant_12"
         android:duration="200" />
 </animation-list>

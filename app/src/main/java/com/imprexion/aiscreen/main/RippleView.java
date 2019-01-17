@@ -36,11 +36,6 @@ public class RippleView extends View {
         mPaint = new Paint();
         mPaint.setColor(getResources().getColor(R.color.spreadColor));
         mTypedArray = context.obtainStyledAttributes(attrs, R.styleable.spreadView);
-//        mRadiu = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,mTypedArray.getFloat(R.styleable.spreadView_radiu,mRadiu),context.getResources().getDisplayMetrics());
-//        mRadiu = dpTopx(context,mTypedArray.getInt(R.styleable.spreadView_radiu, (int) mRadiu));
-        mType = mTypedArray.getInt(R.styleable.spreadView_radiu, (int) mRadiu);
-        Log.d(TAG, "mType = " + mType);
-//        Log.d(TAG,"text = "+mTypedArray.getString(R.styleable.spreadView_text));
     }
 
     public RippleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -57,16 +52,12 @@ public class RippleView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        Log.d(TAG, "onDraw");
         super.onDraw(canvas);
         mCanvas = canvas;
 
         if (mValueAnimator == null) {
-//            mRadiu = dpTopx(mContext,mTypedArray.getFloat(R.styleable.spreadView_radiu,mRadiu));
-//            Log.d(TAG," onDraw radiu = "+mRadiu);
+            mType = mTypedArray.getInt(R.styleable.spreadView_radiu, (int) mRadiu);
             mPaint = new Paint();
-//            mAlpha = 255;
-//            mPaint.setAlpha(mAlpha);
             mPaint.setColor(getResources().getColor(R.color.spreadColor));
             mValueAnimator = ValueAnimator.ofFloat(30, mWidth / 2);
             mValueAnimator.setDuration(2700);
@@ -81,16 +72,6 @@ public class RippleView extends View {
                     postInvalidate();
                 }
             });
-//            mValueAnimator.addListener(new AnimatorListenerAdapter() {
-//                @Override
-//                public void onAnimationEnd(Animator animation) {
-//                    Log.d(TAG, "onAnimationEnd");
-//                    super.onAnimationEnd(animation);
-////                    drawCircle(0);
-//                    mValueAnimator = null;
-//                    postInvalidate();
-//                }
-//            });
             switch (mType) {
                 case 1:
                     mValueAnimator.start();
@@ -98,12 +79,10 @@ public class RippleView extends View {
                 case 2:
                     mValueAnimator.setStartDelay(900);
                     mValueAnimator.start();
-                    mType = 1;
                     break;
                 case 3:
                     mValueAnimator.setStartDelay(1800);
                     mValueAnimator.start();
-                    mType = 1;
                     break;
                 case 4:
                     mPaint.setAlpha(255);
@@ -118,5 +97,16 @@ public class RippleView extends View {
 
     private void drawCircle(float radiu) {
         mCanvas.drawCircle(mWidth / 2, mHeight / 2, radiu, mPaint);
+    }
+
+    public void stopSpread(){
+        if (mValueAnimator != null && mValueAnimator.isRunning()) {
+            mValueAnimator.cancel();
+            mValueAnimator = null;
+        }
+    }
+
+    public void startSpread(){
+        postInvalidate();
     }
 }

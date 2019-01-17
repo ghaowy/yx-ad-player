@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.imprexion.aiscreen">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".base.AISApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,7 +19,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.MainActivity"></activity>
+        <activity android:name=".main.MainActivity" />
+        <activity android:name=".navigation.FloorMapActivity" />
+        <activity android:name=".promotion.PromotionActivity" />
+        <activity android:name=".parking.ParkingActivity" />
+        <activity android:name=".lottery.LotteryActivity" />
+        <activity android:name=".membership.MemberShipActivity" />
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.imprexion.aiscreen.navigation;
+package com.imprexion.aiscreen.status;
 
 import android.os.Bundle;
 import android.os.Handler;
