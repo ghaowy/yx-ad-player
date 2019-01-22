@@ -1,4 +1,4 @@
-package com.imprexion.aiscreen.navigation;
+package com.imprexion.aiscreen.functionPart.membership;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +10,7 @@ import com.imprexion.aiscreen.tools.Tools;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FloorMapActivity extends AppCompatActivity {
+public class MemberShipActivity extends AppCompatActivity {
 
     @BindView(R.id.webView)
     WebView webView;
@@ -18,7 +18,7 @@ public class FloorMapActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_floor_map);
+        setContentView(R.layout.activity_member_ship);
         ButterKnife.bind(this);
         Tools.setWebView(webView);
         webView.loadUrl(getIntent().getStringExtra("url"));

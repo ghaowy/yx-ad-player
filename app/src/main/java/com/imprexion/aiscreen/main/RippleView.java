@@ -67,7 +67,7 @@ public class RippleView extends View {
                 public void onAnimationUpdate(ValueAnimator animation) {
                     mRadiu = (float) animation.getAnimatedValue();
                     mAlpha = (int) (255 - mRadiu / (mWidth / 2) * 255);
-                    Log.d(TAG, "mAlpha = " + mAlpha);
+//                    Log.d(TAG, "mAlpha = " + mAlpha);
                     mPaint.setAlpha(mAlpha);
                     postInvalidate();
                 }

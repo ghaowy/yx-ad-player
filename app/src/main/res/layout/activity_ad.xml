@@ -121,7 +121,7 @@
             android:textSize="40px"
             android:layout_marginStart="130px"
             android:layout_marginTop="250px"
-            android:id="@+id/tv_weather_text"/>
+            android:id="@+id/tv_weather_location"/>
 
         <TextView
             android:layout_width="165px"
@@ -131,7 +131,7 @@
             android:text="@string/weather_place_default_trans"
             android:textSize="20px"
             android:layout_marginStart="130px"
-            android:layout_below="@+id/tv_weather_text"
+            android:layout_below="@+id/tv_weather_location"
             android:id="@+id/tv_weather_text_trans"/>
 
 
@@ -144,17 +144,23 @@
         android:layout_marginTop="@dimen/top_margin"
         android:layout_marginEnd="@dimen/left_right_margin">
 
-        <ImageView
-            android:layout_width="@dimen/toutiao_text_width"
+        <com.imprexion.aiscreen.tools.IconFontTextView
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/imprexion_toutiao" />
+            android:text="&#xe647;"
+            android:textSize="45px"
+            android:gravity="center"
+            android:textColor="@color/toutiao_Color"
+            android:id="@+id/tv_toutaio"/>
 
-        <ImageView
-            android:layout_width="@dimen/toutiao_icon_width"
-            android:layout_height="@dimen/toutiao_icon_width"
+        <com.imprexion.aiscreen.tools.IconFontTextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/news" />
+            android:text="&#xe645;"
+            android:textSize="45px"
+            android:textColor="@color/toutiao_Color"
+            android:id="@+id/tv_toutaio_icon"/>
 
         <TextView
             android:layout_width="match_parent"

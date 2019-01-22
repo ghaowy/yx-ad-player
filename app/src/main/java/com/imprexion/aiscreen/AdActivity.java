@@ -14,7 +14,11 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.imprexion.aiscreen.ad.AdContract;
+import com.imprexion.aiscreen.ad.AdPresenter;
+import com.imprexion.aiscreen.bean.WeatherInfo;
 import com.imprexion.aiscreen.main.MainActivity;
 import com.imprexion.aiscreen.status.StatusFragment;
 import com.imprexion.aiscreen.tools.IconFontTextView;
@@ -23,7 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AdActivity extends AppCompatActivity {
+public class AdActivity extends AppCompatActivity implements AdContract.AdView {
 
     @BindView(R.id.elephant_animation)
     ImageView elephantAnimation;
@@ -37,12 +41,26 @@ public class AdActivity extends AppCompatActivity {
     ImageView ivSun;
     @BindView(R.id.rl_status)
     RelativeLayout rlStatus;
+    @BindView(R.id.tempreture_1)
+    IconFontTextView tempreture1;
+    @BindView(R.id.tempreture_2)
+    IconFontTextView tempreture2;
+    @BindView(R.id.tv_toutaio_icon)
+    IconFontTextView tvToutaioIcon;
+    @BindView(R.id.tv_weather_location)
+    TextView tvWeatherLocation;
+
+    private String tempretures[];
+    private static final String TAG = "AdActivity";
 
 
     private AnimationDrawable mAnimationDrawable;
     private ObjectAnimator mObjectAnimator;
     private ObjectAnimator mObjectAnimatorScale;
     private ObjectAnimator mObjectAnimatorSun;
+    private ObjectAnimator mObjectAnimatorToutiaoY;
+    private ObjectAnimator mObjectAnimatorToutiaoX;
+    private AnimatorSet mAnimatorSetToutiao = new AnimatorSet();
     private AnimatorSet mAnimatorSet = new AnimatorSet();
     private StatusFragment mStatusFragment;
     private float mCurrentpositionY;
@@ -86,7 +104,13 @@ public class AdActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         startAnim();
+        setWeatherInfo();
 
+    }
+
+    private void setWeatherInfo() {
+        AdPresenter adPresenter = new AdPresenter(this);
+        adPresenter.updateWeather();
     }
 
     @Override
@@ -137,6 +161,21 @@ public class AdActivity extends AppCompatActivity {
                 mObjectAnimatorSun.start();
             }
         });
+        //头条广播动画
+        tvToutaioIcon.post(new Runnable() {
+            @Override
+            public void run() {
+                mObjectAnimatorToutiaoX = ObjectAnimator.ofFloat(tvToutaioIcon, "scaleX", 0.5f, 1);
+                mObjectAnimatorToutiaoY = ObjectAnimator.ofFloat(tvToutaioIcon, "scaleY", 0.5f, 1);
+                mObjectAnimatorToutiaoX.setRepeatCount(ObjectAnimator.RESTART);
+                mObjectAnimatorToutiaoX.setRepeatCount(ObjectAnimator.INFINITE);
+                mObjectAnimatorToutiaoY.setRepeatCount(ObjectAnimator.RESTART);
+                mObjectAnimatorToutiaoY.setRepeatCount(ObjectAnimator.INFINITE);
+                mAnimatorSetToutiao.play(mObjectAnimatorToutiaoX).with(mObjectAnimatorToutiaoY);
+                mAnimatorSetToutiao.setDuration(1000);
+                mAnimatorSetToutiao.start();
+            }
+        });
     }
 
     private void stopAnim() {
@@ -166,4 +205,26 @@ public class AdActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void updateWeather(WeatherInfo weatherInfo) {
+        tempretures = getResources().getStringArray(R.array.tempretures);
+        WeatherInfo.HeWeather6 heWeather6 = weatherInfo.getHeWeather6().get(0);
+//        Log.d(TAG,"heWeather6="+new Gson().toJson(heWeather6));
+        String status = heWeather6.getStatus();
+        if (!status.equals("ok")) {
+            return;
+        }
+        int temp = 0;
+        if (heWeather6 != null) {
+            temp = weatherInfo.getHeWeather6().get(0).getNow().getTmp();
+        }
+        if (temp / 10 != 0) {
+            tempreture1.setVisibility(View.VISIBLE);
+            tempreture1.setText(tempretures[temp / 10]);
+        } else {
+            tempreture1.setVisibility(View.INVISIBLE);
+        }
+        tempreture2.setText(tempretures[temp % 10]);
+        tvWeatherLocation.setText(heWeather6.getBasic().getLocation()+"."+heWeather6.getNow().getCond_txt());
+    }
 }

@@ -23,22 +23,16 @@
             android:layout_height="match_parent" />
     </FrameLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lav"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lav_snow_man"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="snow_man_json.json"
-            app:lottie_loop="true" />
-    </android.support.constraint.ConstraintLayout>
+        android:layout_height="match_parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true" />
 
 
     <ImageView
-        android:id="@+id/iv_1"
+        android:id="@+id/iv_navigation"
         android:layout_width="360px"
         android:layout_height="268px"
         android:layout_marginStart="135px"
@@ -46,10 +40,10 @@
         android:background="@drawable/title1" />
 
     <TextView
-        android:id="@+id/tv_text_1"
+        android:id="@+id/tv_text_navigation"
         android:layout_width="360px"
         android:layout_height="30px"
-        android:layout_below="@+id/iv_1"
+        android:layout_below="@+id/iv_navigation"
         android:layout_marginStart="135px"
         android:layout_marginTop="20px"
         android:gravity="center"
@@ -58,19 +52,19 @@
         android:textSize="24px" />
 
     <ImageView
-        android:id="@+id/iv_2"
+        android:id="@+id/iv_park"
         android:layout_width="360px"
         android:layout_height="268px"
-        android:layout_below="@+id/iv_1"
+        android:layout_below="@+id/iv_navigation"
         android:layout_marginStart="135px"
         android:layout_marginTop="95px"
         android:background="@drawable/title2" />
 
     <TextView
-        android:id="@+id/tv_text_2"
+        android:id="@+id/tv_text_park"
         android:layout_width="360px"
         android:layout_height="30px"
-        android:layout_below="@+id/iv_2"
+        android:layout_below="@+id/iv_park"
         android:layout_marginStart="135px"
         android:layout_marginTop="20px"
         android:gravity="center"
@@ -79,19 +73,19 @@
         android:textSize="24px" />
 
     <ImageView
-        android:id="@+id/iv_3"
+        android:id="@+id/iv_membership"
         android:layout_width="360px"
         android:layout_height="268px"
-        android:layout_below="@+id/iv_2"
+        android:layout_below="@+id/iv_park"
         android:layout_marginStart="135px"
         android:layout_marginTop="95px"
         android:background="@drawable/title3" />
 
     <TextView
-        android:id="@+id/tv_text_3"
+        android:id="@+id/tv_text_membership"
         android:layout_width="360px"
         android:layout_height="30px"
-        android:layout_below="@+id/iv_3"
+        android:layout_below="@+id/iv_membership"
         android:layout_marginStart="135px"
         android:layout_marginTop="20px"
         android:gravity="center"
@@ -100,7 +94,7 @@
         android:textSize="24px" />
 
     <ImageView
-        android:id="@+id/iv_4"
+        android:id="@+id/iv_promotion"
         android:layout_width="360px"
         android:layout_height="268px"
         android:layout_marginStart="585px"
@@ -108,10 +102,10 @@
         android:background="@drawable/title4" />
 
     <TextView
-        android:id="@+id/tv_text_4"
+        android:id="@+id/tv_text_promotion"
         android:layout_width="360px"
         android:layout_height="30px"
-        android:layout_below="@+id/iv_4"
+        android:layout_below="@+id/iv_promotion"
         android:layout_marginStart="585px"
         android:layout_marginTop="20px"
         android:gravity="center"
@@ -120,19 +114,19 @@
         android:textSize="24px" />
 
     <ImageView
-        android:id="@+id/iv_5"
+        android:id="@+id/iv_lottery"
         android:layout_width="360px"
         android:layout_height="268px"
-        android:layout_below="@+id/iv_4"
+        android:layout_below="@+id/iv_promotion"
         android:layout_marginStart="585px"
         android:layout_marginTop="95px"
         android:background="@drawable/title5" />
 
     <TextView
-        android:id="@+id/tv_text_5"
+        android:id="@+id/tv_text_lottery"
         android:layout_width="360px"
         android:layout_height="30px"
-        android:layout_below="@+id/iv_5"
+        android:layout_below="@+id/iv_lottery"
         android:layout_marginStart="585px"
         android:layout_marginTop="20px"
         android:gravity="center"
@@ -141,10 +135,10 @@
         android:textSize="24px" />
 
     <ImageView
-        android:id="@+id/iv_6"
+        android:id="@+id/iv_emojidancer"
         android:layout_width="360px"
         android:layout_height="268px"
-        android:layout_below="@+id/iv_5"
+        android:layout_below="@+id/iv_lottery"
         android:layout_marginStart="585px"
         android:layout_marginTop="95px"
         android:background="@drawable/title6" />
@@ -153,7 +147,7 @@
         android:id="@+id/tv_text_6"
         android:layout_width="360px"
         android:layout_height="30px"
-        android:layout_below="@+id/iv_6"
+        android:layout_below="@+id/iv_emojidancer"
         android:layout_marginStart="585px"
         android:layout_marginTop="20px"
         android:gravity="center"

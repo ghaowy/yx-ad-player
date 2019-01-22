@@ -20,11 +20,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".main.MainActivity" />
-        <activity android:name=".navigation.FloorMapActivity" />
-        <activity android:name=".promotion.PromotionActivity" />
-        <activity android:name=".parking.ParkingActivity" />
-        <activity android:name=".lottery.LotteryActivity" />
-        <activity android:name=".membership.MemberShipActivity" />
+        <activity android:name=".functionPart.navigation.FloorMapActivity" />
+        <activity android:name=".functionPart.promotion.PromotionActivity" />
+        <activity android:name=".functionPart.parking.ParkingActivity" />
+        <activity android:name=".functionPart.lottery.LotteryActivity" />
+        <activity android:name=".functionPart.membership.MemberShipActivity" />
     </application>
 
 </manifest>

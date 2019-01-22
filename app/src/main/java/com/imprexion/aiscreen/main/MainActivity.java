@@ -1,5 +1,8 @@
 package com.imprexion.aiscreen.main;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -9,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -17,11 +21,11 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.imprexion.aiscreen.R;
 import com.imprexion.aiscreen.animation.SnowWeather;
-import com.imprexion.aiscreen.lottery.LotteryActivity;
-import com.imprexion.aiscreen.membership.MemberShipActivity;
-import com.imprexion.aiscreen.navigation.FloorMapActivity;
-import com.imprexion.aiscreen.parking.ParkingActivity;
-import com.imprexion.aiscreen.promotion.PromotionActivity;
+import com.imprexion.aiscreen.functionPart.lottery.LotteryActivity;
+import com.imprexion.aiscreen.functionPart.membership.MemberShipActivity;
+import com.imprexion.aiscreen.functionPart.navigation.FloorMapActivity;
+import com.imprexion.aiscreen.functionPart.parking.ParkingActivity;
+import com.imprexion.aiscreen.functionPart.promotion.PromotionActivity;
 import com.imprexion.aiscreen.status.StatusFragment;
 import com.imprexion.aiscreen.tools.ScreenUtils;
 import com.imprexion.aiscreen.tools.Tools;
@@ -35,18 +39,6 @@ import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity implements ScreenUtils.NavigationListener {
 
-    @BindView(R.id.iv_1)
-    ImageView iv1;
-    @BindView(R.id.iv_2)
-    ImageView iv2;
-    @BindView(R.id.iv_3)
-    ImageView iv3;
-    @BindView(R.id.iv_4)
-    ImageView iv4;
-    @BindView(R.id.iv_5)
-    ImageView iv5;
-    @BindView(R.id.iv_6)
-    ImageView iv6;
     @BindView(R.id.rl_status)
     RelativeLayout rlStatus;
     @BindView(R.id.smoke_emiter)
@@ -61,12 +53,24 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     RippleView rv2;
     @BindView(R.id.rv_3)
     RippleView rv3;
-    @BindView(R.id.lav_snow_man)
-    LottieAnimationView lavSnowMan;
+    @BindView(R.id.lav)
+    LottieAnimationView lav;
     @BindView(R.id.snow_weather_1)
     SnowWeather snowWeather1;
     @BindView(R.id.snow_weather_2)
     SnowWeather snowWeather2;
+    @BindView(R.id.iv_navigation)
+    ImageView ivNavigation;
+    @BindView(R.id.iv_park)
+    ImageView ivPark;
+    @BindView(R.id.iv_membership)
+    ImageView ivMembership;
+    @BindView(R.id.iv_promotion)
+    ImageView ivPromotion;
+    @BindView(R.id.iv_lottery)
+    ImageView ivLottery;
+    @BindView(R.id.iv_emojidancer)
+    ImageView ivEmojidancer;
     private ParticleSystem mParticleSystem;
     private boolean isHoverExit1 = true;
     private boolean isHoverExit2 = true;
@@ -75,8 +79,12 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     private boolean isHoverExit5 = true;
     private boolean isHoverExit6 = true;
     private static final String TAG = "MainActivity";
-    private static final String URL = "http://172.162.2.153:88/";
+    private static final String URL = "http://172.16.2.207:5000/";
     private StatusFragment mStatusFragment;
+    private boolean bgFlag = true;
+    private ObjectAnimator mObjectAnimator;
+    private ObjectAnimator mObjectAnimator2;
+    private int mDuration = 8000;
 
 
     @Override
@@ -84,9 +92,9 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        lavSnowMan.setImageAssetsFolder("images");
-        lavSnowMan.setAnimation("snow_man_json.json");
-        lavSnowMan.playAnimation();
+        lav.setImageAssetsFolder("images");
+        lav.setAnimation("snow_man_json.json");
+        lav.playAnimation();
         initStatus();
     }
 
@@ -108,22 +116,76 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         smokeEmiter.post(new Runnable() {
             @Override
             public void run() {
-                startAnim();
+                startSmokeAnim();
             }
         });
-        setOnHoverListener1(iv1);
-        setOnHoverListener2(iv2);
-        setOnHoverListener3(iv3);
-        setOnHoverListener4(iv4);
-        setOnHoverListener5(iv5);
-        setOnHoverListener6(iv6);
+        setOnHoverListener1(ivNavigation);
+        setOnHoverListener2(ivPark);
+        setOnHoverListener3(ivMembership);
+        setOnHoverListener4(ivPromotion);
+        setOnHoverListener5(ivLottery);
+        setOnHoverListener6(ivEmojidancer);
 
         ScreenUtils.setNavigationListener(rlMain, this);
 
         rv1.startSpread();
         rv2.startSpread();
         rv3.startSpread();
+        snowWeather1.post(new Runnable() {
+            @Override
+            public void run() {
+                startSnowAnimation();
+            }
+        });
 
+
+    }
+
+    private void startSnowAnimation() {
+
+        snowWeather1.post(new Runnable() {
+            @Override
+            public void run() {
+                mObjectAnimator = ObjectAnimator.ofFloat(snowWeather1, "translationY", -snowWeather1.getHeight(), snowWeather1.getHeight());
+                mObjectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+                mObjectAnimator.setDuration(mDuration);
+                mObjectAnimator.setInterpolator(new LinearInterpolator());
+                mObjectAnimator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+                        super.onAnimationRepeat(animation);
+                        snowWeather1.initData();
+                    }
+                });
+                mObjectAnimator.start();
+            }
+        });
+
+        snowWeather2.post(new Runnable() {
+            @Override
+            public void run() {
+                snowWeather2.setVisibility(View.INVISIBLE);
+                mObjectAnimator2 = ObjectAnimator.ofFloat(snowWeather2, "translationY", -snowWeather2.getHeight(), snowWeather2.getHeight());
+                mObjectAnimator2.setRepeatCount(ObjectAnimator.INFINITE);
+                mObjectAnimator2.setDuration(mDuration);
+                mObjectAnimator2.setStartDelay(mDuration / 2);
+                mObjectAnimator2.setInterpolator(new LinearInterpolator());
+                mObjectAnimator2.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+                        super.onAnimationRepeat(animation);
+                        snowWeather2.initData();
+                    }
+
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        super.onAnimationStart(animation);
+                        snowWeather2.setVisibility(View.VISIBLE);
+                    }
+                });
+                mObjectAnimator2.start();
+            }
+        });
     }
 
     @Override
@@ -145,31 +207,59 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     }
 
 
-    @OnClick({R.id.iv_1, R.id.iv_2, R.id.iv_3, R.id.iv_4, R.id.iv_5, R.id.iv_6, R.id.fl_back})
+    @OnClick({R.id.iv_navigation, R.id.iv_park, R.id.iv_membership, R.id.iv_promotion, R.id.iv_lottery, R.id.iv_emojidancer, R.id.fl_back, R.id.rl_main})
     public void onClick(View v) {
 
         switch (v.getId()) {
-            case R.id.iv_1:
+            case R.id.iv_navigation:
                 startActivity(new Intent(this, FloorMapActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Floor"));
                 break;
-            case R.id.iv_2:
-                startActivity(new Intent(this, ParkingActivity.class).putExtra("url", URL + "park"));
+            case R.id.iv_park:
+                startActivity(new Intent(this, ParkingActivity.class).putExtra("url", URL + "app/park"));
                 break;
-            case R.id.iv_3:
+            case R.id.iv_membership:
                 startActivity(new Intent(this, MemberShipActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/VipCard"));
                 break;
-            case R.id.iv_4:
+            case R.id.iv_promotion:
                 startActivity(new Intent(this, PromotionActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Promotion"));
                 break;
-            case R.id.iv_5:
-                startActivity(new Intent(this, LotteryActivity.class).putExtra("url", URL + "app/markting/index.html"));
+            case R.id.iv_lottery:
+                startActivity(new Intent(this, LotteryActivity.class).putExtra("url", "http://oss.imprexion.cn/application/lottery/index.html"));
                 break;
-            case R.id.iv_6:
+            case R.id.iv_emojidancer:
 //                startActivity(new Intent(this, JsonActivity.class).putExtra("url", URL + "app"));
+//                AISApplication.getSmdtManager().setMouseIcon(i++%5);
                 break;
             case R.id.fl_back:
                 onBackPressed();
                 break;
+            case R.id.rl_main:
+                if (bgFlag) {
+                    snowWeather1.setVisibility(View.GONE);
+                    snowWeather2.setVisibility(View.GONE);
+                    mObjectAnimator.cancel();
+                    mObjectAnimator2.cancel();
+                    mParticleSystem.cancel();
+                    mParticleSystem = null;
+                    lav.cancelAnimation();
+                    lav.setImageAssetsFolder("imagesHome");
+                    lav.setAnimation("goHome_json.json");
+                    lav.playAnimation();
+                    bgFlag = !bgFlag;
+                } else {
+                    snowWeather1.setVisibility(View.VISIBLE);
+//                    snowWeather2.setVisibility(View.VISIBLE);
+                    mObjectAnimator.start();
+                    mObjectAnimator2.start();
+                    if (mParticleSystem == null) {
+                        startSmokeAnim();
+                    }
+                    lav.cancelAnimation();
+                    lav.setImageAssetsFolder("images");
+                    lav.setAnimation("snow_man_json.json");
+                    lav.playAnimation();
+                    bgFlag = !bgFlag;
+                }
             default:
                 break;
         }
@@ -463,7 +553,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         Toast.makeText(this, "hoverExit", Toast.LENGTH_SHORT).show();
     }
 
-    private void startAnim() {
+    private void startSmokeAnim() {
         if (mParticleSystem == null) {
             mParticleSystem = new ParticleSystem(this, 20, R.drawable.smoke, 1000);
             mParticleSystem.setSpeedByComponentsRange(-0.025f, 0.025f, -0.06f, -0.08f)
@@ -483,7 +573,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         if (mParticleSystem != null) {
             mParticleSystem.cancel();
             mParticleSystem = null;
-            startAnim();
+            startSmokeAnim();
         }
     }
 
@@ -494,7 +584,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         if (mParticleSystem != null) {
             mParticleSystem.cancel();
             mParticleSystem = null;
-            startAnim();
+            startSmokeAnim();
         }
     }
 }
