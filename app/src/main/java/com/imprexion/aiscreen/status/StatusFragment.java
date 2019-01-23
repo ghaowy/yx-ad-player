@@ -6,12 +6,16 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.imprexion.aiscreen.R;
+import com.imprexion.aiscreen.bean.EventBusMessage;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,6 +30,8 @@ public class StatusFragment extends Fragment {
     TextView tvCurrentTime;
     private View mView;
     private Unbinder mUnbinder;
+    public final static int UPDATE_WEATHER = 1;
+    private final static String TAG = "StatusFragment";
 
     private Thread mTimeThread;
     private Handler mHandler = new Handler() {
@@ -34,9 +40,13 @@ public class StatusFragment extends Fragment {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 1:
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     if (tvCurrentTime != null) {
-                        tvCurrentTime.setText(simpleDateFormat.format(new Date()));
+                        Date date = new Date();
+                        tvCurrentTime.setText(simpleDateFormat.format(date));
+                        if (date.getMinutes() == 0 && date.getSeconds() == 0) {
+                            EventBus.getDefault().post(new EventBusMessage(UPDATE_WEATHER, null));
+                        }
                     }
                     break;
                 default:
@@ -44,6 +54,7 @@ public class StatusFragment extends Fragment {
             }
         }
     };
+
 
     @Nullable
     @Override

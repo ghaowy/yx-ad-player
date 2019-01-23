@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -15,13 +16,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.imprexion.aiscreen.ad.AdContract;
 import com.imprexion.aiscreen.ad.AdPresenter;
+import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.bean.WeatherInfo;
 import com.imprexion.aiscreen.main.MainActivity;
 import com.imprexion.aiscreen.status.StatusFragment;
 import com.imprexion.aiscreen.tools.IconFontTextView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,6 +58,14 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
     IconFontTextView tvToutaioIcon;
     @BindView(R.id.tv_weather_location)
     TextView tvWeatherLocation;
+    @BindView(R.id.pinan_building)
+    ImageView pinanBuilding;
+    @BindView(R.id.iv_weather_bottom)
+    ImageView ivWeatherBottom;
+    @BindView(R.id.rl_weather)
+    RelativeLayout rlWeather;
+    @BindView(R.id.ad_video)
+    VideoView adVideo;
 
     private String tempretures[];
     private static final String TAG = "AdActivity";
@@ -65,7 +82,9 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
     private StatusFragment mStatusFragment;
     private float mCurrentpositionY;
     private float mCurrentpositionX;
-
+//    private String[] weather = {"晴", "多云", "雨"};
+    private int i = 0;
+    private AdPresenter mAdPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +104,7 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
                 mCurrentpositionX = ivSun.getTranslationX();
             }
         });
-
+        EventBus.getDefault().register(this);
     }
 
     private void initStatus() {
@@ -105,18 +124,25 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
         super.onResume();
         startAnim();
         setWeatherInfo();
-
     }
 
     private void setWeatherInfo() {
-        AdPresenter adPresenter = new AdPresenter(this);
-        adPresenter.updateWeather();
+        if (mAdPresenter == null) {
+            mAdPresenter = new AdPresenter(this);
+        }
+        mAdPresenter.updateWeather();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         stopAnim();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void startAnim() {
@@ -193,12 +219,15 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
         }
     }
 
-    @OnClick({R.id.ll_ad})
+    @OnClick({R.id.ll_ad, R.id.ad_video})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ll_ad:
                 startActivity(new Intent(AdActivity.this, MainActivity.class));
                 break;
+//            case R.id.ad_video:
+//                updateBg(weather[i++ % 3]);
+//                break;
             default:
                 break;
         }
@@ -225,6 +254,63 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
             tempreture1.setVisibility(View.INVISIBLE);
         }
         tempreture2.setText(tempretures[temp % 10]);
-        tvWeatherLocation.setText(heWeather6.getBasic().getLocation()+"."+heWeather6.getNow().getCond_txt());
+        tvWeatherLocation.setText(heWeather6.getBasic().getLocation() + "." + heWeather6.getNow().getCond_txt());
+        String weather = heWeather6.getNow().getCond_txt();
+        updateBg(weather);
+//        updateBg(weather[i++ % 3]);
+    }
+
+    private void updateBg(String weather) {
+        boolean isNight;
+        Date date = new Date();
+//        Log.d(TAG, "hour = " + date.getHours());
+        if (date.getHours() < 18 && date.getHours() > 8) {
+            isNight = false;
+        } else {
+            isNight = true;
+        }
+        if ("晴".equals(weather)) {
+            ivWeatherBottom.setVisibility(View.VISIBLE);
+            pinanBuilding.setVisibility(View.VISIBLE);
+            ivSun.setVisibility(View.VISIBLE);
+            rlWeather.setBackgroundResource(R.drawable.gradient_bg);
+            llAd.setBackgroundColor(getResources().getColor(R.color.ad_bgcolor1));
+        } else if ("多云".equals(weather)) {
+            if (!isNight) {
+                ivWeatherBottom.setVisibility(View.INVISIBLE);
+                pinanBuilding.setVisibility(View.INVISIBLE);
+                ivSun.setVisibility(View.INVISIBLE);
+                rlWeather.setBackgroundResource(R.drawable.weather_cloud_day);
+                llAd.setBackgroundColor(getResources().getColor(R.color.weather_cloud_day_Color));
+            } else {
+                ivWeatherBottom.setVisibility(View.INVISIBLE);
+                pinanBuilding.setVisibility(View.INVISIBLE);
+                ivSun.setVisibility(View.INVISIBLE);
+                rlWeather.setBackgroundResource(R.drawable.weather_cloud_night);
+                llAd.setBackgroundColor(getResources().getColor(R.color.weather_cloud_night_Color));
+            }
+        } else if ("雨".equals(weather)) {
+            if (!isNight) {
+                ivWeatherBottom.setVisibility(View.INVISIBLE);
+                pinanBuilding.setVisibility(View.INVISIBLE);
+                ivSun.setVisibility(View.INVISIBLE);
+                rlWeather.setBackgroundResource(R.drawable.weather_rain_day);
+                llAd.setBackgroundColor(getResources().getColor(R.color.weather_rain_day_Color));
+            } else {
+                ivWeatherBottom.setVisibility(View.INVISIBLE);
+                pinanBuilding.setVisibility(View.INVISIBLE);
+                ivSun.setVisibility(View.INVISIBLE);
+                rlWeather.setBackgroundResource(R.drawable.weather_rain_night);
+                llAd.setBackgroundColor(getResources().getColor(R.color.weather_rain_night_Color));
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateWeatherByHour(EventBusMessage eventBusMessage) {
+        Log.d(TAG, "updateWeatherByHour");
+        if (eventBusMessage.getType() == StatusFragment.UPDATE_WEATHER) {
+            setWeatherInfo();
+        }
     }
 }

@@ -12,6 +12,10 @@
     <color name="black_Color_10">#19000000</color>
     <color name="white_Color_50">#5BFFFFFF</color>
     <color name="toutiao_Color">#A0522D</color>
+    <color name="weather_rain_night_Color">#7160EF</color>
+    <color name="weather_rain_day_Color">#A0D7F1</color>
+    <color name="weather_cloud_night_Color">#4393BD</color>
+    <color name="weather_cloud_day_Color">#6CB1FD</color>
 
 
 
