@@ -1,7 +1,5 @@
 package com.imprexion.aiscreen.main;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -20,7 +18,7 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.imprexion.aiscreen.R;
-import com.imprexion.aiscreen.animation.SnowWeather;
+import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.functionPart.lottery.LotteryActivity;
 import com.imprexion.aiscreen.functionPart.membership.MemberShipActivity;
 import com.imprexion.aiscreen.functionPart.navigation.FloorMapActivity;
@@ -29,9 +27,11 @@ import com.imprexion.aiscreen.functionPart.promotion.PromotionActivity;
 import com.imprexion.aiscreen.status.StatusFragment;
 import com.imprexion.aiscreen.tools.ScreenUtils;
 import com.imprexion.aiscreen.tools.Tools;
-import com.plattysoft.leonids.ParticleSystem;
-import com.plattysoft.leonids.modifiers.AlphaModifier;
-import com.plattysoft.leonids.modifiers.ScaleModifier;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,8 +41,8 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 
     @BindView(R.id.rl_status)
     RelativeLayout rlStatus;
-    @BindView(R.id.smoke_emiter)
-    View smokeEmiter;
+    //    @BindView(R.id.smoke_emiter)
+//    View smokeEmiter;
     @BindView(R.id.fl_back)
     FrameLayout flBack;
     @BindView(R.id.rl_main)
@@ -55,10 +55,10 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     RippleView rv3;
     @BindView(R.id.lav)
     LottieAnimationView lav;
-    @BindView(R.id.snow_weather_1)
-    SnowWeather snowWeather1;
-    @BindView(R.id.snow_weather_2)
-    SnowWeather snowWeather2;
+    //    @BindView(R.id.snow_weather_1)
+//    SnowWeather snowWeather1;
+//    @BindView(R.id.snow_weather_2)
+//    SnowWeather snowWeather2;
     @BindView(R.id.iv_navigation)
     ImageView ivNavigation;
     @BindView(R.id.iv_park)
@@ -71,7 +71,9 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     ImageView ivLottery;
     @BindView(R.id.iv_emojidancer)
     ImageView ivEmojidancer;
-    private ParticleSystem mParticleSystem;
+    @BindView(R.id.iv_sun)
+    ImageView ivSun;
+    //    private ParticleSystem mParticleSystem;
     private boolean isHoverExit1 = true;
     private boolean isHoverExit2 = true;
     private boolean isHoverExit3 = true;
@@ -85,6 +87,9 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     private ObjectAnimator mObjectAnimator;
     private ObjectAnimator mObjectAnimator2;
     private int mDuration = 8000;
+    private float mCurrentpositionX;
+    private ObjectAnimator mObjectAnimatorSun;
+
 
 
     @Override
@@ -92,10 +97,31 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        lav.setImageAssetsFolder("images");
-        lav.setAnimation("snow_man_json.json");
-        lav.playAnimation();
+        ivSun.post(new Runnable() {
+            @Override
+            public void run() {
+                mCurrentpositionX = ivSun.getTranslationX();
+            }
+        });
+
+        setMainBg();
         initStatus();
+    }
+
+    private void setMainBg() {
+        Date date = new Date();
+        if (date.getHours() >= 8 && date.getHours() < 18) {
+//        if (bgFlag) {
+            ivSun.setImageResource(R.drawable.sun);
+            lav.setImageAssetsFolder("imagesGohomeDay");
+            lav.setAnimation("gohome_day_json.json");
+            lav.playAnimation();
+        } else {
+            ivSun.setImageResource(R.drawable.moon);
+            lav.setImageAssetsFolder("imagesGohomeNight");
+            lav.setAnimation("gohome_night_json.json");
+            lav.playAnimation();
+        }
     }
 
     private void initStatus() {
@@ -113,12 +139,12 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     @Override
     protected void onResume() {
         super.onResume();
-        smokeEmiter.post(new Runnable() {
-            @Override
-            public void run() {
-                startSmokeAnim();
-            }
-        });
+//        smokeEmiter.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                startSmokeAnim();
+//            }
+//        });
         setOnHoverListener1(ivNavigation);
         setOnHoverListener2(ivPark);
         setOnHoverListener3(ivMembership);
@@ -131,70 +157,77 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         rv1.startSpread();
         rv2.startSpread();
         rv3.startSpread();
-        snowWeather1.post(new Runnable() {
+        startAnim();
+//        startSnowAnimation();
+    }
+
+    private void startAnim() {
+        ivSun.post(new Runnable() {
             @Override
             public void run() {
-                startSnowAnimation();
+                mObjectAnimatorSun = ObjectAnimator.ofFloat(ivSun, "translationX", mCurrentpositionX, mCurrentpositionX - 300, mCurrentpositionX);
+                mObjectAnimatorSun.setInterpolator(new LinearInterpolator());
+                mObjectAnimatorSun.setDuration(40000);
+                mObjectAnimatorSun.setRepeatCount(ObjectAnimator.INFINITE);
+                mObjectAnimatorSun.start();
             }
         });
-
-
     }
 
     private void startSnowAnimation() {
 
-        snowWeather1.post(new Runnable() {
-            @Override
-            public void run() {
-                mObjectAnimator = ObjectAnimator.ofFloat(snowWeather1, "translationY", -snowWeather1.getHeight(), snowWeather1.getHeight());
-                mObjectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
-                mObjectAnimator.setDuration(mDuration);
-                mObjectAnimator.setInterpolator(new LinearInterpolator());
-                mObjectAnimator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-                        super.onAnimationRepeat(animation);
-                        snowWeather1.initData();
-                    }
-                });
-                mObjectAnimator.start();
-            }
-        });
-
-        snowWeather2.post(new Runnable() {
-            @Override
-            public void run() {
-                snowWeather2.setVisibility(View.INVISIBLE);
-                mObjectAnimator2 = ObjectAnimator.ofFloat(snowWeather2, "translationY", -snowWeather2.getHeight(), snowWeather2.getHeight());
-                mObjectAnimator2.setRepeatCount(ObjectAnimator.INFINITE);
-                mObjectAnimator2.setDuration(mDuration);
-                mObjectAnimator2.setStartDelay(mDuration / 2);
-                mObjectAnimator2.setInterpolator(new LinearInterpolator());
-                mObjectAnimator2.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-                        super.onAnimationRepeat(animation);
-                        snowWeather2.initData();
-                    }
-
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        super.onAnimationStart(animation);
-                        snowWeather2.setVisibility(View.VISIBLE);
-                    }
-                });
-                mObjectAnimator2.start();
-            }
-        });
+//        snowWeather1.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                mObjectAnimator = ObjectAnimator.ofFloat(snowWeather1, "translationY", -snowWeather1.getHeight(), snowWeather1.getHeight());
+//                mObjectAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+//                mObjectAnimator.setDuration(mDuration);
+//                mObjectAnimator.setInterpolator(new LinearInterpolator());
+//                mObjectAnimator.addListener(new AnimatorListenerAdapter() {
+//                    @Override
+//                    public void onAnimationRepeat(Animator animation) {
+//                        super.onAnimationRepeat(animation);
+//                        snowWeather1.initData();
+//                    }
+//                });
+//                mObjectAnimator.start();
+//            }
+//        });
+//
+//        snowWeather2.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                snowWeather2.setVisibility(View.INVISIBLE);
+//                mObjectAnimator2 = ObjectAnimator.ofFloat(snowWeather2, "translationY", -snowWeather2.getHeight(), snowWeather2.getHeight());
+//                mObjectAnimator2.setRepeatCount(ObjectAnimator.INFINITE);
+//                mObjectAnimator2.setDuration(mDuration);
+//                mObjectAnimator2.setStartDelay(mDuration / 2);
+//                mObjectAnimator2.setInterpolator(new LinearInterpolator());
+//                mObjectAnimator2.addListener(new AnimatorListenerAdapter() {
+//                    @Override
+//                    public void onAnimationRepeat(Animator animation) {
+//                        super.onAnimationRepeat(animation);
+//                        snowWeather2.initData();
+//                    }
+//
+//                    @Override
+//                    public void onAnimationStart(Animator animation) {
+//                        super.onAnimationStart(animation);
+//                        snowWeather2.setVisibility(View.VISIBLE);
+//                    }
+//                });
+//                mObjectAnimator2.start();
+//            }
+//        });
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (mParticleSystem != null) {
-            mParticleSystem.cancel();
-            mParticleSystem = null;
-        }
+//        if (mParticleSystem != null) {
+//            mParticleSystem.cancel();
+//            mParticleSystem = null;
+//        }
         if (rv1 != null) {
             rv1.stopSpread();
         }
@@ -234,32 +267,32 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 onBackPressed();
                 break;
             case R.id.rl_main:
-                if (bgFlag) {
-                    snowWeather1.setVisibility(View.GONE);
-                    snowWeather2.setVisibility(View.GONE);
-                    mObjectAnimator.cancel();
-                    mObjectAnimator2.cancel();
-                    mParticleSystem.cancel();
-                    mParticleSystem = null;
-                    lav.cancelAnimation();
-                    lav.setImageAssetsFolder("imagesHome");
-                    lav.setAnimation("goHome_json.json");
-                    lav.playAnimation();
-                    bgFlag = !bgFlag;
-                } else {
-                    snowWeather1.setVisibility(View.VISIBLE);
+                bgFlag = !bgFlag;
+                setMainBg();
+//                if (bgFlag) {
+//                    snowWeather1.setVisibility(View.GONE);
+//                    snowWeather2.setVisibility(View.GONE);
+//                    mObjectAnimator.cancel();
+//                    mObjectAnimator2.cancel();
+//                    mParticleSystem.cancel();
+//                    mParticleSystem = null;
+//                    setMainBg();
+//                    bgFlag = !bgFlag;
+//                } else {
+//                    snowWeather1.setVisibility(View.VISIBLE);
 //                    snowWeather2.setVisibility(View.VISIBLE);
-                    mObjectAnimator.start();
-                    mObjectAnimator2.start();
-                    if (mParticleSystem == null) {
-                        startSmokeAnim();
-                    }
-                    lav.cancelAnimation();
-                    lav.setImageAssetsFolder("images");
-                    lav.setAnimation("snow_man_json.json");
-                    lav.playAnimation();
-                    bgFlag = !bgFlag;
-                }
+//                    mObjectAnimator.start();
+//                    mObjectAnimator2.start();
+//                    if (mParticleSystem == null) {
+//                        startSmokeAnim();
+//                    }
+//                    lav.cancelAnimation();
+//                    lav.setImageAssetsFolder("images");
+//                    lav.setAnimation("snow_man_json.json");
+//                    lav.playAnimation();
+//                    bgFlag = !bgFlag;
+//                }
+                break;
             default:
                 break;
         }
@@ -553,38 +586,45 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         Toast.makeText(this, "hoverExit", Toast.LENGTH_SHORT).show();
     }
 
-    private void startSmokeAnim() {
-        if (mParticleSystem == null) {
-            mParticleSystem = new ParticleSystem(this, 20, R.drawable.smoke, 1000);
-            mParticleSystem.setSpeedByComponentsRange(-0.025f, 0.025f, -0.06f, -0.08f)
-                    .setAcceleration(0.0001f, -45)
-                    .setInitialRotationRange(0, 360)
-                    .addModifier(new AlphaModifier(255, 0, 0, 1000))
-                    .addModifier(new ScaleModifier(0.4f, 0.9f, 0, 1000))
-                    .emit(smokeEmiter, 20);
-        }
-    }
+//    private void startSmokeAnim() {
+//        if (mParticleSystem == null) {
+//            mParticleSystem = new ParticleSystem(this, 20, R.drawable.smoke, 1000);
+//            mParticleSystem.setSpeedByComponentsRange(-0.025f, 0.025f, -0.06f, -0.08f)
+//                    .setAcceleration(0.0001f, -45)
+//                    .setInitialRotationRange(0, 360)
+//                    .addModifier(new AlphaModifier(255, 0, 0, 1000))
+//                    .addModifier(new ScaleModifier(0.4f, 0.9f, 0, 1000))
+//                    .emit(smokeEmiter, 20);
+//        }
+//    }
 
 
     @Override
     public void show() {
         Log.d(TAG, "navigation show");
         rlMain.postInvalidate();
-        if (mParticleSystem != null) {
-            mParticleSystem.cancel();
-            mParticleSystem = null;
-            startSmokeAnim();
-        }
+//        if (mParticleSystem != null) {
+//            mParticleSystem.cancel();
+//            mParticleSystem = null;
+//            startSmokeAnim();
+//        }
     }
 
     @Override
     public void hide() {
         Log.d(TAG, "navigation hide");
         rlMain.postInvalidate();
-        if (mParticleSystem != null) {
-            mParticleSystem.cancel();
-            mParticleSystem = null;
-            startSmokeAnim();
+//        if (mParticleSystem != null) {
+//            mParticleSystem.cancel();
+//            mParticleSystem = null;
+//            startSmokeAnim();
+//        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updateBgByTime(EventBusMessage eventBusMessage) {
+        if (lav != null) {
+            setMainBg();
         }
     }
 }

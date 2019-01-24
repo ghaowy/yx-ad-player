@@ -16,6 +16,7 @@
     <color name="weather_rain_day_Color">#A0D7F1</color>
     <color name="weather_cloud_night_Color">#4393BD</color>
     <color name="weather_cloud_day_Color">#6CB1FD</color>
+    <color name="weather_sunny_night_Color">#439FDE</color>
 
 
 

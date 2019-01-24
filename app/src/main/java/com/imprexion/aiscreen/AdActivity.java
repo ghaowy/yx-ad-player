@@ -58,14 +58,16 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
     IconFontTextView tvToutaioIcon;
     @BindView(R.id.tv_weather_location)
     TextView tvWeatherLocation;
-    @BindView(R.id.pinan_building)
-    ImageView pinanBuilding;
-    @BindView(R.id.iv_weather_bottom)
-    ImageView ivWeatherBottom;
     @BindView(R.id.rl_weather)
     RelativeLayout rlWeather;
     @BindView(R.id.ad_video)
     VideoView adVideo;
+    @BindView(R.id.iv_cloud_1)
+    ImageView ivCloud1;
+    @BindView(R.id.iv_cloud_2)
+    ImageView ivCloud2;
+    @BindView(R.id.iv_cloud_3)
+    ImageView ivCloud3;
 
     private String tempretures[];
     private static final String TAG = "AdActivity";
@@ -82,7 +84,7 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
     private StatusFragment mStatusFragment;
     private float mCurrentpositionY;
     private float mCurrentpositionX;
-//    private String[] weather = {"晴", "多云", "雨"};
+        private String[] weather = {"晴", "多云", "雨"};
     private int i = 0;
     private AdPresenter mAdPresenter;
 
@@ -225,9 +227,9 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
             case R.id.ll_ad:
                 startActivity(new Intent(AdActivity.this, MainActivity.class));
                 break;
-//            case R.id.ad_video:
-//                updateBg(weather[i++ % 3]);
-//                break;
+            case R.id.ad_video:
+                updateBg(weather[i++ % 3]);
+                break;
             default:
                 break;
         }
@@ -264,42 +266,56 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
         boolean isNight;
         Date date = new Date();
 //        Log.d(TAG, "hour = " + date.getHours());
-        if (date.getHours() < 18 && date.getHours() > 8) {
+        if (date.getHours() < 18 && date.getHours() >= 8) {
             isNight = false;
         } else {
             isNight = true;
         }
         if ("晴".equals(weather)) {
-            ivWeatherBottom.setVisibility(View.VISIBLE);
-            pinanBuilding.setVisibility(View.VISIBLE);
-            ivSun.setVisibility(View.VISIBLE);
-            rlWeather.setBackgroundResource(R.drawable.gradient_bg);
-            llAd.setBackgroundColor(getResources().getColor(R.color.ad_bgcolor1));
+            if (!isNight) {
+                ivSun.setImageResource(R.drawable.sun);
+                ivCloud1.setVisibility(View.VISIBLE);
+                ivCloud2.setVisibility(View.VISIBLE);
+                ivCloud3.setVisibility(View.VISIBLE);
+                rlWeather.setBackgroundResource(R.drawable.weather_sunny_day);
+                llAd.setBackgroundColor(getResources().getColor(R.color.ad_bgcolor1));
+            } else {
+                ivSun.setImageResource(R.drawable.moon);
+                ivCloud1.setVisibility(View.INVISIBLE);
+                ivCloud2.setVisibility(View.INVISIBLE);
+                ivCloud3.setVisibility(View.INVISIBLE);
+                rlWeather.setBackgroundResource(R.drawable.weather_sunny_night);
+                llAd.setBackgroundColor(getResources().getColor(R.color.weather_sunny_night_Color));
+            }
         } else if ("多云".equals(weather)) {
             if (!isNight) {
-                ivWeatherBottom.setVisibility(View.INVISIBLE);
-                pinanBuilding.setVisibility(View.INVISIBLE);
                 ivSun.setVisibility(View.INVISIBLE);
+                ivCloud1.setVisibility(View.VISIBLE);
+                ivCloud2.setVisibility(View.VISIBLE);
+                ivCloud3.setVisibility(View.VISIBLE);
                 rlWeather.setBackgroundResource(R.drawable.weather_cloud_day);
                 llAd.setBackgroundColor(getResources().getColor(R.color.weather_cloud_day_Color));
             } else {
-                ivWeatherBottom.setVisibility(View.INVISIBLE);
-                pinanBuilding.setVisibility(View.INVISIBLE);
                 ivSun.setVisibility(View.INVISIBLE);
+                ivCloud1.setVisibility(View.INVISIBLE);
+                ivCloud2.setVisibility(View.INVISIBLE);
+                ivCloud3.setVisibility(View.INVISIBLE);
                 rlWeather.setBackgroundResource(R.drawable.weather_cloud_night);
                 llAd.setBackgroundColor(getResources().getColor(R.color.weather_cloud_night_Color));
             }
         } else if ("雨".equals(weather)) {
             if (!isNight) {
-                ivWeatherBottom.setVisibility(View.INVISIBLE);
-                pinanBuilding.setVisibility(View.INVISIBLE);
                 ivSun.setVisibility(View.INVISIBLE);
+                ivCloud1.setVisibility(View.INVISIBLE);
+                ivCloud2.setVisibility(View.INVISIBLE);
+                ivCloud3.setVisibility(View.INVISIBLE);
                 rlWeather.setBackgroundResource(R.drawable.weather_rain_day);
                 llAd.setBackgroundColor(getResources().getColor(R.color.weather_rain_day_Color));
             } else {
-                ivWeatherBottom.setVisibility(View.INVISIBLE);
-                pinanBuilding.setVisibility(View.INVISIBLE);
                 ivSun.setVisibility(View.INVISIBLE);
+                ivCloud1.setVisibility(View.INVISIBLE);
+                ivCloud2.setVisibility(View.INVISIBLE);
+                ivCloud3.setVisibility(View.INVISIBLE);
                 rlWeather.setBackgroundResource(R.drawable.weather_rain_night);
                 llAd.setBackgroundColor(getResources().getColor(R.color.weather_rain_night_Color));
             }

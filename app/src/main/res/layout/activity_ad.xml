@@ -11,7 +11,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/weather_height"
-        android:background="@drawable/gradient_bg"
+        android:background="@drawable/weather_sunny_day"
         android:id="@+id/rl_weather">
 
         <ImageView
@@ -46,40 +46,19 @@
                 android:src="@drawable/cloud_3" />
         </LinearLayout>
 
-       
-
-
-        <ImageView
-            android:id="@+id/pinan_building"
-            android:layout_width="@dimen/pingan_width"
-            android:layout_height="match_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="@dimen/pingan_margin_end"
-            android:layout_marginBottom="@dimen/pingan_margin_bottom"
-            android:src="@drawable/pinan_building" />
-
         <ImageView
             android:id="@+id/iv_sun"
             android:layout_width="@dimen/sun_width"
             android:layout_height="@dimen/sun_width"
             android:layout_marginTop="10px"
             android:layout_marginEnd="@dimen/sun_margin_end"
-            android:layout_toStartOf="@+id/pinan_building"
+            android:layout_alignParentEnd="true"
             android:src="@drawable/sun" />
 
         <RelativeLayout
             android:id="@+id/rl_status"
             android:layout_width="match_parent"
-            android:layout_height="50px">
-
-        </RelativeLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/bg_pic_height"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/weather_bg_bottom"
-            android:id="@+id/iv_weather_bottom"/>
+            android:layout_height="50px"/>
 
         <com.imprexion.aiscreen.tools.IconFontTextView
             android:layout_width="56px"

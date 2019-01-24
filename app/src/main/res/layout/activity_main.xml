@@ -5,23 +5,22 @@
     android:id="@+id/rl_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_bg_day"
     tools:context=".main.MainActivity">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!--<FrameLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
 
-        <com.imprexion.aiscreen.animation.SnowWeather
-            android:id="@+id/snow_weather_1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <!--<com.imprexion.aiscreen.animation.SnowWeather-->
+            <!--android:id="@+id/snow_weather_1"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
 
-        <com.imprexion.aiscreen.animation.SnowWeather
-            android:id="@+id/snow_weather_2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </FrameLayout>
+        <!--<com.imprexion.aiscreen.animation.SnowWeather-->
+            <!--android:id="@+id/snow_weather_2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent" />-->
+    <!--</FrameLayout>-->
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lav"
@@ -30,6 +29,14 @@
         app:lottie_autoPlay="true"
         app:lottie_loop="true" />
 
+    <ImageView
+        android:id="@+id/iv_sun"
+        android:layout_width="@dimen/sun_width"
+        android:layout_height="@dimen/sun_width"
+        android:layout_marginTop="10px"
+        android:layout_marginEnd="@dimen/sun_margin_end"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/sun" />
 
     <ImageView
         android:id="@+id/iv_navigation"
@@ -223,14 +230,14 @@
         </RelativeLayout>
     </FrameLayout>
 
-    <View
-        android:id="@+id/smoke_emiter"
-        android:layout_width="1px"
-        android:layout_height="1px"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="357px"
-        android:layout_marginBottom="261px" />
+    <!--<View-->
+        <!--android:id="@+id/smoke_emiter"-->
+        <!--android:layout_width="1px"-->
+        <!--android:layout_height="1px"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_marginEnd="357px"-->
+        <!--android:layout_marginBottom="261px" />-->
 
 
 </RelativeLayout>

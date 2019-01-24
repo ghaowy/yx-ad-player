@@ -105,7 +105,7 @@
     <dimen name="pingan_margin_end">150px</dimen>
     <dimen name="pingan_margin_bottom">10px</dimen>
     <dimen name="sun_width">180px</dimen>
-    <dimen name="sun_margin_end">80px</dimen>
+    <dimen name="sun_margin_end">300px</dimen>
     <dimen name="bg_pic_height">200px</dimen>
     <dimen name="weather_height">370px</dimen>
     <dimen name="toutiao_height">50px</dimen>
