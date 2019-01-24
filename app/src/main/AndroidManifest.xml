@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".AdActivity">
+        <activity
+            android:name=".AdActivity">
+            <!--android:theme="@android:style/Theme.NoTitleBar.Fullscreen">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,11 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".main.MainActivity" />
-        <activity android:name=".functionPart.navigation.FloorMapActivity" />
-        <activity android:name=".functionPart.promotion.PromotionActivity" />
-        <activity android:name=".functionPart.parking.ParkingActivity" />
-        <activity android:name=".functionPart.lottery.LotteryActivity" />
-        <activity android:name=".functionPart.membership.MemberShipActivity" />
+        <activity android:name=".functionPart.WebViewActivity" />
     </application>
 
 </manifest>

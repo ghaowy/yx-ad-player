@@ -19,11 +19,7 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.imprexion.aiscreen.R;
 import com.imprexion.aiscreen.bean.EventBusMessage;
-import com.imprexion.aiscreen.functionPart.lottery.LotteryActivity;
-import com.imprexion.aiscreen.functionPart.membership.MemberShipActivity;
-import com.imprexion.aiscreen.functionPart.navigation.FloorMapActivity;
-import com.imprexion.aiscreen.functionPart.parking.ParkingActivity;
-import com.imprexion.aiscreen.functionPart.promotion.PromotionActivity;
+import com.imprexion.aiscreen.functionPart.WebViewActivity;
 import com.imprexion.aiscreen.status.StatusFragment;
 import com.imprexion.aiscreen.tools.ScreenUtils;
 import com.imprexion.aiscreen.tools.Tools;
@@ -95,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         ivSun.post(new Runnable() {
@@ -106,6 +103,12 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 
         setMainBg();
         initStatus();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        Tools.hideNavigationBarStatusBar(this, hasFocus);
     }
 
     private void setMainBg() {
@@ -245,19 +248,19 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 
         switch (v.getId()) {
             case R.id.iv_navigation:
-                startActivity(new Intent(this, FloorMapActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Floor"));
+                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Floor"));
                 break;
             case R.id.iv_park:
-                startActivity(new Intent(this, ParkingActivity.class).putExtra("url", URL + "app/park"));
+                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", URL + "app/park"));
                 break;
             case R.id.iv_membership:
-                startActivity(new Intent(this, MemberShipActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/VipCard"));
+                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/VipCard"));
                 break;
             case R.id.iv_promotion:
-                startActivity(new Intent(this, PromotionActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Promotion"));
+                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Promotion"));
                 break;
             case R.id.iv_lottery:
-                startActivity(new Intent(this, LotteryActivity.class).putExtra("url", "http://oss.imprexion.cn/application/lottery/index.html"));
+                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://oss.imprexion.cn/application/lottery/index.html"));
                 break;
             case R.id.iv_emojidancer:
 //                startActivity(new Intent(this, JsonActivity.class).putExtra("url", URL + "app"));
@@ -602,7 +605,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     @Override
     public void show() {
         Log.d(TAG, "navigation show");
-        rlMain.postInvalidate();
+//        rlMain.postInvalidate();
 //        if (mParticleSystem != null) {
 //            mParticleSystem.cancel();
 //            mParticleSystem = null;
@@ -613,7 +616,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     @Override
     public void hide() {
         Log.d(TAG, "navigation hide");
-        rlMain.postInvalidate();
+//        rlMain.postInvalidate();
 //        if (mParticleSystem != null) {
 //            mParticleSystem.cancel();
 //            mParticleSystem = null;

@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
@@ -25,6 +27,7 @@ import com.imprexion.aiscreen.bean.WeatherInfo;
 import com.imprexion.aiscreen.main.MainActivity;
 import com.imprexion.aiscreen.status.StatusFragment;
 import com.imprexion.aiscreen.tools.IconFontTextView;
+import com.imprexion.aiscreen.tools.Tools;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -84,7 +87,7 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
     private StatusFragment mStatusFragment;
     private float mCurrentpositionY;
     private float mCurrentpositionX;
-        private String[] weather = {"晴", "多云", "雨"};
+    private String[] weather = {"晴", "多云", "雨"};
     private int i = 0;
     private AdPresenter mAdPresenter;
 
@@ -126,6 +129,12 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
         super.onResume();
         startAnim();
         setWeatherInfo();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        Tools.hideNavigationBarStatusBar(this, hasFocus);
     }
 
     private void setWeatherInfo() {
