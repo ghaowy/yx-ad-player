@@ -8,13 +8,20 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Tools {
+
+    private static final String TAG = "Tools";
 
     public static Drawable zoomDrawable(Drawable drawable, int w, int h) {
         int width = drawable.getIntrinsicWidth();
@@ -61,6 +68,22 @@ public class Tools {
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
+    }
+
+    public static List<String> getFilesAllName(String path) {
+        File file = new File(path);
+        File[] files = file.listFiles();
+        if (files == null) {
+            Log.e(TAG, "空目录");
+            return null;
+        }
+        List<String> s = new ArrayList<>();
+        for (int i = 0; i < files.length; i++) {
+            String[] splits = files[i].getAbsolutePath().split("/");
+            s.add(splits[splits.length - 1]);
+            Log.d(TAG, "filename = " + s.get(i));
+        }
+        return s;
     }
 
 }

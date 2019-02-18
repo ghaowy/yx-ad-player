@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -87,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     private ObjectAnimator mObjectAnimatorSun;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,12 +148,14 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 //                startSmokeAnim();
 //            }
 //        });
-        setOnHoverListener1(ivNavigation);
-        setOnHoverListener2(ivPark);
-        setOnHoverListener3(ivMembership);
-        setOnHoverListener4(ivPromotion);
-        setOnHoverListener5(ivLottery);
-        setOnHoverListener6(ivEmojidancer);
+        Tools.hideNavigationBarStatusBar(this, true);
+
+//        setOnHoverListener1(ivNavigation);
+//        setOnHoverListener2(ivPark);
+//        setOnHoverListener3(ivMembership);
+//        setOnHoverListener4(ivPromotion);
+//        setOnHoverListener5(ivLottery);
+//        setOnHoverListener6(ivEmojidancer);
 
         ScreenUtils.setNavigationListener(rlMain, this);
 
@@ -605,7 +607,8 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     @Override
     public void show() {
         Log.d(TAG, "navigation show");
-//        rlMain.postInvalidate();
+        rlMain.postInvalidate();
+        rlMain.invalidate();
 //        if (mParticleSystem != null) {
 //            mParticleSystem.cancel();
 //            mParticleSystem = null;

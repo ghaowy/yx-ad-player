@@ -1,16 +1,21 @@
 package com.imprexion.aiscreen;
 
+import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -33,7 +38,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -71,6 +78,8 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
     ImageView ivCloud2;
     @BindView(R.id.iv_cloud_3)
     ImageView ivCloud3;
+    @BindView(R.id.rl_ad_content)
+    LinearLayout rlAdContent;
 
     private String tempretures[];
     private static final String TAG = "AdActivity";
@@ -90,6 +99,11 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
     private String[] weather = {"晴", "多云", "雨"};
     private int i = 0;
     private AdPresenter mAdPresenter;
+    private String mVideoBasePath = Environment.getExternalStorageDirectory() + "/AIvideo";
+    private List<String> videoPaths = new ArrayList<>();
+    private int mLength;
+    private int mVideoCount;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,8 +141,66 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
     @Override
     protected void onResume() {
         super.onResume();
+        Tools.hideNavigationBarStatusBar(this, true);
+
+        getPermission();
         startAnim();
         setWeatherInfo();
+        startVideo();
+    }
+
+    private void startVideo() {
+//        mVideoCount = 0;
+        videoPaths = Tools.getFilesAllName(mVideoBasePath);
+        if (videoPaths == null) {
+            return;
+        }
+        mLength = videoPaths.size();
+        /*String videoPath = videoPaths.get(mVideoCount++ % mLength);
+        if (videoPath.contains(".jpg") || videoPath.contains(".png")) {
+            Log.d(TAG,"adcontent is pic.");
+            Bitmap bitmap = BitmapFactory.decodeFile(mVideoBasePath + "/" + videoPath);
+            rlAdContent.setBackground(new BitmapDrawable(bitmap));
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adVideo.start();
+                        }
+                    });
+                }
+            }).start();
+
+        }*/
+        while (true){
+            String videoPath = videoPaths.get(mVideoCount++ % mLength);
+            if (!videoPath.contains(".jpg") && !videoPath.contains(".png")){
+                break;
+            }
+        }
+        adVideo.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                String videoPath;
+                while (true){
+                    videoPath = videoPaths.get(mVideoCount++ % mLength);
+                    if (!videoPath.contains(".jpg") && !videoPath.contains(".png")){
+                        break;
+                    }
+                }
+                adVideo.setVideoPath(mVideoBasePath + "/" + videoPath);
+                adVideo.start();
+            }
+        });
+        adVideo.setVideoPath(mVideoBasePath + "/" + videoPaths.get(mVideoCount-1 % mLength));
+        adVideo.start();
     }
 
     @Override
@@ -237,7 +309,7 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
                 startActivity(new Intent(AdActivity.this, MainActivity.class));
                 break;
             case R.id.ad_video:
-                updateBg(weather[i++ % 3]);
+//                updateBg(weather[i++ % 3]);
                 break;
             default:
                 break;
@@ -312,7 +384,7 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
                 rlWeather.setBackgroundResource(R.drawable.weather_cloud_night);
                 llAd.setBackgroundColor(getResources().getColor(R.color.weather_cloud_night_Color));
             }
-        } else if ("雨".equals(weather)) {
+        } else if ("雨".equals(weather) || "小雨".equals(weather) || "阵雨".equals(weather) || weather.contains("阴") || weather.contains("雪")) {
             if (!isNight) {
                 ivSun.setVisibility(View.INVISIBLE);
                 ivCloud1.setVisibility(View.INVISIBLE);
@@ -336,6 +408,19 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
         Log.d(TAG, "updateWeatherByHour");
         if (eventBusMessage.getType() == StatusFragment.UPDATE_WEATHER) {
             setWeatherInfo();
+        }
+    }
+
+    private void getPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         }
     }
 }

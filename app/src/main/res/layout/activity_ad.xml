@@ -9,10 +9,10 @@
     tools:context=".AdActivity">
 
     <RelativeLayout
+        android:id="@+id/rl_weather"
         android:layout_width="match_parent"
         android:layout_height="@dimen/weather_height"
-        android:background="@drawable/weather_sunny_day"
-        android:id="@+id/rl_weather">
+        android:background="@drawable/weather_sunny_day">
 
         <ImageView
             android:id="@+id/iv_cloud_1"
@@ -50,17 +50,18 @@
             android:id="@+id/iv_sun"
             android:layout_width="@dimen/sun_width"
             android:layout_height="@dimen/sun_width"
+            android:layout_alignParentEnd="true"
             android:layout_marginTop="10px"
             android:layout_marginEnd="@dimen/sun_margin_end"
-            android:layout_alignParentEnd="true"
             android:src="@drawable/sun" />
 
         <RelativeLayout
             android:id="@+id/rl_status"
             android:layout_width="match_parent"
-            android:layout_height="50px"/>
+            android:layout_height="50px" />
 
         <com.imprexion.aiscreen.tools.IconFontTextView
+            android:id="@+id/tempreture_1"
             android:layout_width="56px"
             android:layout_height="120px"
             android:layout_marginStart="130px"
@@ -68,52 +69,52 @@
             android:gravity="center"
             android:text="&#xe63e;"
             android:textColor="@color/white"
-            android:textSize="110px"
-            android:id="@+id/tempreture_1"/>
+            android:textSize="110px" />
 
         <com.imprexion.aiscreen.tools.IconFontTextView
+            android:id="@+id/tempreture_2"
             android:layout_width="56px"
             android:layout_height="120px"
-            android:layout_toEndOf="@+id/tempreture_1"
             android:layout_marginTop="100px"
+            android:layout_toEndOf="@+id/tempreture_1"
             android:gravity="center"
             android:text="&#xe63a;"
             android:textColor="@color/white"
-            android:textSize="110px"
-            android:id="@+id/tempreture_2"/>
+            android:textSize="110px" />
 
         <com.imprexion.aiscreen.tools.IconFontTextView
+            android:id="@+id/tempreture_3"
             android:layout_width="56px"
             android:layout_height="120px"
-            android:layout_toEndOf="@+id/tempreture_2"
             android:layout_marginTop="100px"
+            android:layout_toEndOf="@+id/tempreture_2"
             android:gravity="center"
             android:text="&#xe639;"
             android:textColor="@color/white"
-            android:textSize="110px"
-            android:id="@+id/tempreture_3"/>
-        
-        <TextView
-            android:layout_width="165px"
-            android:layout_height="46px"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:text="@string/weather_place_default"
-            android:textSize="40px"
-            android:layout_marginStart="130px"
-            android:layout_marginTop="250px"
-            android:id="@+id/tv_weather_location"/>
+            android:textSize="110px" />
 
         <TextView
+            android:id="@+id/tv_weather_location"
+            android:layout_width="185px"
+            android:layout_height="46px"
+            android:layout_marginStart="130px"
+            android:layout_marginTop="250px"
+            android:gravity="center"
+            android:text="@string/weather_place_default"
+            android:textColor="@color/white"
+            android:textSize="40px" />
+
+        <TextView
+            android:id="@+id/tv_weather_text_trans"
             android:layout_width="165px"
             android:layout_height="46px"
-            android:textColor="@color/white"
+            android:layout_below="@+id/tv_weather_location"
+            android:layout_marginStart="130px"
             android:gravity="center"
             android:text="@string/weather_place_default_trans"
+            android:textColor="@color/white"
             android:textSize="20px"
-            android:layout_marginStart="130px"
-            android:layout_below="@+id/tv_weather_location"
-            android:id="@+id/tv_weather_text_trans"/>
+            android:visibility="gone" />
 
 
     </RelativeLayout>
@@ -126,38 +127,48 @@
         android:layout_marginEnd="@dimen/left_right_margin">
 
         <com.imprexion.aiscreen.tools.IconFontTextView
+            android:id="@+id/tv_toutaio"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="&#xe647;"
-            android:textSize="45px"
             android:gravity="center"
+            android:text="&#xe647;"
             android:textColor="@color/toutiao_Color"
-            android:id="@+id/tv_toutaio"/>
+            android:textSize="45px" />
 
         <com.imprexion.aiscreen.tools.IconFontTextView
+            android:id="@+id/tv_toutaio_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginStart="10px"
             android:layout_gravity="center"
             android:text="&#xe645;"
-            android:textSize="45px"
             android:textColor="@color/toutiao_Color"
-            android:id="@+id/tv_toutaio_icon"/>
+            android:textSize="45px" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginStart="10px"
             android:gravity="center_vertical"
             android:text="@string/imprexion_toutiao"
             android:textSize="@dimen/text_size" />
     </LinearLayout>
 
-    <VideoView
-        android:id="@+id/ad_video"
+    <LinearLayout
+        android:id="@+id/rl_ad_content"
         android:layout_width="match_parent"
         android:layout_height="@dimen/video_height"
         android:layout_marginStart="@dimen/left_right_margin"
         android:layout_marginTop="@dimen/video_top_margin"
-        android:layout_marginEnd="@dimen/left_right_margin" />
+        android:layout_marginEnd="@dimen/left_right_margin">
+
+        <VideoView
+            android:id="@+id/ad_video"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/video_height"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
 
     <ImageView
         android:layout_width="match_parent"

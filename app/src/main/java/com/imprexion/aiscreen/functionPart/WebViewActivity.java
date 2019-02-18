@@ -26,6 +26,13 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Tools.hideNavigationBarStatusBar(this, true);
+
+    }
+
+    @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         Tools.hideNavigationBarStatusBar(this, hasFocus);

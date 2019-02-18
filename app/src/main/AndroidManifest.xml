@@ -3,6 +3,8 @@
     package="com.imprexion.aiscreen">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".base.AISApplication"
@@ -11,18 +13,20 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity
-            android:name=".AdActivity">
-            <!--android:theme="@android:style/Theme.NoTitleBar.Fullscreen">-->
+        android:theme="@style/AppTheme">
+        <activity android:name=".AdActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.MainActivity" />
-        <activity android:name=".functionPart.WebViewActivity" />
+        <activity
+            android:name=".main.MainActivity"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".functionPart.WebViewActivity"
+            android:launchMode="singleTop" />
     </application>
 
 </manifest>
