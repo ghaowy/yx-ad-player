@@ -213,7 +213,10 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
         if (mAdPresenter == null) {
             mAdPresenter = new AdPresenter(this);
         }
-        mAdPresenter.updateWeather();
+
+        if (Tools.isNetworkConnected(this)) {
+            mAdPresenter.updateWeather();
+        }
     }
 
     @Override
