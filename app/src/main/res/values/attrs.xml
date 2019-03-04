@@ -4,4 +4,9 @@
         <attr name="text" format="string" />
         <attr name="radiu" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="rainView">
+        <attr name="isScale" format="boolean"/>
+        <attr name="size" format="integer"/>
+    </declare-styleable>
 </resources>
