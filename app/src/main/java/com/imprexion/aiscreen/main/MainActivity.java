@@ -1,6 +1,5 @@
 package com.imprexion.aiscreen.main;
 
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -10,14 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.imprexion.aiscreen.R;
 import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.functionPart.WebViewActivity;
@@ -38,16 +34,16 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 
     @BindView(R.id.rl_status)
     RelativeLayout rlStatus;
-    @BindView(R.id.fl_back)
-    FrameLayout flBack;
+//    @BindView(R.id.fl_back)
+//    FrameLayout flBack;
     @BindView(R.id.rl_main)
     RelativeLayout rlMain;
-    @BindView(R.id.rv_1)
-    RippleView rv1;
-    @BindView(R.id.rv_2)
-    RippleView rv2;
-    @BindView(R.id.rv_3)
-    RippleView rv3;
+//    @BindView(R.id.rv_1)
+//    RippleView rv1;
+//    @BindView(R.id.rv_2)
+//    RippleView rv2;
+//    @BindView(R.id.rv_3)
+//    RippleView rv3;
 //    @BindView(R.id.lav)
 //    LottieAnimationView lav;
     @BindView(R.id.iv_navigation)
@@ -72,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     private static final String URL = "http://172.16.2.207:5000/";
     private StatusFragment mStatusFragment;
     private boolean bgFlag = true;
+    private int ZOOM_WIDTH;
+    private int ZOOM_HEIGHT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         ButterKnife.bind(this);
         setMainBg();
         initStatus();
+        ZOOM_WIDTH = (int) getResources().getDimension(R.dimen.title_width);
+        ZOOM_HEIGHT = (int) getResources().getDimension(R.dimen.title_height);
     }
 
     @Override
@@ -108,34 +108,34 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     protected void onResume() {
         super.onResume();
         Tools.hideNavigationBarStatusBar(this, true);
-//        setOnHoverListener1(ivNavigation);
-//        setOnHoverListener2(ivPark);
-//        setOnHoverListener3(ivMembership);
-//        setOnHoverListener4(ivPromotion);
-//        setOnHoverListener5(ivLottery);
-//        setOnHoverListener6(ivEmojidancer);
+        setOnHoverListener1(ivNavigation);
+        setOnHoverListener2(ivPark);
+        setOnHoverListener3(ivMembership);
+        setOnHoverListener4(ivPromotion);
+        setOnHoverListener5(ivLottery);
+        setOnHoverListener6(ivEmojidancer);
         ScreenUtils.setNavigationListener(rlMain, this);
-        rv1.startSpread();
-        rv2.startSpread();
-        rv3.startSpread();
+//        rv1.startSpread();
+//        rv2.startSpread();
+//        rv3.startSpread();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (rv1 != null) {
-            rv1.stopSpread();
-        }
-        if (rv2 != null) {
-            rv2.stopSpread();
-        }
-        if (rv3 != null) {
-            rv3.stopSpread();
-        }
+//        if (rv1 != null) {
+//            rv1.stopSpread();
+//        }
+//        if (rv2 != null) {
+//            rv2.stopSpread();
+//        }
+//        if (rv3 != null) {
+//            rv3.stopSpread();
+//        }
     }
 
 
-    @OnClick({R.id.iv_navigation, R.id.iv_park, R.id.iv_membership, R.id.iv_promotion, R.id.iv_lottery, R.id.iv_emojidancer, R.id.fl_back, R.id.rl_main})
+    @OnClick({R.id.iv_navigation, R.id.iv_park, R.id.iv_membership, R.id.iv_promotion, R.id.iv_lottery, R.id.iv_emojidancer, R.id.rl_main})
     public void onClick(View v) {
 
         switch (v.getId()) {
@@ -158,13 +158,13 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 //                startActivity(new Intent(this, JsonActivity.class).putExtra("url", URL + "app"));
 //                AISApplication.getSmdtManager().setMouseIcon(i++%5);
                 break;
-            case R.id.fl_back:
-                onBackPressed();
-                break;
-            case R.id.rl_main:
-                bgFlag = !bgFlag;
-                setMainBg();
-                break;
+//            case R.id.fl_back:
+//                onBackPressed();
+//                break;
+//            case R.id.rl_main:
+//                bgFlag = !bgFlag;
+//                setMainBg();
+//                break;
             default:
                 break;
         }
@@ -179,31 +179,31 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 switch (what) {
                     case MotionEvent.ACTION_HOVER_ENTER: //鼠标进入view
                         isHoverExit1 = false;
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.count_hands_3);
-                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, 200, 200);
+                        Drawable drawable1 = getResources().getDrawable(R.drawable.hover);
+                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, ZOOM_WIDTH, ZOOM_HEIGHT);
                         ((ImageView) view).setScaleType(ImageView.ScaleType.CENTER);
                         ((ImageView) view).setImageDrawable(zoomDrawable1);
-                        view.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isHoverExit1) {
-                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
-                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
-                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
-                                }
-                            }
-                        }, 1000);
-                        view.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isHoverExit1) {
-                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
-                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
-                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
-                                    onClick(view);
-                                }
-                            }
-                        }, 2000);
+//                        view.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (!isHoverExit1) {
+//                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
+//                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
+//                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
+//                                }
+//                            }
+//                        }, 1000);
+//                        view.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (!isHoverExit1) {
+//                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
+//                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
+//                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
+//                                    onClick(view);
+//                                }
+//                            }
+//                        }, 2000);
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT: //鼠标离开view
                         ((ImageView) view).setImageDrawable(null);
@@ -224,32 +224,32 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 switch (what) {
                     case MotionEvent.ACTION_HOVER_ENTER: //鼠标进入view
                         isHoverExit2 = false;
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.count_hands_3);
-                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, 200, 200);
+                        Drawable drawable1 = getResources().getDrawable(R.drawable.hover);
+                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, ZOOM_WIDTH, ZOOM_HEIGHT);
                         ((ImageView) view).setScaleType(ImageView.ScaleType.CENTER);
                         ((ImageView) view).setImageDrawable(zoomDrawable1);
-                        view.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isHoverExit2) {
-                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
-                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
-                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
-                                }
-                            }
-                        }, 1000);
-                        view.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isHoverExit2) {
-                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
-                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
-                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
-                                    onClick(view);
-
-                                }
-                            }
-                        }, 2000);
+//                        view.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (!isHoverExit2) {
+//                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
+//                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
+//                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
+//                                }
+//                            }
+//                        }, 1000);
+//                        view.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (!isHoverExit2) {
+//                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
+//                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
+//                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
+//                                    onClick(view);
+//
+//                                }
+//                            }
+//                        }, 2000);
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT: //鼠标离开view
                         ((ImageView) view).setImageDrawable(null);
@@ -270,32 +270,32 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 switch (what) {
                     case MotionEvent.ACTION_HOVER_ENTER: //鼠标进入view
                         isHoverExit3 = false;
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.count_hands_3);
-                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, 200, 200);
+                        Drawable drawable1 = getResources().getDrawable(R.drawable.hover);
+                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, ZOOM_WIDTH, ZOOM_HEIGHT);
                         ((ImageView) view).setScaleType(ImageView.ScaleType.CENTER);
                         ((ImageView) view).setImageDrawable(zoomDrawable1);
-                        view.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isHoverExit3) {
-                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
-                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
-                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
-                                }
-                            }
-                        }, 1000);
-                        view.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isHoverExit3) {
-                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
-                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
-                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
-                                    onClick(view);
-
-                                }
-                            }
-                        }, 2000);
+//                        view.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (!isHoverExit3) {
+//                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
+//                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
+//                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
+//                                }
+//                            }
+//                        }, 1000);
+//                        view.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (!isHoverExit3) {
+//                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
+//                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
+//                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
+//                                    onClick(view);
+//
+//                                }
+//                            }
+//                        }, 2000);
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT: //鼠标离开view
                         ((ImageView) view).setImageDrawable(null);
@@ -316,32 +316,32 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 switch (what) {
                     case MotionEvent.ACTION_HOVER_ENTER: //鼠标进入view
                         isHoverExit4 = false;
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.count_hands_3);
-                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, 200, 200);
+                        Drawable drawable1 = getResources().getDrawable(R.drawable.hover);
+                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, ZOOM_WIDTH, ZOOM_HEIGHT);
                         ((ImageView) view).setScaleType(ImageView.ScaleType.CENTER);
                         ((ImageView) view).setImageDrawable(zoomDrawable1);
-                        view.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isHoverExit4) {
-                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
-                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
-                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
-                                }
-                            }
-                        }, 1000);
-                        view.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isHoverExit4) {
-                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
-                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
-                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
-                                    onClick(view);
-
-                                }
-                            }
-                        }, 2000);
+//                        view.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (!isHoverExit4) {
+//                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
+//                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
+//                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
+//                                }
+//                            }
+//                        }, 1000);
+//                        view.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (!isHoverExit4) {
+//                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
+//                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
+//                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
+//                                    onClick(view);
+//
+//                                }
+//                            }
+//                        }, 2000);
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT: //鼠标离开view
                         ((ImageView) view).setImageDrawable(null);
@@ -362,32 +362,32 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 switch (what) {
                     case MotionEvent.ACTION_HOVER_ENTER: //鼠标进入view
                         isHoverExit5 = false;
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.count_hands_3);
-                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, 200, 200);
+                        Drawable drawable1 = getResources().getDrawable(R.drawable.hover);
+                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, ZOOM_WIDTH, ZOOM_HEIGHT);
                         ((ImageView) view).setScaleType(ImageView.ScaleType.CENTER);
                         ((ImageView) view).setImageDrawable(zoomDrawable1);
-                        view.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isHoverExit5) {
-                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
-                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
-                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
-                                }
-                            }
-                        }, 1000);
-                        view.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isHoverExit5) {
-                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
-                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
-                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
-                                    onClick(view);
-
-                                }
-                            }
-                        }, 2000);
+//                        view.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (!isHoverExit5) {
+//                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
+//                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
+//                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
+//                                }
+//                            }
+//                        }, 1000);
+//                        view.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (!isHoverExit5) {
+//                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
+//                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
+//                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
+//                                    onClick(view);
+//
+//                                }
+//                            }
+//                        }, 2000);
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT: //鼠标离开view
                         ((ImageView) view).setImageDrawable(null);
@@ -408,32 +408,32 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 switch (what) {
                     case MotionEvent.ACTION_HOVER_ENTER: //鼠标进入view
                         isHoverExit6 = false;
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.count_hands_3);
-                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, 200, 200);
+                        Drawable drawable1 = getResources().getDrawable(R.drawable.hover);
+                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, ZOOM_WIDTH, ZOOM_HEIGHT);
                         ((ImageView) view).setScaleType(ImageView.ScaleType.CENTER);
                         ((ImageView) view).setImageDrawable(zoomDrawable1);
-                        view.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isHoverExit6) {
-                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
-                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
-                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
-                                }
-                            }
-                        }, 1000);
-                        view.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!isHoverExit6) {
-                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
-                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
-                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
-                                    onClick(view);
-
-                                }
-                            }
-                        }, 2000);
+//                        view.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (!isHoverExit6) {
+//                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
+//                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
+//                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
+//                                }
+//                            }
+//                        }, 1000);
+//                        view.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                if (!isHoverExit6) {
+//                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
+//                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
+//                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
+//                                    onClick(view);
+//
+//                                }
+//                            }
+//                        }, 2000);
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT: //鼠标离开view
                         ((ImageView) view).setImageDrawable(null);

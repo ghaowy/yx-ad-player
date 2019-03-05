@@ -26,19 +26,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <ImageView
-        android:id="@+id/iv_navigation"
-        android:layout_width="360px"
-        android:layout_height="268px"
+    <RelativeLayout
+        android:id="@+id/rl_navigation"
+        android:layout_width="@dimen/title_shadow_width"
+        android:layout_height="@dimen/title_shadow_height"
         android:layout_marginStart="135px"
         android:layout_marginTop="241px"
-        android:background="@drawable/title1" />
+        android:background="@drawable/shadow_title">
+
+        <ImageView
+            android:id="@+id/iv_navigation"
+            android:layout_width="@dimen/title_width"
+            android:layout_height="@dimen/title_height"
+            android:layout_centerInParent="true"
+            android:background="@drawable/navigation_title" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_text_navigation"
         android:layout_width="360px"
         android:layout_height="30px"
-        android:layout_below="@+id/iv_navigation"
+        android:layout_below="@+id/rl_navigation"
         android:layout_marginStart="135px"
         android:layout_marginTop="20px"
         android:gravity="center"
@@ -46,20 +54,28 @@
         android:textColor="@color/white"
         android:textSize="24px" />
 
-    <ImageView
-        android:id="@+id/iv_park"
-        android:layout_width="360px"
-        android:layout_height="268px"
-        android:layout_below="@+id/iv_navigation"
+    <RelativeLayout
+        android:id="@+id/rl_park"
+        android:layout_width="@dimen/title_shadow_width"
+        android:layout_height="@dimen/title_shadow_height"
+        android:layout_below="@+id/rl_navigation"
         android:layout_marginStart="135px"
         android:layout_marginTop="95px"
-        android:background="@drawable/title2" />
+        android:background="@drawable/shadow_title">
+
+        <ImageView
+            android:id="@+id/iv_park"
+            android:layout_width="@dimen/title_width"
+            android:layout_height="@dimen/title_height"
+            android:layout_centerInParent="true"
+            android:background="@drawable/parking_title" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_text_park"
         android:layout_width="360px"
         android:layout_height="30px"
-        android:layout_below="@+id/iv_park"
+        android:layout_below="@+id/rl_park"
         android:layout_marginStart="135px"
         android:layout_marginTop="20px"
         android:gravity="center"
@@ -67,20 +83,28 @@
         android:textColor="@color/white"
         android:textSize="24px" />
 
-    <ImageView
-        android:id="@+id/iv_membership"
-        android:layout_width="360px"
-        android:layout_height="268px"
-        android:layout_below="@+id/iv_park"
+    <RelativeLayout
+        android:id="@+id/rl_membership"
+        android:layout_width="@dimen/title_shadow_width"
+        android:layout_height="@dimen/title_shadow_height"
+        android:layout_below="@+id/rl_park"
         android:layout_marginStart="135px"
         android:layout_marginTop="95px"
-        android:background="@drawable/title3" />
+        android:background="@drawable/shadow_title">
+
+        <ImageView
+            android:id="@+id/iv_membership"
+            android:layout_width="@dimen/title_width"
+            android:layout_height="@dimen/title_height"
+            android:layout_centerInParent="true"
+            android:background="@drawable/membership_title" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_text_membership"
         android:layout_width="360px"
         android:layout_height="30px"
-        android:layout_below="@+id/iv_membership"
+        android:layout_below="@+id/rl_membership"
         android:layout_marginStart="135px"
         android:layout_marginTop="20px"
         android:gravity="center"
@@ -88,19 +112,27 @@
         android:textColor="@color/white"
         android:textSize="24px" />
 
-    <ImageView
-        android:id="@+id/iv_promotion"
-        android:layout_width="360px"
-        android:layout_height="268px"
+    <RelativeLayout
+        android:id="@+id/rl_promotion"
+        android:layout_width="@dimen/title_shadow_width"
+        android:layout_height="@dimen/title_shadow_height"
         android:layout_marginStart="585px"
         android:layout_marginTop="241px"
-        android:background="@drawable/title4" />
+        android:background="@drawable/shadow_title">
+
+        <ImageView
+            android:id="@+id/iv_promotion"
+            android:layout_width="@dimen/title_width"
+            android:layout_height="@dimen/title_height"
+            android:layout_centerInParent="true"
+            android:background="@drawable/promotion_title" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_text_promotion"
         android:layout_width="360px"
         android:layout_height="30px"
-        android:layout_below="@+id/iv_promotion"
+        android:layout_below="@+id/rl_promotion"
         android:layout_marginStart="585px"
         android:layout_marginTop="20px"
         android:gravity="center"
@@ -108,20 +140,28 @@
         android:textColor="@color/white"
         android:textSize="24px" />
 
-    <ImageView
-        android:id="@+id/iv_lottery"
-        android:layout_width="360px"
-        android:layout_height="268px"
-        android:layout_below="@+id/iv_promotion"
+    <RelativeLayout
+        android:id="@+id/rl_lottery"
+        android:layout_width="@dimen/title_shadow_width"
+        android:layout_height="@dimen/title_shadow_height"
+        android:layout_below="@+id/rl_promotion"
         android:layout_marginStart="585px"
         android:layout_marginTop="95px"
-        android:background="@drawable/title5" />
+        android:background="@drawable/shadow_title">
+
+        <ImageView
+            android:id="@+id/iv_lottery"
+            android:layout_width="@dimen/title_width"
+            android:layout_height="@dimen/title_height"
+            android:layout_centerInParent="true"
+            android:background="@drawable/lottery_title" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_text_lottery"
         android:layout_width="360px"
         android:layout_height="30px"
-        android:layout_below="@+id/iv_lottery"
+        android:layout_below="@+id/rl_lottery"
         android:layout_marginStart="585px"
         android:layout_marginTop="20px"
         android:gravity="center"
@@ -129,20 +169,28 @@
         android:textColor="@color/white"
         android:textSize="24px" />
 
-    <ImageView
-        android:id="@+id/iv_emojidancer"
-        android:layout_width="360px"
-        android:layout_height="268px"
-        android:layout_below="@+id/iv_lottery"
+    <RelativeLayout
+        android:id="@+id/rl_emojidancer"
+        android:layout_width="@dimen/title_shadow_width"
+        android:layout_height="@dimen/title_shadow_height"
+        android:layout_below="@+id/rl_lottery"
         android:layout_marginStart="585px"
         android:layout_marginTop="95px"
-        android:background="@drawable/title6" />
+        android:background="@drawable/shadow_title">
+
+        <ImageView
+            android:id="@+id/iv_emojidancer"
+            android:layout_width="@dimen/title_width"
+            android:layout_height="@dimen/title_height"
+            android:layout_centerInParent="true"
+            android:background="@drawable/emojidancer_title" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/tv_text_6"
         android:layout_width="360px"
         android:layout_height="30px"
-        android:layout_below="@+id/iv_emojidancer"
+        android:layout_below="@+id/rl_emojidancer"
         android:layout_marginStart="585px"
         android:layout_marginTop="20px"
         android:gravity="center"
@@ -155,7 +203,7 @@
         android:layout_width="match_parent"
         android:layout_height="50px" />
 
-    <FrameLayout
+    <!--<FrameLayout
         android:id="@+id/fl_back"
         android:layout_width="@dimen/ripple_width"
         android:layout_height="@dimen/ripple_width"
@@ -216,7 +264,7 @@
                 android:layout_gravity="center_horizontal"
                 app:radiu="4" />
         </RelativeLayout>
-    </FrameLayout>
+    </FrameLayout>-->
 
 
 </RelativeLayout>

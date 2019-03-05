@@ -99,12 +99,12 @@ public class RaindropView extends View {
         postInvalidate();
     }
 
-    public void remove(boolean isRemoveLeft,boolean isRemoveRight) {
+    public void remove(boolean isRemoveLeft, boolean isRemoveRight) {
         mIsRemoveLeft = isRemoveLeft;
         mIsRemoveRight = isRemoveRight;
         mValue = -1;
         ObjectAnimator objectAnimator = ObjectAnimator.ofInt(null, "TranslationY", 0, 12);
-        objectAnimator.setDuration(700);
+        objectAnimator.setDuration(500);
         objectAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {

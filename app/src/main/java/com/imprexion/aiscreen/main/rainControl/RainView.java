@@ -65,7 +65,7 @@ public class RainView extends View {
     }
 
     public void initData() {
-        Log.d(TAG, "initData");
+//        Log.d(TAG, "initData");
         Random random = new Random();
         mMatrix = new Matrix();
         mPaint = new Paint();
@@ -88,7 +88,7 @@ public class RainView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d(TAG, "size=" + mRainSize + " isScale=" + isScale + " mBitmap=" + mBitmap.getGenerationId());
+//        Log.d(TAG, "size=" + mRainSize + " isScale=" + isScale + " mBitmap=" + mBitmap.getGenerationId());
         if (mRainList.size() == 0) {
             return;
         }
