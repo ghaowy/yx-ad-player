@@ -63,6 +63,12 @@ public class CameraFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        flCamera.removeAllViews();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
     }
