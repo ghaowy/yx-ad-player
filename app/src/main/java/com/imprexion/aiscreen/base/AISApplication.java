@@ -1,8 +1,6 @@
 package com.imprexion.aiscreen.base;
 
 import android.app.Application;
-import android.app.smdt.SmdtManager;
-import android.content.Context;
 
 import com.tencent.smtt.sdk.QbSdk;
 
@@ -10,32 +8,26 @@ public class AISApplication extends Application {
 
 
     private static AISApplication aisApplication;
-    private static SmdtManager mSmdtManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
         aisApplication = this;
-        mSmdtManager = SmdtManager.create(this);
-//        mSmdtManager.setMouseAutoHide(false);
-//        mSmdtManager.setMousePosition(400,600);
-//        mSmdtManager.setMouseSize(9.5f);
-//        mSmdtManager.setMouseIcon(1);
 
-        //éwifiæƒ…å†µä¸‹ï¼Œä¸»åŠ¨ä¸‹è½½x5å†…æ ¸
+        //·ÇwifiÇé¿öÏÂ£¬Ö÷¶¯ÏÂÔØx5ÄÚºË
         QbSdk.setDownloadWithoutWifi(true);
-        //æœé›†æœ¬åœ°tbså†…æ ¸ä¿¡æ¯å¹¶ä¸ŠæŠ¥æœåŠ¡å™¨ï¼ŒæœåŠ¡å™¨è¿”å›ç»“æœå†³å®šä½¿ç”¨å“ªä¸ªå†…æ ¸ã€‚
+        //ËÑ¼¯±¾µØtbsÄÚºËĞÅÏ¢²¢ÉÏ±¨·şÎñÆ÷£¬·şÎñÆ÷·µ»Ø½á¹û¾ö¶¨Ê¹ÓÃÄÄ¸öÄÚºË¡£
         QbSdk.PreInitCallback cb = new QbSdk.PreInitCallback() {
             @Override
             public void onViewInitFinished(boolean arg0) {
-                //x5å…§æ ¸åˆå§‹åŒ–å®Œæˆçš„å›è°ƒï¼Œä¸ºtrueè¡¨ç¤ºx5å†…æ ¸åŠ è½½æˆåŠŸï¼Œå¦åˆ™è¡¨ç¤ºx5å†…æ ¸åŠ è½½å¤±è´¥ï¼Œä¼šè‡ªåŠ¨åˆ‡æ¢åˆ°ç³»ç»Ÿå†…æ ¸ã€‚
+                //x5ƒÈºË³õÊ¼»¯Íê³ÉµÄ»Øµ÷£¬Îªtrue±íÊ¾x5ÄÚºË¼ÓÔØ³É¹¦£¬·ñÔò±íÊ¾x5ÄÚºË¼ÓÔØÊ§°Ü£¬»á×Ô¶¯ÇĞ»»µ½ÏµÍ³ÄÚºË¡£
             }
             @Override
             public void onCoreInitFinished() {
 
             }
         };
-        //x5å†…æ ¸åˆå§‹åŒ–æ¥å£
+        //x5ÄÚºË³õÊ¼»¯½Ó¿Ú
         QbSdk.initX5Environment(getApplicationContext(), cb);
 
     }
@@ -43,9 +35,4 @@ public class AISApplication extends Application {
     public static AISApplication getInstance(){
         return aisApplication;
     }
-
-    public static SmdtManager getSmdtManager(){
-        return mSmdtManager;
-    }
-
 }

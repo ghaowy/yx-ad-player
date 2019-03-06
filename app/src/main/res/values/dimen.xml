@@ -137,5 +137,9 @@
     <dimen name="elephant_width">330px</dimen>
     <dimen name="elephant_height">295px</dimen>
     <dimen name="ripple_width">200px</dimen>
+    <dimen name="title_width">360px</dimen>
+    <dimen name="title_height">268px</dimen>
+    <dimen name="title_shadow_width">400px</dimen>
+    <dimen name="title_shadow_height">308px</dimen>
 
 </resources>
