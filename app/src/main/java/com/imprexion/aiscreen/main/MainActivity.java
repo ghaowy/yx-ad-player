@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.imprexion.aiscreen.R;
 import com.imprexion.aiscreen.bean.EventBusMessage;
+import com.imprexion.aiscreen.functionPart.BrowserActivity;
 import com.imprexion.aiscreen.functionPart.WebViewActivity;
 import com.imprexion.aiscreen.status.StatusFragment;
 import com.imprexion.aiscreen.tools.ScreenUtils;
@@ -250,19 +251,19 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 
         switch (v.getId()) {
             case R.id.iv_navigation:
-                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Floor"));
+                startActivity(new Intent(this, BrowserActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Floor"));
                 break;
             case R.id.iv_park:
-                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", URL + "app/park"));
+                startActivity(new Intent(this, BrowserActivity.class).putExtra("url", URL + "app/park"));
                 break;
             case R.id.iv_membership:
-                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/VipCard"));
+                startActivity(new Intent(this, BrowserActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/VipCard"));
                 break;
             case R.id.iv_promotion:
-                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Promotion"));
+                startActivity(new Intent(this, BrowserActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Promotion"));
                 break;
             case R.id.iv_lottery:
-                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://oss.imprexion.cn/application/lottery/index.html"));
+                startActivity(new Intent(this, BrowserActivity.class).putExtra("url", "http://oss.imprexion.cn/application/lottery/index.html"));
                 break;
             case R.id.iv_emojidancer:
 //                startActivity(new Intent(this, JsonActivity.class).putExtra("url", URL + "app"));
