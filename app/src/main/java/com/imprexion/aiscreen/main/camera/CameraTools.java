@@ -35,11 +35,13 @@ public class CameraTools {
 
     public boolean checkCameraHardware(Context context) {
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            toast(context, "有相机");
+//            toast(context, "有相机");
+            Log.d(TAG,"有相机");
             init(context);
             return true;
         } else {
-            toast(context, "无相机");
+//            toast(context, "无相机");
+            Log.d(TAG,"无相机");
             return false;
         }
     }

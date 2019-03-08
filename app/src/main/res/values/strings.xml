@@ -18,6 +18,7 @@
     <string name="title_4">人脸签到抽奖</string>
     <string name="title_5">电子会员卡</string>
     <string name="title_6">表情帝舞蹈机</string>
+    <string name="hand_rock_hint">挥挥手试试~</string>
 
 
     <string-array name="tempretures">
@@ -32,4 +33,7 @@
         <item>&#xe643;</item>
         <item>&#xe63f;</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
