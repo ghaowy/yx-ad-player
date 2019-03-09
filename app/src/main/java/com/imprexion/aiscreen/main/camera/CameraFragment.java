@@ -50,13 +50,13 @@ public class CameraFragment extends Fragment {
         } else {
             return;
         }
-        if(mCamera == null){
-            Log.d(TAG,"camera is null");
+        if (mCamera == null) {
+            Log.d(TAG, "camera is null");
             return;
         }
         mCameraPreview = new CameraPreview(getActivity());
         mCameraPreview.setCamera(mCamera);
-        if (flCamera.getChildCount()  == 0) {
+        if (flCamera.getChildCount() == 0) {
             flCamera.addView(mCameraPreview);
         }
 

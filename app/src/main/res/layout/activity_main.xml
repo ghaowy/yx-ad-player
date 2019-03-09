@@ -30,7 +30,7 @@
         android:id="@+id/rl_navigation"
         android:layout_width="@dimen/title_shadow_width"
         android:layout_height="@dimen/title_shadow_height"
-        android:layout_marginStart="135px"
+        android:layout_marginStart="@dimen/title_margin_start"
         android:layout_marginTop="241px"
         android:background="@drawable/shadow_title">
 
@@ -44,22 +44,26 @@
 
     <TextView
         android:id="@+id/tv_text_navigation"
-        android:layout_width="360px"
-        android:layout_height="30px"
+        android:layout_width="@dimen/title_text_width"
+        android:layout_height="@dimen/title_text_heigt"
         android:layout_below="@+id/rl_navigation"
-        android:layout_marginStart="135px"
+        android:layout_marginStart="@dimen/title_margin_start"
         android:layout_marginTop="20px"
         android:gravity="center"
         android:text="@string/title_1"
         android:textColor="@color/white"
-        android:textSize="24px" />
+        android:textSize="@dimen/title_text_size"
+        android:shadowColor="@color/black_color_75"
+        android:shadowRadius="5"
+        android:shadowDx="2"
+        android:shadowDy="2"/>
 
     <RelativeLayout
         android:id="@+id/rl_park"
         android:layout_width="@dimen/title_shadow_width"
         android:layout_height="@dimen/title_shadow_height"
         android:layout_below="@+id/rl_navigation"
-        android:layout_marginStart="135px"
+        android:layout_marginStart="@dimen/title_margin_start"
         android:layout_marginTop="95px"
         android:background="@drawable/shadow_title">
 
@@ -73,22 +77,26 @@
 
     <TextView
         android:id="@+id/tv_text_park"
-        android:layout_width="360px"
-        android:layout_height="30px"
+        android:layout_width="@dimen/title_text_width"
+        android:layout_height="@dimen/title_text_heigt"
         android:layout_below="@+id/rl_park"
-        android:layout_marginStart="135px"
+        android:layout_marginStart="@dimen/title_margin_start"
         android:layout_marginTop="20px"
         android:gravity="center"
         android:text="@string/title_3"
         android:textColor="@color/white"
-        android:textSize="24px" />
+        android:textSize="@dimen/title_text_size"
+        android:shadowColor="@color/black_color_75"
+        android:shadowRadius="5"
+        android:shadowDx="2"
+        android:shadowDy="2" />
 
     <RelativeLayout
         android:id="@+id/rl_membership"
         android:layout_width="@dimen/title_shadow_width"
         android:layout_height="@dimen/title_shadow_height"
         android:layout_below="@+id/rl_park"
-        android:layout_marginStart="135px"
+        android:layout_marginStart="@dimen/title_margin_start"
         android:layout_marginTop="95px"
         android:background="@drawable/shadow_title">
 
@@ -102,21 +110,25 @@
 
     <TextView
         android:id="@+id/tv_text_membership"
-        android:layout_width="360px"
-        android:layout_height="30px"
+        android:layout_width="@dimen/title_text_width"
+        android:layout_height="@dimen/title_text_heigt"
         android:layout_below="@+id/rl_membership"
-        android:layout_marginStart="135px"
+        android:layout_marginStart="@dimen/title_margin_start"
         android:layout_marginTop="20px"
         android:gravity="center"
         android:text="@string/title_5"
         android:textColor="@color/white"
-        android:textSize="24px" />
+        android:textSize="@dimen/title_text_size"
+        android:shadowColor="@color/black_color_75"
+        android:shadowRadius="5"
+        android:shadowDx="2"
+        android:shadowDy="2" />
 
     <RelativeLayout
         android:id="@+id/rl_promotion"
         android:layout_width="@dimen/title_shadow_width"
         android:layout_height="@dimen/title_shadow_height"
-        android:layout_marginStart="585px"
+        android:layout_marginStart="@dimen/title_margin_start_2"
         android:layout_marginTop="241px"
         android:background="@drawable/shadow_title">
 
@@ -130,22 +142,26 @@
 
     <TextView
         android:id="@+id/tv_text_promotion"
-        android:layout_width="360px"
-        android:layout_height="30px"
+        android:layout_width="@dimen/title_text_width"
+        android:layout_height="@dimen/title_text_heigt"
         android:layout_below="@+id/rl_promotion"
-        android:layout_marginStart="585px"
+        android:layout_marginStart="@dimen/title_margin_start_2"
         android:layout_marginTop="20px"
         android:gravity="center"
         android:text="@string/title_2"
         android:textColor="@color/white"
-        android:textSize="24px" />
+        android:textSize="@dimen/title_text_size"
+        android:shadowColor="@color/black_color_75"
+        android:shadowRadius="5"
+        android:shadowDx="2"
+        android:shadowDy="2" />
 
     <RelativeLayout
         android:id="@+id/rl_lottery"
         android:layout_width="@dimen/title_shadow_width"
         android:layout_height="@dimen/title_shadow_height"
         android:layout_below="@+id/rl_promotion"
-        android:layout_marginStart="585px"
+        android:layout_marginStart="@dimen/title_margin_start_2"
         android:layout_marginTop="95px"
         android:background="@drawable/shadow_title">
 
@@ -159,22 +175,26 @@
 
     <TextView
         android:id="@+id/tv_text_lottery"
-        android:layout_width="360px"
-        android:layout_height="30px"
+        android:layout_width="@dimen/title_text_width"
+        android:layout_height="@dimen/title_text_heigt"
         android:layout_below="@+id/rl_lottery"
-        android:layout_marginStart="585px"
+        android:layout_marginStart="@dimen/title_margin_start_2"
         android:layout_marginTop="20px"
         android:gravity="center"
         android:text="@string/title_4"
         android:textColor="@color/white"
-        android:textSize="24px" />
+        android:textSize="@dimen/title_text_size"
+        android:shadowColor="@color/black_color_75"
+        android:shadowRadius="5"
+        android:shadowDx="2"
+        android:shadowDy="2" />
 
     <RelativeLayout
         android:id="@+id/rl_emojidancer"
         android:layout_width="@dimen/title_shadow_width"
         android:layout_height="@dimen/title_shadow_height"
         android:layout_below="@+id/rl_lottery"
-        android:layout_marginStart="585px"
+        android:layout_marginStart="@dimen/title_margin_start_2"
         android:layout_marginTop="95px"
         android:background="@drawable/shadow_title">
 
@@ -188,15 +208,19 @@
 
     <TextView
         android:id="@+id/tv_text_6"
-        android:layout_width="360px"
-        android:layout_height="30px"
+        android:layout_width="@dimen/title_text_width"
+        android:layout_height="@dimen/title_text_heigt"
         android:layout_below="@+id/rl_emojidancer"
-        android:layout_marginStart="585px"
+        android:layout_marginStart="@dimen/title_margin_start_2"
         android:layout_marginTop="20px"
         android:gravity="center"
         android:text="@string/title_6"
         android:textColor="@color/white"
-        android:textSize="24px" />
+        android:textSize="@dimen/title_text_size"
+        android:shadowColor="@color/black_color_75"
+        android:shadowRadius="5"
+        android:shadowDx="2"
+        android:shadowDy="2" />
 
     <RelativeLayout
         android:id="@+id/rl_status"
@@ -267,4 +291,31 @@
     </FrameLayout>-->
 
 
+    <RelativeLayout
+        android:layout_width="300px"
+        android:layout_height="140px"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="93px">
+        <fragment
+            android:id="@+id/hand_rock_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.imprexion.aiscreen.main.HandRockFragment"/>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hand_rock_hint"
+        android:textSize="@dimen/text_size"
+        android:background="@drawable/hand_rock_text_bg"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40px"
+        android:paddingTop="10px"
+        android:paddingBottom="10px"
+        android:paddingStart="20px"
+        android:paddingEnd="20px"
+        android:textColor="@color/white"/>
 </RelativeLayout>
