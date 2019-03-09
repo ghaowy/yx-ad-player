@@ -14,20 +14,20 @@ public class AISApplication extends Application {
         super.onCreate();
         aisApplication = this;
 
-        //·ÇwifiÇé¿öÏÂ£¬Ö÷¶¯ÏÂÔØx5ÄÚºË
+        //éwifiæƒ…å†µä¸‹ï¼Œä¸»åŠ¨ä¸‹è½½x5å†…æ ¸
         QbSdk.setDownloadWithoutWifi(true);
-        //ËÑ¼¯±¾µØtbsÄÚºËĞÅÏ¢²¢ÉÏ±¨·şÎñÆ÷£¬·şÎñÆ÷·µ»Ø½á¹û¾ö¶¨Ê¹ÓÃÄÄ¸öÄÚºË¡£
+        //æœé›†æœ¬åœ°tbså†…æ ¸ä¿¡æ¯å¹¶ä¸ŠæŠ¥æœåŠ¡å™¨ï¼ŒæœåŠ¡å™¨è¿”å›ç»“æœå†³å®šä½¿ç”¨å“ªä¸ªå†…æ ¸ã€‚
         QbSdk.PreInitCallback cb = new QbSdk.PreInitCallback() {
             @Override
             public void onViewInitFinished(boolean arg0) {
-                //x5ƒÈºË³õÊ¼»¯Íê³ÉµÄ»Øµ÷£¬Îªtrue±íÊ¾x5ÄÚºË¼ÓÔØ³É¹¦£¬·ñÔò±íÊ¾x5ÄÚºË¼ÓÔØÊ§°Ü£¬»á×Ô¶¯ÇĞ»»µ½ÏµÍ³ÄÚºË¡£
+                //x5å…§æ ¸åˆå§‹åŒ–å®Œæˆçš„å›è°ƒï¼Œä¸ºtrueè¡¨ç¤ºx5å†…æ ¸åŠ è½½æˆåŠŸï¼Œå¦åˆ™è¡¨ç¤ºx5å†…æ ¸åŠ è½½å¤±è´¥ï¼Œä¼šè‡ªåŠ¨åˆ‡æ¢åˆ°ç³»ç»Ÿå†…æ ¸ã€‚
             }
             @Override
             public void onCoreInitFinished() {
 
             }
         };
-        //x5ÄÚºË³õÊ¼»¯½Ó¿Ú
+        //x5å†…æ ¸åˆå§‹åŒ–æ¥å£
         QbSdk.initX5Environment(getApplicationContext(), cb);
 
     }

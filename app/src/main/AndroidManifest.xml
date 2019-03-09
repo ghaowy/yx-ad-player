@@ -38,7 +38,7 @@
             android:name=".functionPart.WebViewActivity"
             android:launchMode="singleTop" />
 
-        <!-- ÍøÒ³ä¯ÀÀÆ÷ -->
+        <!-- ç½‘é¡µæµè§ˆå™¨ -->
         <activity
             android:name=".functionPart.BrowserActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
