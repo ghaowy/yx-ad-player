@@ -149,6 +149,7 @@ public class RainControlFragment extends Fragment {
     }
 
     private void startRain() {
+        rainDropView.setVisibility(View.INVISIBLE);
         rainView1.post(new Runnable() {
             @Override
             public void run() {
