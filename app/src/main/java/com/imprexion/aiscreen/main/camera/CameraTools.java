@@ -19,6 +19,7 @@ public class CameraTools {
     private int cameraId;
     private int mScreenWidth;
     private int mScreenHeight;
+    private static CameraTools mCameraTools;
 
     public boolean isRelease() {
         return isRelease;
@@ -30,18 +31,21 @@ public class CameraTools {
     }
 
     public static CameraTools getInstance() {
-        return new CameraTools();
+        if (mCameraTools == null) {
+            mCameraTools = new CameraTools();
+        }
+        return mCameraTools;
     }
 
     public boolean checkCameraHardware(Context context) {
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
 //            toast(context, "有相机");
-            Log.d(TAG,"有相机");
+            Log.d(TAG, "有相机");
             init(context);
             return true;
         } else {
 //            toast(context, "无相机");
-            Log.d(TAG,"无相机");
+            Log.d(TAG, "无相机");
             return false;
         }
     }
@@ -52,6 +56,7 @@ public class CameraTools {
         wm.getDefaultDisplay().getSize(p);
         mScreenWidth = p.x;
         mScreenHeight = p.y;
+        Log.d(TAG, "mScreenWidth=" + mScreenWidth + " mScreenHeight=" + mScreenHeight);
     }
 
     public Camera getCameraInstance() {
@@ -74,12 +79,7 @@ public class CameraTools {
         if (mCamera == null) {
             return;
         }
-        if (mParameters != null) {
-            mCamera.setParameters(mParameters);
-        } else {
-            mCamera.setParameters(generateCameraParameters());
-        }
-
+        mCamera.setParameters(generateCameraParameters());
     }
 
     private Camera.Parameters generateCameraParameters() {
@@ -105,17 +105,17 @@ public class CameraTools {
 
         // 获取摄像头支持的PictureSize列表
         List<Camera.Size> picSizeList = mParameters.getSupportedPictureSizes();
-        for (Camera.Size size : picSizeList) {
-            Log.i(TAG, "pictureSizeList size.width=" + size.width + "  size.height=" + size.height);
-        }
+//        for (Camera.Size size : picSizeList) {
+//            Log.i(TAG, "pictureSizeList size.width=" + size.width + "  size.height=" + size.height);
+//        }
         Camera.Size picSize = getProperSize(picSizeList, ((float) mScreenHeight / mScreenWidth));
         mParameters.setPictureSize(picSize.width, picSize.height);
 
         // 获取摄像头支持的PreviewSize列表
         List<Camera.Size> previewSizeList = mParameters.getSupportedPreviewSizes();
-        for (Camera.Size size : previewSizeList) {
-            Log.i(TAG, "previewSizeList size.width=" + size.width + "  size.height=" + size.height);
-        }
+//        for (Camera.Size size : previewSizeList) {
+//            Log.i(TAG, "previewSizeList size.width=" + size.width + "  size.height=" + size.height);
+//        }
         Camera.Size preSize = getProperSize(previewSizeList, ((float) mScreenHeight) / mScreenWidth);
         Log.i(TAG, "final size is: " + picSize.width + " " + picSize.height);
         if (null != preSize) {
@@ -130,7 +130,8 @@ public class CameraTools {
         Log.i(TAG, "screenRatio=" + screenRatio);
         Camera.Size result = null;
         for (Camera.Size size : pictureSizeList) {
-            float currentRatio = ((float) size.width) / size.height;
+            float currentRatio = ((float) size.width) / size.height;//0.5625
+            Log.d(TAG, "currentRatio = " + currentRatio);
             if (currentRatio - screenRatio == 0) {
                 result = size;
                 break;
@@ -141,6 +142,7 @@ public class CameraTools {
             for (Camera.Size size : pictureSizeList) {
                 float curRatio = ((float) size.width) / size.height;
                 if (curRatio == 4f / 3) {// 默认w:h = 4:3
+                    Log.d(TAG, "currentRatio = 4f / 3");
                     result = size;
                     break;
                 }
