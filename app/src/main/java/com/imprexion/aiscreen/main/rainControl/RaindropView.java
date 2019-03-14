@@ -64,8 +64,8 @@ public class RaindropView extends View {
             RaindropItem raindropItem = new RaindropItem();
             raindropItem.x = mRandom.nextInt(mWidth);
             raindropItem.y = mRandom.nextInt(mHeight);
-            if (i < SIZE * 0.6) {
-                raindropItem.scaleX = (mRandom.nextInt(30) + 10) / 100f;
+            if (i < SIZE * 0.65) {
+                raindropItem.scaleX = (mRandom.nextInt(40) + 10) / 100f;
                 raindropItem.offsetX = mRandom.nextInt(2) + 2;
                 raindropItem.bitmap = mBitmapAlpha;
             } else if (i < SIZE * 0.95) {
@@ -85,7 +85,7 @@ public class RaindropView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d(TAG, "mIsRemoveLeft =" + mIsRemoveLeft + " mIsRemoveRight=" + mIsRemoveRight);
+//        Log.d(TAG, "mIsRemoveLeft =" + mIsRemoveLeft + " mIsRemoveRight=" + mIsRemoveRight);
         Matrix matrix = new Matrix();
         for (int i = 0; i < SIZE; i++) {
             matrix.reset();
