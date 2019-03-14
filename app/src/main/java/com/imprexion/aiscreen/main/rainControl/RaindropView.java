@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Size;
 import android.view.View;
 
 import com.imprexion.aiscreen.R;
@@ -29,8 +30,11 @@ public class RaindropView extends View {
     private int mHeight;
     private Paint mPaint;
     private Bitmap mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.raindrop_1);
+    private Bitmap mBitmapAlpha = BitmapFactory.decodeResource(getResources(), R.drawable.raindrop);
     private boolean mIsRemoveLeft;
     private boolean mIsRemoveRight;
+    private boolean mIsRemoveUp;
+    private boolean mIsRemoveDown;
     private Random mRandom;
     private static final String TAG = "RaindropView";
     private int mValue = -1;
@@ -60,14 +64,20 @@ public class RaindropView extends View {
             RaindropItem raindropItem = new RaindropItem();
             raindropItem.x = mRandom.nextInt(mWidth);
             raindropItem.y = mRandom.nextInt(mHeight);
-            if (i < SIZE * 0.95) {
+            if (i < SIZE * 0.6) {
                 raindropItem.scaleX = (mRandom.nextInt(30) + 10) / 100f;
+                raindropItem.offsetX = mRandom.nextInt(2) + 2;
+                raindropItem.bitmap = mBitmapAlpha;
+            } else if (i < SIZE * 0.95) {
+                raindropItem.scaleX = (mRandom.nextInt(30) + 20) / 100f;
                 raindropItem.offsetX = mRandom.nextInt(3) + 2;
+                raindropItem.bitmap = mBitmap;
             } else {
                 raindropItem.scaleX = (mRandom.nextInt(30) + 60) / 100f;
                 raindropItem.offsetX = mRandom.nextInt(3) + 6;
+                raindropItem.bitmap = mBitmap;
             }
-            raindropItem.bitmap = mBitmap;
+//            raindropItem.bitmap = mBitmap;
             mRaindropItemList.add(raindropItem);
         }
     }
@@ -87,6 +97,12 @@ public class RaindropView extends View {
             } else if (mIsRemoveRight) {
                 raindropItem.x = raindropItem.x + raindropItem.offsetX;
                 matrix.postTranslate(raindropItem.x, raindropItem.y);
+            } else if (mIsRemoveUp) {
+                raindropItem.y = raindropItem.y - raindropItem.offsetX;
+                matrix.postTranslate(raindropItem.x, raindropItem.y);
+            } else if (mIsRemoveDown) {
+                raindropItem.y = raindropItem.y + raindropItem.offsetX;
+                matrix.postTranslate(raindropItem.x, raindropItem.y);
             } else {
                 matrix.postTranslate(raindropItem.x, raindropItem.y);
             }
@@ -99,9 +115,11 @@ public class RaindropView extends View {
         postInvalidate();
     }
 
-    public void remove(boolean isRemoveLeft, boolean isRemoveRight) {
+    public void remove(boolean isRemoveLeft, boolean isRemoveRight, boolean isRemoveUp, boolean isRemoveDown) {
         mIsRemoveLeft = isRemoveLeft;
         mIsRemoveRight = isRemoveRight;
+        mIsRemoveDown = isRemoveDown;
+        mIsRemoveUp = isRemoveUp;
         mValue = -1;
         ObjectAnimator objectAnimator = ObjectAnimator.ofInt(null, "TranslationY", 0, 12);
         objectAnimator.setDuration(500);

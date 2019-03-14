@@ -16,9 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+
 import com.imprexion.aiscreen.R;
 
 
@@ -106,13 +108,25 @@ public class RainControlFragment extends Fragment {
                             //右移
                             Log.d(TAG, "右移");
                             if (isStop) {
-                                rainDropView.remove(false, true);
+                                rainDropView.remove(false, true, false, false);
                             }
                         } else if (lastX - x > 120) {
                             //左移
                             Log.d(TAG, "左移");
                             if (isStop) {
-                                rainDropView.remove(true, false);
+                                rainDropView.remove(true, false, false, false);
+                            }
+                        } else if (y - lastY > 120) {
+                            //下移
+                            if (isStop) {
+                                rainDropView.remove(false, false, false, true);
+
+                            }
+                        } else if (lastY - y > 120) {
+                            //上移
+                            if (isStop) {
+                                rainDropView.remove(false, false, true, false);
+
                             }
                         } else {
                             //点击

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AIScreen</string>
+    <string name="app_name">印象数据</string>
     <string name="history_today">历史上的今天</string>
     <string name="hands_move">手掌移动选择</string>
     <string name="fist_select">保持握拳选中</string>
