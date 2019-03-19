@@ -11,6 +11,8 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
@@ -385,12 +387,12 @@ public class AdvertisingActivity extends AppCompatActivity {
 //        lavInjectWater.setImageAssetsFolder("imagesInjectWater");
 //        lavInjectWater.setAnimation("inject_water_json.json");
 //        lavInjectWater.playAnimation();
-        ivInjectWaterTip.setVisibility(View.VISIBLE);
-        mInjectWaterObjAnimator = ObjectAnimator.ofFloat(ivInjectWaterTip, "translationX", -800, 0);
-        mInjectWaterObjAnimator.setDuration(2000);
-        mInjectWaterObjAnimator.setInterpolator(new DecelerateInterpolator());
-        mInjectWaterObjAnimator.start();
-        ivInjectWaterTip.setVisibility(View.VISIBLE);
+//        mInjectWaterObjAnimator = ObjectAnimator.ofFloat(ivInjectWaterTip, "translationX", -800, 0);
+//        mInjectWaterObjAnimator.setDuration(2000);
+//        mInjectWaterObjAnimator.setInterpolator(new DecelerateInterpolator());
+//        mInjectWaterObjAnimator.start();
+//        ivInjectWaterTip.setVisibility(View.VISIBLE);
+        fadeIn(ivInjectWaterTip);
         if (mInjectWaterAnimation == null) {
             mInjectWaterAnimation = (AnimationDrawable) ivInjectWaterTip.getDrawable();
         }
@@ -407,12 +409,13 @@ public class AdvertisingActivity extends AppCompatActivity {
 //        lavInjectWater.cancelAnimation();
 //        lavInjectWater.clearAnimation();
 //        lavInjectWater.setVisibility(View.INVISIBLE);
-//        mInjectingWaterAnimation.stop();
-        mInjectWaterObjAnimator = ObjectAnimator.ofFloat(ivInjectingWaterTip, "translationX", 0, -1000);
-        mInjectWaterObjAnimator.setDuration(2000);
-        mInjectWaterObjAnimator.setInterpolator(new DecelerateInterpolator());
-        mInjectWaterObjAnimator.start();
-        mInjectWaterObjAnimator.addListener(new AnimatorListenerAdapter() {
+
+//        mInjectWaterObjAnimator = ObjectAnimator.ofFloat(ivInjectingWaterTip, "translationX", 0, -1000);
+//        mInjectWaterObjAnimator.setDuration(2000);
+//        mInjectWaterObjAnimator.setInterpolator(new DecelerateInterpolator());
+//        mInjectWaterObjAnimator.start();
+        fadeOut(ivInjectingWaterTip);
+/*        mInjectWaterObjAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
@@ -423,7 +426,7 @@ public class AdvertisingActivity extends AppCompatActivity {
                 mInjectWaterObjAnimator.start();
                 startElephantEnterAnimation();//循环
             }
-        });
+        });*/
     }
 
     private void injectingWaterAnimation() {
@@ -436,7 +439,37 @@ public class AdvertisingActivity extends AppCompatActivity {
         mMessage = mHandler.obtainMessage();
         mMessage.what = INJECTED_WATER;
         mHandler.sendMessageDelayed(mMessage, 1970);
+    }
 
+    private void fadeIn(View view) {
+        view.setVisibility(View.VISIBLE);
+        Animation animation = new AlphaAnimation(0f, 1f);
+        animation.setDuration(2000);
+        view.startAnimation(animation);
+    }
+
+    private void fadeOut(View view) {
+//        view.setVisibility(View.VISIBLE);
+        Animation animation = new AlphaAnimation(1f, 0f);
+        animation.setDuration(2000);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                startElephantEnterAnimation();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        view.startAnimation(animation);
+        view.setVisibility(View.GONE);
 
     }
 }

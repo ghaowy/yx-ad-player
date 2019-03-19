@@ -4,33 +4,33 @@
 
     <item
         android:drawable="@drawable/elephant_exit_1"
-        android:duration="200" />
+        android:duration="80" />
     <item
         android:drawable="@drawable/elephant_exit_2"
-        android:duration="200" />
+        android:duration="80" />
     <item
         android:drawable="@drawable/elephant_exit_3"
-        android:duration="200" />
+        android:duration="80" />
     <item
         android:drawable="@drawable/elephant_exit_4"
-        android:duration="200" />
+        android:duration="80" />
     <item
         android:drawable="@drawable/elephant_exit_5"
-        android:duration="200" />
+        android:duration="80" />
     <item
         android:drawable="@drawable/elephant_exit_6"
-        android:duration="200" />
+        android:duration="80" />
     <item
         android:drawable="@drawable/elephant_exit_7"
-        android:duration="200" />
+        android:duration="80" />
     <item
         android:drawable="@drawable/elephant_exit_8"
-        android:duration="200" />
+        android:duration="80" />
     <item
         android:drawable="@drawable/elephant_exit_9"
-        android:duration="200" />
+        android:duration="80" />
     <item
         android:drawable="@drawable/elephant_exit_10"
-        android:duration="200" />
+        android:duration="80" />
 
 </animation-list>
