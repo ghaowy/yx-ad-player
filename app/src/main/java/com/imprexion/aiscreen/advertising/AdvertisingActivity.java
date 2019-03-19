@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.imprexion.aiscreen.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -71,16 +70,20 @@ public class AdvertisingActivity extends AppCompatActivity {
     ImageView ivLeftprint;
     @BindView(R.id.iv_rightprint)
     ImageView ivRightprint;
+    @BindView(R.id.iv_injecting_water_tip)
+    ImageView ivInjectingWaterTip;
 
     private AnimationDrawable mElephantEnterAnimation;
     private AnimationDrawable mElephantStopAnimation;
     private AnimationDrawable mElephantExitAnimation;
+    private AnimationDrawable mInjectingWaterAnimation;
     private Message mMessage;
     private AnimationDrawable mInjectWaterAnimation;
     private ObjectAnimator mLFootprintScaleObjAnimatorX;
     private ObjectAnimator mLFootprintScaleObjAnimatorY;
     private ObjectAnimator mRFootprintScaleObjAnimatorX;
     private ObjectAnimator mRFootprintScaleObjAnimatorY;
+    private ObjectAnimator mFootprintRotateObjAnimator;
     private ObjectAnimator mEEnterObjAnimator;
     private ObjectAnimator mEExitObjAnimator;
     private ObjectAnimator mETipObjAnimator;
@@ -101,6 +104,8 @@ public class AdvertisingActivity extends AppCompatActivity {
     private final static int RIGHT_FOOTPRINT_5 = 11;
     private final static int RIGHT_FOOTPRINT_6 = 12;
     private final static int FULL_FOOTPRINT = 13;
+    private final static int INJECT_WATER = 14;
+    private final static int INJECTED_WATER = 15;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -143,14 +148,30 @@ public class AdvertisingActivity extends AppCompatActivity {
                     ivRightprint6.setVisibility(View.VISIBLE);
                     break;
                 case FULL_FOOTPRINT:
-//                    hideFootprint();
-//                    rlFootprint.setBackground(getResources().getDrawable(R.drawable.full_footprint));
+                    startRotateFootprint();
+                    break;
+                case INJECT_WATER:
+                    injectingWaterAnimation();
+                    break;
+                case INJECTED_WATER:
+                    mInjectingWaterAnimation.stop();
+
+//                    stopInjectWaterAnimation();
+//                    startElephantEnterAnimation();//循环
                     break;
                 default:
                     break;
             }
         }
     };
+
+    private void startRotateFootprint() {
+        if (!mFootprintRotateObjAnimator.isRunning()) {
+            mFootprintRotateObjAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+            mFootprintRotateObjAnimator.setDuration(1500);
+            mFootprintRotateObjAnimator.start();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -159,6 +180,7 @@ public class AdvertisingActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mEEnterObjAnimator = ObjectAnimator.ofFloat(ivElephantEnter, "translationX", 400, 0);
         mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, 400);
+        mFootprintRotateObjAnimator = ObjectAnimator.ofFloat(rlFootprint, "rotationX", 0, 30, 0);
 //        mETipObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", 800, 0);
         mElephantExitAnimation = (AnimationDrawable) ivElephantExit.getDrawable();
         mElephantEnterAnimation = (AnimationDrawable) ivElephantEnter.getDrawable();
@@ -223,7 +245,7 @@ public class AdvertisingActivity extends AppCompatActivity {
                 public void run() {
                     startElephantExitAnimation();
                 }
-            }, 9000);
+            }, 12000);
         }
         tvGuideTip1.postDelayed(new Runnable() {
             @Override
@@ -231,7 +253,7 @@ public class AdvertisingActivity extends AppCompatActivity {
                 tvGuideTip1.setText(getString(R.string.guide_tips_2));
                 showFullFootprint();
             }
-        }, 3000);
+        }, 4000);
         tvGuideTip1.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -239,7 +261,7 @@ public class AdvertisingActivity extends AppCompatActivity {
                 hideFullFootprint();
                 startInjectWaterAnimation();
             }
-        }, 6000);
+        }, 7000);
 
     }
 
@@ -257,8 +279,8 @@ public class AdvertisingActivity extends AppCompatActivity {
             mFloorObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 0, 800);
             mEExitObjAnimator.setInterpolator(new LinearInterpolator());
             mETipObjAnimator.setInterpolator(new LinearInterpolator());
-            mFloorObjAnimator.setDuration(500);
-            mFloorObjAnimator.setStartDelay(2500);
+            mFloorObjAnimator.setDuration(300);
+            mFloorObjAnimator.setStartDelay(2000);
             mFloorObjAnimator.start();
             mFloorObjAnimator.setInterpolator(new AccelerateInterpolator());
             if (mAnimatorSet == null) {
@@ -285,14 +307,6 @@ public class AdvertisingActivity extends AppCompatActivity {
 
 
     private void showFootPrint() {
-//        if (mMessageList == null) {
-//            mMessageList = new ArrayList<>();
-//            for (int i = 0; i < 13; i++) {
-//                mMessage = new Message();
-//                mMessage.what = i + 1;
-//                mMessageList.add(mMessage);
-//            }
-//        }
         for (int i = 0; i < 13; i++) {
             mMessage = mHandler.obtainMessage();
             mMessage.what = i + 1;
@@ -322,12 +336,12 @@ public class AdvertisingActivity extends AppCompatActivity {
         mLFootprintScaleObjAnimatorY = ObjectAnimator.ofFloat(ivLeftprint, "ScaleY", 1, 0);
         mRFootprintScaleObjAnimatorX = ObjectAnimator.ofFloat(ivRightprint, "ScaleX", 1, 0);
         mRFootprintScaleObjAnimatorY = ObjectAnimator.ofFloat(ivRightprint, "ScaleY", 1, 0);
-        mRFootprintScaleObjAnimatorX.setDuration(500);
-        mRFootprintScaleObjAnimatorY.setDuration(500);
-        mRFootprintScaleObjAnimatorX.setDuration(500);
-        mRFootprintScaleObjAnimatorY.setDuration(500);
-        mRFootprintScaleObjAnimatorX.setStartDelay(500);
-        mRFootprintScaleObjAnimatorY.setStartDelay(500);
+        mRFootprintScaleObjAnimatorX.setDuration(300);
+        mRFootprintScaleObjAnimatorY.setDuration(300);
+        mRFootprintScaleObjAnimatorX.setDuration(300);
+        mRFootprintScaleObjAnimatorY.setDuration(300);
+        mRFootprintScaleObjAnimatorX.setStartDelay(200);
+        mRFootprintScaleObjAnimatorY.setStartDelay(200);
         mLFootprintScaleObjAnimatorX.start();
         mLFootprintScaleObjAnimatorY.start();
         mRFootprintScaleObjAnimatorX.start();
@@ -343,17 +357,13 @@ public class AdvertisingActivity extends AppCompatActivity {
     }
 
     private void showFullFootprint() {
-        ivLeftprint.setVisibility(View.INVISIBLE);
-        ivRightprint.setVisibility(View.INVISIBLE);
-//        rlFootprint.setBackground(getResources().getDrawable(R.drawable.full_footprint));
+        if (mFootprintRotateObjAnimator.isRunning()) {
+            mFootprintRotateObjAnimator.cancel();
+        }
         mLFootprintScaleObjAnimatorX = ObjectAnimator.ofFloat(ivLeftprint, "ScaleX", 0, 1);
         mLFootprintScaleObjAnimatorY = ObjectAnimator.ofFloat(ivLeftprint, "ScaleY", 0, 1);
         mRFootprintScaleObjAnimatorX = ObjectAnimator.ofFloat(ivRightprint, "ScaleX", 0, 1);
         mRFootprintScaleObjAnimatorY = ObjectAnimator.ofFloat(ivRightprint, "ScaleY", 0, 1);
-//        mRFootprintScaleObjAnimatorX.setDuration(500);
-//        mRFootprintScaleObjAnimatorY.setDuration(500);
-//        mRFootprintScaleObjAnimatorX.setDuration(500);
-//        mRFootprintScaleObjAnimatorY.setDuration(500);
         mRFootprintScaleObjAnimatorX.start();
         mRFootprintScaleObjAnimatorY.start();
         mLFootprintScaleObjAnimatorX.start();
@@ -362,12 +372,11 @@ public class AdvertisingActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                hideFootprint();
                 ivLeftprint.setVisibility(View.VISIBLE);
                 ivRightprint.setVisibility(View.VISIBLE);
+                hideFootprint();
             }
         });
-
     }
 
 
@@ -376,6 +385,7 @@ public class AdvertisingActivity extends AppCompatActivity {
 //        lavInjectWater.setImageAssetsFolder("imagesInjectWater");
 //        lavInjectWater.setAnimation("inject_water_json.json");
 //        lavInjectWater.playAnimation();
+        ivInjectWaterTip.setVisibility(View.VISIBLE);
         mInjectWaterObjAnimator = ObjectAnimator.ofFloat(ivInjectWaterTip, "translationX", -800, 0);
         mInjectWaterObjAnimator.setDuration(2000);
         mInjectWaterObjAnimator.setInterpolator(new DecelerateInterpolator());
@@ -385,6 +395,11 @@ public class AdvertisingActivity extends AppCompatActivity {
             mInjectWaterAnimation = (AnimationDrawable) ivInjectWaterTip.getDrawable();
         }
         mInjectWaterAnimation.start();
+
+        //接收信号执行注水ing动画
+        mMessage = mHandler.obtainMessage();
+        mMessage.what = INJECT_WATER;
+        mHandler.sendMessageDelayed(mMessage, 3000);
     }
 
     private void stopInjectWaterAnimation() {
@@ -392,7 +407,8 @@ public class AdvertisingActivity extends AppCompatActivity {
 //        lavInjectWater.cancelAnimation();
 //        lavInjectWater.clearAnimation();
 //        lavInjectWater.setVisibility(View.INVISIBLE);
-        mInjectWaterObjAnimator = ObjectAnimator.ofFloat(ivInjectWaterTip, "translationX", 0, -1000);
+//        mInjectingWaterAnimation.stop();
+        mInjectWaterObjAnimator = ObjectAnimator.ofFloat(ivInjectingWaterTip, "translationX", 0, -1000);
         mInjectWaterObjAnimator.setDuration(2000);
         mInjectWaterObjAnimator.setInterpolator(new DecelerateInterpolator());
         mInjectWaterObjAnimator.start();
@@ -400,10 +416,27 @@ public class AdvertisingActivity extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                ivInjectWaterTip.setVisibility(View.INVISIBLE);
-                mInjectWaterAnimation.stop();
+//                ivInjectWaterTip.setVisibility(View.INVISIBLE);
+//                mInjectWaterAnimation.stop();
+                ivInjectingWaterTip.setVisibility(View.INVISIBLE);
+                mInjectWaterObjAnimator = ObjectAnimator.ofFloat(ivInjectingWaterTip, "translationX", -1000, 0);
+                mInjectWaterObjAnimator.start();
                 startElephantEnterAnimation();//循环
             }
         });
+    }
+
+    private void injectingWaterAnimation() {
+        mInjectingWaterAnimation = (AnimationDrawable) ivInjectingWaterTip.getDrawable();
+        ivInjectingWaterTip.setVisibility(View.VISIBLE);
+        ivInjectWaterTip.setVisibility(View.INVISIBLE);
+        mInjectWaterAnimation.stop();
+        mInjectingWaterAnimation.start();
+//        mInjectingWaterAnimation.setExitFadeDuration(2000);
+        mMessage = mHandler.obtainMessage();
+        mMessage.what = INJECTED_WATER;
+        mHandler.sendMessageDelayed(mMessage, 1970);
+
+
     }
 }

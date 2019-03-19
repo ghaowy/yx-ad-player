@@ -26,9 +26,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/inject_water_tip_list"
-        android:visibility="invisible" />
-    <!--android:src="@drawable/inject_water_tip_list"-->
+        android:visibility="gone" />
 
+    <ImageView
+        android:id="@+id/iv_injecting_water_tip"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/injecting_water_animation_list"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/iv_elephant_enter"
