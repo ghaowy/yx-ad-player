@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".advertising.AdvertisingActivity">
+    <!--android:background="@drawable/gezhixuan">-->
+
+    <ImageView
+        android:id="@+id/iv_bottom_floor"
+        android:layout_width="match_parent"
+        android:layout_height="450px"
+        android:layout_alignParentBottom="true"
+        android:src="@drawable/bottom_grid" />
+
+    <!--<com.airbnb.lottie.LottieAnimationView-->
+    <!--android:id="@+id/lav_inject_water"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--app:lottie_autoPlay="true"-->
+    <!--app:lottie_loop="true" />-->
+
+    <ImageView
+        android:id="@+id/iv_inject_water_tip"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/inject_water_tip_list"
+        android:visibility="invisible" />
+    <!--android:src="@drawable/inject_water_tip_list"-->
+
+
+    <ImageView
+        android:id="@+id/iv_elephant_enter"
+        android:layout_width="400px"
+        android:layout_height="342px"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="70px"
+        android:src="@drawable/elephant_animation_enter_list"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/iv_elephant_exit"
+        android:layout_width="400px"
+        android:layout_height="342px"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="70px"
+        android:src="@drawable/elephant_animation_exit_list"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/iv_elephant_stop"
+        android:layout_width="400px"
+        android:layout_height="342px"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="70px"
+        android:src="@drawable/elephant_animation_list"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/tv_guide_tip_1"
+        android:layout_width="370px"
+        android:layout_height="100px"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="260px"
+        android:layout_marginBottom="475px"
+        android:background="@drawable/elephant_talk_bg"
+        android:gravity="center"
+        android:text="@string/guide_tips_1"
+        android:textSize="@dimen/guide_tip_textsize"
+        android:visibility="invisible" />
+
+    <RelativeLayout
+        android:id="@+id/rl_footprint"
+        android:layout_width="330px"
+        android:layout_height="200px"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="375px"
+        android:layout_marginBottom="27px">
+
+        <ImageView
+            android:id="@+id/iv_leftprint_1"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:src="@drawable/left_footprint_1"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_leftprint_2"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:src="@drawable/left_footprint_2"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_leftprint_3"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:src="@drawable/left_footprint_3"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_leftprint_4"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:src="@drawable/left_footprint_4"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_leftprint_5"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:src="@drawable/left_footprint_5"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_leftprint_6"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:src="@drawable/left_footprint_6"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_leftprint"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:src="@drawable/full_left_footprint"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_rightprint_1"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/right_footprint_1"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_rightprint_2"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/right_footprint_2"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_rightprint_3"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/right_footprint_3"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_rightprint_4"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/right_footprint_4"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_rightprint_5"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/right_footprint_5"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_rightprint_6"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/right_footprint_6"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/iv_rightprint"
+            android:layout_width="@dimen/footprint_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/full_right_footprint"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>
