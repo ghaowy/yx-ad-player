@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         setOnHoverListener4(ivPromotion);
         setOnHoverListener5(ivLottery);
         setOnHoverListener6(ivEmojidancer);
-        ScreenUtils.setNavigationListener(rlMain, this);
+//        ScreenUtils.setNavigationListener(rlMain, this);
 //        rv1.startSpread();
 //        rv2.startSpread();
 //        rv3.startSpread();

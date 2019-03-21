@@ -179,9 +179,9 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
             }).start();
 
         }*/
-        while (true){
+        while (true) {
             String videoPath = videoPaths.get(mVideoCount++ % mLength);
-            if (!videoPath.contains(".jpg") && !videoPath.contains(".png")){
+            if (!videoPath.contains(".jpg") && !videoPath.contains(".png")) {
                 break;
             }
         }
@@ -189,9 +189,9 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 String videoPath;
-                while (true){
+                while (true) {
                     videoPath = videoPaths.get(mVideoCount++ % mLength);
-                    if (!videoPath.contains(".jpg") && !videoPath.contains(".png")){
+                    if (!videoPath.contains(".jpg") && !videoPath.contains(".png")) {
                         break;
                     }
                 }
@@ -199,7 +199,7 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
                 adVideo.start();
             }
         });
-        adVideo.setVideoPath(mVideoBasePath + "/" + videoPaths.get(mVideoCount-1 % mLength));
+        adVideo.setVideoPath(mVideoBasePath + "/" + videoPaths.get(mVideoCount - 1 % mLength));
         adVideo.start();
     }
 

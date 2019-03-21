@@ -75,6 +75,9 @@ public class StatusFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+        if (mTimeThread.isAlive()) {
+            mTimeThread.destroy();
+        }
     }
 
     private void setcurrentTime() {
