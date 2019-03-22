@@ -18,13 +18,15 @@
         android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--<activity android:name=".AdActivity">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.MAIN" />-->
 
-        <!--<category android:name="android.intent.category.LAUNCHER" />-->
-        <!--</intent-filter>-->
-        <!--</activity>-->
+        <!-- <activity android:name=".AdActivity"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+        <!-- </intent-filter> -->
+        <!-- </activity> -->
         <activity
             android:name=".advertising.AdvertisingActivity"
             android:launchMode="singleTop">
@@ -34,15 +36,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".main.MainActivity"
             android:launchMode="singleTop">
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
 
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".functionPart.WebViewActivity"
@@ -52,7 +55,12 @@
         <activity
             android:name=".functionPart.BrowserActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
+
+        <service
+            android:name=".advertising.service.AdService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

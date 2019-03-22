@@ -59,12 +59,6 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     ImageView ivLottery;
     @BindView(R.id.iv_emojidancer)
     ImageView ivEmojidancer;
-    private boolean isHoverExit1 = true;
-    private boolean isHoverExit2 = true;
-    private boolean isHoverExit3 = true;
-    private boolean isHoverExit4 = true;
-    private boolean isHoverExit5 = true;
-    private boolean isHoverExit6 = true;
     private static final String TAG = "MainActivity";
     private static final String URL = "http://172.16.2.207:5000/";
     private StatusFragment mStatusFragment;
@@ -109,12 +103,12 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     protected void onResume() {
         super.onResume();
         Tools.hideNavigationBarStatusBar(this, true);
-        setOnHoverListener1(ivNavigation);
-        setOnHoverListener2(ivPark);
-        setOnHoverListener3(ivMembership);
-        setOnHoverListener4(ivPromotion);
-        setOnHoverListener5(ivLottery);
-        setOnHoverListener6(ivEmojidancer);
+        setOnHoverListener(ivNavigation);
+        setOnHoverListener(ivPark);
+        setOnHoverListener(ivMembership);
+        setOnHoverListener(ivPromotion);
+        setOnHoverListener(ivLottery);
+        setOnHoverListener(ivEmojidancer);
 //        ScreenUtils.setNavigationListener(rlMain, this);
 //        rv1.startSpread();
 //        rv2.startSpread();
@@ -172,43 +166,20 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 
     }
 
-    private void setOnHoverListener1(final View view) {
+    private void setOnHoverListener(final View view) {
         view.setOnHoverListener(new View.OnHoverListener() {
             @Override
             public boolean onHover(View v, MotionEvent event) {
                 int what = event.getAction();
                 switch (what) {
                     case MotionEvent.ACTION_HOVER_ENTER: //鼠标进入view
-                        isHoverExit1 = false;
                         Drawable drawable1 = getResources().getDrawable(R.drawable.hover);
                         Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, ZOOM_WIDTH, ZOOM_HEIGHT);
                         ((ImageView) view).setScaleType(ImageView.ScaleType.CENTER);
                         ((ImageView) view).setImageDrawable(zoomDrawable1);
-//                        view.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (!isHoverExit1) {
-//                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
-//                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
-//                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
-//                                }
-//                            }
-//                        }, 1000);
-//                        view.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (!isHoverExit1) {
-//                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
-//                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
-//                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
-//                                    onClick(view);
-//                                }
-//                            }
-//                        }, 2000);
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT: //鼠标离开view
                         ((ImageView) view).setImageDrawable(null);
-                        isHoverExit1 = true;
                         break;
                 }
                 return false;
@@ -216,249 +187,6 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 
         });
     }
-
-    private void setOnHoverListener2(final View view) {
-        view.setOnHoverListener(new View.OnHoverListener() {
-            @Override
-            public boolean onHover(View v, MotionEvent event) {
-                int what = event.getAction();
-                switch (what) {
-                    case MotionEvent.ACTION_HOVER_ENTER: //鼠标进入view
-                        isHoverExit2 = false;
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.hover);
-                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, ZOOM_WIDTH, ZOOM_HEIGHT);
-                        ((ImageView) view).setScaleType(ImageView.ScaleType.CENTER);
-                        ((ImageView) view).setImageDrawable(zoomDrawable1);
-//                        view.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (!isHoverExit2) {
-//                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
-//                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
-//                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
-//                                }
-//                            }
-//                        }, 1000);
-//                        view.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (!isHoverExit2) {
-//                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
-//                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
-//                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
-//                                    onClick(view);
-//
-//                                }
-//                            }
-//                        }, 2000);
-                        break;
-                    case MotionEvent.ACTION_HOVER_EXIT: //鼠标离开view
-                        ((ImageView) view).setImageDrawable(null);
-                        isHoverExit2 = true;
-                        break;
-                }
-                return false;
-            }
-
-        });
-    }
-
-    private void setOnHoverListener3(final View view) {
-        view.setOnHoverListener(new View.OnHoverListener() {
-            @Override
-            public boolean onHover(View v, MotionEvent event) {
-                int what = event.getAction();
-                switch (what) {
-                    case MotionEvent.ACTION_HOVER_ENTER: //鼠标进入view
-                        isHoverExit3 = false;
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.hover);
-                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, ZOOM_WIDTH, ZOOM_HEIGHT);
-                        ((ImageView) view).setScaleType(ImageView.ScaleType.CENTER);
-                        ((ImageView) view).setImageDrawable(zoomDrawable1);
-//                        view.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (!isHoverExit3) {
-//                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
-//                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
-//                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
-//                                }
-//                            }
-//                        }, 1000);
-//                        view.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (!isHoverExit3) {
-//                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
-//                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
-//                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
-//                                    onClick(view);
-//
-//                                }
-//                            }
-//                        }, 2000);
-                        break;
-                    case MotionEvent.ACTION_HOVER_EXIT: //鼠标离开view
-                        ((ImageView) view).setImageDrawable(null);
-                        isHoverExit3 = true;
-                        break;
-                }
-                return false;
-            }
-
-        });
-    }
-
-    private void setOnHoverListener4(final View view) {
-        view.setOnHoverListener(new View.OnHoverListener() {
-            @Override
-            public boolean onHover(View v, MotionEvent event) {
-                int what = event.getAction();
-                switch (what) {
-                    case MotionEvent.ACTION_HOVER_ENTER: //鼠标进入view
-                        isHoverExit4 = false;
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.hover);
-                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, ZOOM_WIDTH, ZOOM_HEIGHT);
-                        ((ImageView) view).setScaleType(ImageView.ScaleType.CENTER);
-                        ((ImageView) view).setImageDrawable(zoomDrawable1);
-//                        view.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (!isHoverExit4) {
-//                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
-//                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
-//                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
-//                                }
-//                            }
-//                        }, 1000);
-//                        view.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (!isHoverExit4) {
-//                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
-//                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
-//                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
-//                                    onClick(view);
-//
-//                                }
-//                            }
-//                        }, 2000);
-                        break;
-                    case MotionEvent.ACTION_HOVER_EXIT: //鼠标离开view
-                        ((ImageView) view).setImageDrawable(null);
-                        isHoverExit4 = true;
-                        break;
-                }
-                return false;
-            }
-
-        });
-    }
-
-    private void setOnHoverListener5(final View view) {
-        view.setOnHoverListener(new View.OnHoverListener() {
-            @Override
-            public boolean onHover(View v, MotionEvent event) {
-                int what = event.getAction();
-                switch (what) {
-                    case MotionEvent.ACTION_HOVER_ENTER: //鼠标进入view
-                        isHoverExit5 = false;
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.hover);
-                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, ZOOM_WIDTH, ZOOM_HEIGHT);
-                        ((ImageView) view).setScaleType(ImageView.ScaleType.CENTER);
-                        ((ImageView) view).setImageDrawable(zoomDrawable1);
-//                        view.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (!isHoverExit5) {
-//                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
-//                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
-//                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
-//                                }
-//                            }
-//                        }, 1000);
-//                        view.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (!isHoverExit5) {
-//                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
-//                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
-//                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
-//                                    onClick(view);
-//
-//                                }
-//                            }
-//                        }, 2000);
-                        break;
-                    case MotionEvent.ACTION_HOVER_EXIT: //鼠标离开view
-                        ((ImageView) view).setImageDrawable(null);
-                        isHoverExit5 = true;
-                        break;
-                }
-                return false;
-            }
-
-        });
-    }
-
-    private void setOnHoverListener6(final View view) {
-        view.setOnHoverListener(new View.OnHoverListener() {
-            @Override
-            public boolean onHover(View v, MotionEvent event) {
-                int what = event.getAction();
-                switch (what) {
-                    case MotionEvent.ACTION_HOVER_ENTER: //鼠标进入view
-                        isHoverExit6 = false;
-                        Drawable drawable1 = getResources().getDrawable(R.drawable.hover);
-                        Drawable zoomDrawable1 = Tools.zoomDrawable(drawable1, ZOOM_WIDTH, ZOOM_HEIGHT);
-                        ((ImageView) view).setScaleType(ImageView.ScaleType.CENTER);
-                        ((ImageView) view).setImageDrawable(zoomDrawable1);
-//                        view.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (!isHoverExit6) {
-//                                    Drawable drawable2 = getResources().getDrawable(R.drawable.count_hands_2);
-//                                    Drawable zoomDrawable2 = Tools.zoomDrawable(drawable2, 200, 200);
-//                                    ((ImageView) view).setImageDrawable(zoomDrawable2);
-//                                }
-//                            }
-//                        }, 1000);
-//                        view.postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                if (!isHoverExit6) {
-//                                    Drawable drawable3 = getResources().getDrawable(R.drawable.count_hands_1);
-//                                    Drawable zoomDrawable3 = Tools.zoomDrawable(drawable3, 200, 200);
-//                                    ((ImageView) view).setImageDrawable(zoomDrawable3);
-//                                    onClick(view);
-//
-//                                }
-//                            }
-//                        }, 2000);
-                        break;
-                    case MotionEvent.ACTION_HOVER_EXIT: //鼠标离开view
-                        ((ImageView) view).setImageDrawable(null);
-                        isHoverExit6 = true;
-                        break;
-                }
-                return false;
-            }
-
-        });
-    }
-
-    private void toastHover() {
-        Toast.makeText(this, "hover", Toast.LENGTH_SHORT).show();
-    }
-
-    private void toastHoverMove() {
-        Toast.makeText(this, "hoverMove", Toast.LENGTH_SHORT).show();
-    }
-
-    private void toastHoverExit() {
-        Toast.makeText(this, "hoverExit", Toast.LENGTH_SHORT).show();
-    }
-
 
     @Override
     public void show() {

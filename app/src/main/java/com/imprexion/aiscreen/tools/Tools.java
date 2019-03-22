@@ -13,6 +13,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
+import android.webkit.JsPromptResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -20,6 +21,7 @@ import android.webkit.WebViewClient;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Tools {
@@ -53,7 +55,22 @@ public class Tools {
 
     public static void setWebView(WebView webView) {
 
-        webView.setWebChromeClient(new WebChromeClient());
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, JsPromptResult result) {
+                if (message.equals("webForParam")) {
+                    String deviceId = Build.SERIAL;
+                    HashMap<String, String> webForParam = new HashMap<>();
+                    webForParam.put("deviceId", deviceId);
+                    webForParam.put("picUrl", "https://cn.bing.com/sa/simg/hpb/NorthMale_EN-US8782628354_1920x1080.jpg");
+                    webForParam.put("picText", "https://cn.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1");
+                    result.confirm(webForParam.toString());
+                    Log.d(TAG, "webForParam=" + webForParam.toString());
+                    return true;
+                }
+                return super.onJsPrompt(view, url, message, defaultValue, result);
+            }
+        });
         webView.setWebViewClient(new WebViewClient());
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
