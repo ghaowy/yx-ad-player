@@ -48,7 +48,16 @@ public class BackButtonFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_back_button, container, false);
         unbinder = ButterKnife.bind(this, view);
+        initAnimator();
         return view;
+    }
+
+    private void initAnimator() {
+        mAnimatorSet = new AnimatorSet();
+        mScaleXAnimator = ObjectAnimator.ofFloat(ivCircle1, "ScaleX", 0.01f, 1);
+        mScaleYAnimator = ObjectAnimator.ofFloat(ivCircle1, "ScaleY", 0.01f, 1);
+        mScaleXAnimator2 = ObjectAnimator.ofFloat(ivCircle2, "ScaleX", 0.01f, 1);
+        mScaleYAnimator2 = ObjectAnimator.ofFloat(ivCircle2, "ScaleY", 0.01f, 1);
     }
 
     @Override
@@ -58,11 +67,6 @@ public class BackButtonFragment extends Fragment {
     }
 
     private void startAnimation() {
-        mAnimatorSet = new AnimatorSet();
-        mScaleXAnimator = ObjectAnimator.ofFloat(ivCircle1, "ScaleX", 0.01f, 1);
-        mScaleYAnimator = ObjectAnimator.ofFloat(ivCircle1, "ScaleY", 0.01f, 1);
-        mScaleXAnimator2 = ObjectAnimator.ofFloat(ivCircle2, "ScaleX", 0.01f, 1);
-        mScaleYAnimator2 = ObjectAnimator.ofFloat(ivCircle2, "ScaleY", 0.01f, 1);
         mScaleXAnimator.setDuration(2000);
         mScaleYAnimator.setDuration(2000);
         mScaleXAnimator2.setDuration(2000);
