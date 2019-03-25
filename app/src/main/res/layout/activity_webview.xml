@@ -11,4 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <FrameLayout
+        android:id="@+id/fl_back"
+        android:layout_width="@dimen/back_button_width"
+        android:layout_height="@dimen/back_button_width"
+        android:layout_marginStart="790px"
+        android:layout_marginTop="1350px">
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.imprexion.aiscreen.functionPart.BackButtonFragment"/>
+    </FrameLayout>
+
 </RelativeLayout>

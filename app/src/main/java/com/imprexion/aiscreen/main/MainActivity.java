@@ -1,23 +1,26 @@
 package com.imprexion.aiscreen.main;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
+import com.imprexion.aiscreen.ContentInfo;
 import com.imprexion.aiscreen.R;
 import com.imprexion.aiscreen.bean.EventBusMessage;
-import com.imprexion.aiscreen.functionPart.BrowserActivity;
 import com.imprexion.aiscreen.functionPart.WebViewActivity;
+import com.imprexion.aiscreen.service.AISService;
 import com.imprexion.aiscreen.status.StatusFragment;
 import com.imprexion.aiscreen.tools.ScreenUtils;
 import com.imprexion.aiscreen.tools.Tools;
@@ -35,11 +38,11 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 
     @BindView(R.id.rl_status)
     RelativeLayout rlStatus;
-//    @BindView(R.id.fl_back)
+    //    @BindView(R.id.fl_back)
 //    FrameLayout flBack;
     @BindView(R.id.rl_main)
     RelativeLayout rlMain;
-//    @BindView(R.id.rv_1)
+    //    @BindView(R.id.rv_1)
 //    RippleView rv1;
 //    @BindView(R.id.rv_2)
 //    RippleView rv2;
@@ -113,6 +116,35 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 //        rv1.startSpread();
 //        rv2.startSpread();
 //        rv3.startSpread();
+        bindAISService();
+    }
+
+    private void bindAISService() {
+        ServiceConnection connection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                AISService.AISBinder aisBinder = (AISService.AISBinder) service;
+                aisBinder.getService().setContentInfoToActivity(new AISService.IContentInfoCallBack() {
+                    @Override
+                    public void setContentInfo(ContentInfo contentInfo) {
+                        pushMessage(contentInfo);
+                    }
+                });
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        Intent intent = new Intent(this, AISService.class);
+        intent.putExtra("src", 0);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+
+    }
+
+    private void pushMessage(ContentInfo contentInfo) {
+        Log.d(TAG, "ContentInfo=" + contentInfo.toString());
     }
 
     @Override
@@ -135,19 +167,19 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 
         switch (v.getId()) {
             case R.id.iv_navigation:
-                startActivity(new Intent(this, BrowserActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Floor"));
+                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Floor"));
                 break;
             case R.id.iv_park:
-                startActivity(new Intent(this, BrowserActivity.class).putExtra("url", URL + "app/park"));
+                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", URL + "app/park"));
                 break;
             case R.id.iv_membership:
-                startActivity(new Intent(this, BrowserActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/VipCard"));
+                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/VipCard"));
                 break;
             case R.id.iv_promotion:
-                startActivity(new Intent(this, BrowserActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Promotion"));
+                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Promotion"));
                 break;
             case R.id.iv_lottery:
-                startActivity(new Intent(this, BrowserActivity.class).putExtra("url", "http://oss.imprexion.cn/application/lottery/index.html"));
+                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://oss.imprexion.cn/application/lottery/index.html"));
                 break;
             case R.id.iv_emojidancer:
 //                startActivity(new Intent(this, JsonActivity.class).putExtra("url", URL + "app"));

@@ -16,6 +16,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', 'src/main/aidl']
+        }
+    }
 }
 
 dependencies {
@@ -40,4 +45,5 @@ dependencies {
     implementation files('libs/tbs_sdk_thirdapp_v4.3.0.1020_43633_sharewithdownload_withoutGame_obfs_20190111_105200.jar')
     implementation files('libs/bugly_crash_release.jar')
     implementation files('libs/glide-full-4.7.0.jar')
+    implementation files('libs/protobuf-java-3.7.0.jar')
 }
