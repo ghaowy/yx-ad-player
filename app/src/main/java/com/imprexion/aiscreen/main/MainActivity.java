@@ -78,6 +78,12 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         initStatus();
         ZOOM_WIDTH = (int) getResources().getDimension(R.dimen.title_width);
         ZOOM_HEIGHT = (int) getResources().getDimension(R.dimen.title_height);
+        setOnHoverListener(ivNavigation);
+        setOnHoverListener(ivPark);
+        setOnHoverListener(ivMembership);
+        setOnHoverListener(ivPromotion);
+        setOnHoverListener(ivLottery);
+        setOnHoverListener(ivEmojidancer);
     }
 
     @Override
@@ -106,12 +112,6 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     protected void onResume() {
         super.onResume();
         Tools.hideNavigationBarStatusBar(this, true);
-        setOnHoverListener(ivNavigation);
-        setOnHoverListener(ivPark);
-        setOnHoverListener(ivMembership);
-        setOnHoverListener(ivPromotion);
-        setOnHoverListener(ivLottery);
-        setOnHoverListener(ivEmojidancer);
 //        ScreenUtils.setNavigationListener(rlMain, this);
 //        rv1.startSpread();
 //        rv2.startSpread();
@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/VipCard"));
                 break;
             case R.id.iv_promotion:
+                Log.d(TAG, "back button click");
                 startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Promotion"));
                 break;
             case R.id.iv_lottery:

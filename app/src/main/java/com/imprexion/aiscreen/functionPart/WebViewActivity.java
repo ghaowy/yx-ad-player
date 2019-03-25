@@ -23,10 +23,10 @@ public class WebViewActivity extends AppCompatActivity {
 
     @BindView(R.id.webView)
     WebView webView;
-
-    private final static String TAG = "WebViewActivity";
     @BindView(R.id.fl_back)
     FrameLayout flBack;
+    private final static String TAG = "WebViewActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,18 +55,19 @@ public class WebViewActivity extends AppCompatActivity {
             }
         });
         webView.loadUrl(getIntent().getStringExtra("url"));
+        getSupportFragmentManager().beginTransaction().add(R.id.fl_back, new BackButtonFragment()).commitAllowingStateLoss();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Tools.hideNavigationBarStatusBar(this, true);
-        flBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+//        flBack.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                onBackPressed();
+//            }
+//        });
 
     }
 
