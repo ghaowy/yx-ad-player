@@ -38,6 +38,20 @@
         <item>&#xe63f;</item>
     </string-array>
 
+    <string-array name="weather_icon">
+        <!--晴-->
+        <item>&#xe644;</item>
+        <!--雨-->
+        <item>&#xe651;</item>
+        <!--<item>&#xe63f;</item>-->
+        <!--阴天-->
+        <item>&#xe652;</item>
+        <!--雪-->
+        <item>&#xe653;</item>
+        <!--多云-->
+        <item>&#xe654;</item>
+    </string-array>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

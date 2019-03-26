@@ -16,7 +16,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
@@ -25,8 +24,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-import com.imprexion.aiscreen.ad.AdContract;
-import com.imprexion.aiscreen.ad.AdPresenter;
+import com.imprexion.aiscreen.net.NetContract;
+import com.imprexion.aiscreen.net.NetPresenter;
 import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.bean.WeatherInfo;
 import com.imprexion.aiscreen.main.MainActivity;
@@ -46,7 +45,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AdActivity extends AppCompatActivity implements AdContract.AdView {
+public class AdActivity extends AppCompatActivity implements NetContract.StatusView {
 
     @BindView(R.id.elephant_animation)
     ImageView elephantAnimation;
@@ -98,7 +97,7 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
     private float mCurrentpositionX;
     private String[] weather = {"晴", "多云", "雨"};
     private int i = 0;
-    private AdPresenter mAdPresenter;
+    private NetPresenter mAdPresenter;
     private String mVideoBasePath = Environment.getExternalStorageDirectory() + "/AIvideo";
     private List<String> videoPaths = new ArrayList<>();
     private int mLength;
@@ -211,7 +210,7 @@ public class AdActivity extends AppCompatActivity implements AdContract.AdView {
 
     private void setWeatherInfo() {
         if (mAdPresenter == null) {
-            mAdPresenter = new AdPresenter(this);
+            mAdPresenter = new NetPresenter(this);
         }
 
         if (Tools.isNetworkConnected(this)) {

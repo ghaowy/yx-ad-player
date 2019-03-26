@@ -1,10 +1,10 @@
-package com.imprexion.aiscreen.ad;
+package com.imprexion.aiscreen.net;
 
 import com.imprexion.aiscreen.bean.WeatherInfo;
 
-public class AdContract {
+public class NetContract {
 
-    public interface AdView{
+    public interface StatusView {
         void updateWeather(WeatherInfo weatherInfo);
     }
 }

@@ -1,12 +1,12 @@
-package com.imprexion.aiscreen.ad;
+package com.imprexion.aiscreen.net;
 
 import android.content.Context;
 
-public class AdModel {
+public class NetModel {
 
     private Context mContext;
 
-    public AdModel(Context context) {
+    public NetModel(Context context) {
         mContext = context;
     }
 

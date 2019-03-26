@@ -12,8 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.imprexion.aiscreen.R;
 import com.imprexion.aiscreen.bean.EventBusMessage;
+import com.imprexion.aiscreen.bean.WeatherInfo;
+import com.imprexion.aiscreen.net.NetContract;
+import com.imprexion.aiscreen.net.NetPresenter;
+import com.imprexion.aiscreen.tools.IconFontTextView;
+import com.imprexion.aiscreen.tools.Tools;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -24,14 +30,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class StatusFragment extends Fragment {
+public class StatusFragment extends Fragment implements NetContract.StatusView {
 
     @BindView(R.id.tv_current_time)
     TextView tvCurrentTime;
+    @BindView(R.id.tv_weather)
+    TextView tvWeather;
+    @BindView(R.id.tv_weather_icon)
+    IconFontTextView tvWeatherIcon;
     private View mView;
     private Unbinder mUnbinder;
     public final static int UPDATE_WEATHER = 1;
     private final static String TAG = "StatusFragment";
+    private String tempretures[];
+    private String weatherIcon[];
+    private NetPresenter mNetPresenter;
 
     private Thread mTimeThread;
     private Handler mHandler = new Handler() {
@@ -69,6 +82,7 @@ public class StatusFragment extends Fragment {
     public void onResume() {
         super.onResume();
         setcurrentTime();
+        setWeatherInfo();
     }
 
     @Override
@@ -97,5 +111,41 @@ public class StatusFragment extends Fragment {
             }
         };
         mTimeThread.start();
+    }
+
+    private void setWeatherInfo() {
+        if (mNetPresenter == null) {
+            mNetPresenter = new NetPresenter(this);
+        }
+
+        if (Tools.isNetworkConnected(getContext())) {
+            mNetPresenter.updateWeather();
+        }
+    }
+
+    @Override
+    public void updateWeather(WeatherInfo weatherInfo) {
+        tempretures = getResources().getStringArray(R.array.tempretures);
+        weatherIcon = getContext().getResources().getStringArray(R.array.weather_icon);
+        WeatherInfo.HeWeather6 heWeather6 = weatherInfo.getHeWeather6().get(0);
+        Log.d(TAG, "heWeather6=" + new Gson().toJson(heWeather6));
+        String status = heWeather6.getStatus();
+        if (!status.equals("ok")) {
+            return;
+        }
+        String weather = heWeather6.getNow().getCond_txt();
+        tvWeather.setText(weather);
+
+        if (weather.contains("晴")) {
+            tvWeatherIcon.setText(weatherIcon[0]);
+        } else if (weather.contains("雨")) {
+            tvWeatherIcon.setText(weatherIcon[1]);
+        } else if (weather.contains("阴")) {
+            tvWeatherIcon.setText(weatherIcon[2]);
+        } else if (weather.contains("雪")) {
+            tvWeatherIcon.setText(weatherIcon[3]);
+        } else if (weather.contains("多云")) {
+            tvWeatherIcon.setText(weatherIcon[4]);
+        }
     }
 }

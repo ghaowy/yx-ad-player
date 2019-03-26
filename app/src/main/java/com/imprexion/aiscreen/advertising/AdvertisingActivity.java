@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.imprexion.aiscreen.R;
+import com.imprexion.aiscreen.bean.ContentPlay;
 import com.imprexion.aiscreen.main.MainActivity;
 import com.imprexion.aiscreen.tools.Tools;
 
@@ -48,14 +49,19 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
     private AnimatorSet mAnimatorSet = new AnimatorSet();
     private AnimatorSet mAnimatorSet_2 = new AnimatorSet();
     private int i;
+    private ContentPlay mContentPlay;
+    private boolean isTimeToShowAd;
+    private long startTime;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
+            String[] picUrl = mContentPlay.getContentInfo().getContentUrl();
             super.handleMessage(msg);
             switch (msg.what) {
                 case NEXT_AD:
                     Glide.with(AdvertisingActivity.this)
-                            .load(mAdpath + "/" + mImges.get(i++ % mImges.size()))
+//                            .load(mAdpath + "/" + mImges.get(i++ % mImges.size()))
+                            .load(picUrl[i++ % picUrl.length])
                             .into(ivAd);
                     mAnimatorSet.play(mAdEnterObjAnimator).with(mAdExitObjAnimator_1);
                     mAnimatorSet.setDuration(300);
@@ -64,7 +70,8 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
                     break;
                 case NEXT_AD_2:
                     Glide.with(AdvertisingActivity.this)
-                            .load(mAdpath + "/" + mImges.get(i++ % mImges.size()))
+//                            .load(mAdpath + "/" + mImges.get(i++ % mImges.size()))
+                            .load(picUrl[i++ % picUrl.length])
                             .into(ivAd2);
                     mAnimatorSet_2.play(mAdEnterObjAnimator_1).with(mAdExitObjAnimator);
                     mAnimatorSet_2.setDuration(300);
@@ -87,9 +94,32 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
         mAdEnterObjAnimator_1 = ObjectAnimator.ofFloat(ivAd2, "translationX", 1080, 0);
         mAdExitObjAnimator_1 = ObjectAnimator.ofFloat(ivAd2, "translationX", 0, -1080);
 //        getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment, new GestureActivationFragment()).commitAllowingStateLoss();
-        getImges();
-        rlAdvertising.setOnClickListener(this);
 
+        rlAdvertising.setOnClickListener(this);
+        //test
+        initContentPlay();
+
+//        downloadImges();
+        getImges();
+
+    }
+
+    private void downloadImges() {
+
+    }
+
+    private void initContentPlay() {
+        if (mContentPlay == null) {
+            mContentPlay = new ContentPlay();
+            ContentPlay.ContentInfo contentInfo = new ContentPlay.ContentInfo();
+            contentInfo.setContent_len(5000);
+            contentInfo.setContentName("播放广告");
+            contentInfo.setContent_priority(5);
+            String[] picUrl = {"https://cn.bing.com/sa/simg/hpb/NorthMale_EN-US8782628354_1920x1080.jpg"};
+            contentInfo.setContentUrl(picUrl);
+            mContentPlay.setContentInfo(contentInfo);
+            mContentPlay.setStart_time(1553572838);
+        }
     }
 
     private void getImges() {
@@ -107,15 +137,19 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
                 @Override
                 public void run() {
                     int i = 0;
+                    startTime = mContentPlay.getStart_time();
                     do {
-                        mMessage = mHandler.obtainMessage();
-                        i = i == 1 ? 0 : 1;
-                        mMessage.what = i + 1;
-                        mHandler.sendMessage(mMessage);
-                        try {
-                            Thread.sleep(15000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        isTimeToShowAd = System.currentTimeMillis() == startTime ? true : false;
+                        if (isTimeToShowAd) {
+                            mMessage = mHandler.obtainMessage();
+                            i = i == 1 ? 0 : 1;
+                            mMessage.what = i + 1;
+                            mHandler.sendMessage(mMessage);
+                            try {
+                                Thread.sleep(15000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     } while (true);
                 }
