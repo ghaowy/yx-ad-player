@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.imprexion.aiscreen.R;
+import com.imprexion.aiscreen.advertising.AdvertisingActivity;
 import com.imprexion.aiscreen.main.MainActivity;
 import com.imprexion.aiscreen.main.camera.CameraFragment;
 import com.imprexion.aiscreen.main.rainControl.RainControlFragment;
@@ -32,7 +33,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class GestureActivationFragment extends Fragment {
+public class GestureActivationFragment extends Fragment implements View.OnClickListener {
 
     @BindView(R.id.iv_elephant_enter)
     ImageView ivElephantEnter;
@@ -78,8 +79,6 @@ public class GestureActivationFragment extends Fragment {
     ImageView ivRightprint;
     @BindView(R.id.iv_injecting_water_tip)
     ImageView ivInjectingWaterTip;
-    @BindView(R.id.rl_advertising)
-    RelativeLayout rlAdvertising;
     @BindView(R.id.fl_fragment_gesture)
     FrameLayout flFragmentGesture;
 
@@ -405,6 +404,19 @@ public class GestureActivationFragment extends Fragment {
         animation.setDuration(duration);
         view.startAnimation(animation);
         view.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.rl_gesture:
+                startActivity(new Intent(getContext(), MainActivity.class));
+                ((AdvertisingActivity) getActivity()).removeGestureFragment();
+                break;
+            default:
+                break;
+        }
+
     }
 
     @Override

@@ -1,23 +1,27 @@
 package com.imprexion.aiscreen.advertising;
 
+import android.Manifest;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.imprexion.aiscreen.R;
+import com.imprexion.aiscreen.advertising.activation.GestureActivationFragment;
 import com.imprexion.aiscreen.bean.ContentPlay;
-import com.imprexion.aiscreen.main.MainActivity;
 import com.imprexion.aiscreen.tools.Tools;
 
 import java.util.ArrayList;
@@ -34,6 +38,8 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
     ImageView ivAd2;
     @BindView(R.id.rl_advertising)
     RelativeLayout rlAdvertising;
+    @BindView(R.id.fl_fragment)
+    FrameLayout flFragment;
 
     private List<String> mImges = new ArrayList<>();
     private String mAdpath = Environment.getExternalStorageDirectory() + "/imprexion_ad";
@@ -42,6 +48,7 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
     private Thread mThread;
     private final static int NEXT_AD = 1;
     private final static int NEXT_AD_2 = 2;
+    private final static int REMOVE_FRAGMENT = 3;
     private ObjectAnimator mAdEnterObjAnimator;
     private ObjectAnimator mAdExitObjAnimator;
     private ObjectAnimator mAdEnterObjAnimator_1;
@@ -60,13 +67,13 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            String[] picUrl = ((ContentPlay) msg.obj).getContentInfo().getContentUrl();
             super.handleMessage(msg);
             switch (msg.what) {
                 case NEXT_AD:
+                    mPicUrl = ((ContentPlay) msg.obj).getContentInfo().getContentUrl();
                     Glide.with(AdvertisingActivity.this)
 //                            .load(mAdpath + "/" + mImges.get(i++ % mImges.size()))
-                            .load(picUrl[0])
+                            .load(mPicUrl[0])
                             .into(ivAd);
                     mAnimatorSet.play(mAdEnterObjAnimator).with(mAdExitObjAnimator_1);
                     mAnimatorSet.setDuration(300);
@@ -74,6 +81,7 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
                     mAnimatorSet.start();
                     break;
                 case NEXT_AD_2:
+                    mPicUrl = ((ContentPlay) msg.obj).getContentInfo().getContentUrl();
                     Glide.with(AdvertisingActivity.this)
 //                            .load(mAdpath + "/" + mImges.get(i++ % mImges.size()))
                             .load(picUrl[0])
@@ -83,11 +91,20 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
                     mAnimatorSet_2.setInterpolator(new DecelerateInterpolator());
                     mAnimatorSet_2.start();
                     break;
+                case REMOVE_FRAGMENT:
+                    if (flFragment.getChildCount() != 0) {
+                        flFragment.removeAllViews();
+                        ivAd.setVisibility(View.VISIBLE);
+                        ivAd2.setVisibility(View.VISIBLE);
+                    }
+                    break;
                 default:
                     break;
             }
         }
     };
+    private boolean mIsRoundPlay = true;
+    private String[] mPicUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,15 +115,20 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
         mAdExitObjAnimator = ObjectAnimator.ofFloat(ivAd, "translationX", 0, -1080);
         mAdEnterObjAnimator_1 = ObjectAnimator.ofFloat(ivAd2, "translationX", 1080, 0);
         mAdExitObjAnimator_1 = ObjectAnimator.ofFloat(ivAd2, "translationX", 0, -1080);
-//        getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment, new GestureActivationFragment()).commitAllowingStateLoss();
         rlAdvertising.setOnClickListener(this);
         //test
-        initContentPlay();
+        initContentPlay(System.currentTimeMillis() / 1000);
         getImges();
-
+        getPermission();
     }
 
-    private void initContentPlay() {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        removeGestureFragment();
+    }
+
+    private void initContentPlay(long currentTime) {
         mContentPlayList = new ArrayList<>();
         mList.add(picUrl);
         mList.add(picUrl1);
@@ -119,7 +141,7 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
             contentInfo.setContent_priority(5);
             contentInfo.setContentUrl(mList.get(j % 3));
             mContentPlay.setContentInfo(contentInfo);
-            mContentPlay.setStart_time(1553667779 + j * 10);
+            mContentPlay.setStart_time((int) (currentTime + j * 2));
             mContentPlayList.add(mContentPlay);
         }
     }
@@ -141,6 +163,7 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
                     int i = 0;
                     int k = 0;
                     int size = mContentPlayList.size();
+                    Log.d(TAG, "mContentPlayList.size=" + size);
                     do {
                         mContentPlay = mContentPlayList.get(k++ % size);
                         startTime = mContentPlay.getStart_time();
@@ -151,7 +174,21 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        if (k > size) {
+                            k = 0;
+                            initContentPlay(System.currentTimeMillis() / 1000);
+                            do {
+                                mContentPlay = mContentPlayList.get(k++ % size);
+                                startTime = mContentPlay.getStart_time();
+                            } while (System.currentTimeMillis() / 1000 > startTime);
+                        }
                         Log.d(TAG, "System.currentTimeMillis()=" + System.currentTimeMillis() / 1000);
+                        Log.d(TAG, "startTime=" + startTime);
+                        Log.d(TAG, "k=" + k);
+                        while (System.currentTimeMillis() / 1000 > startTime) {
+                            Log.d(TAG, "System.currentTimeMillis()=" + System.currentTimeMillis() / 1000 + "> startTime=" + startTime);
+                            startTime++;
+                        }
                         isTimeToShowAd = System.currentTimeMillis() / 1000 == startTime ? true : false;
                         if (isTimeToShowAd) {
                             mMessage = mHandler.obtainMessage();
@@ -168,12 +205,11 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
                             startTime = mContentPlay.getStart_time();
                             isTimeToShowAd = false;
                         }
-                    } while (true);
+                    } while (mIsRoundPlay);
                 }
             });
             mThread.start();
         }
-
     }
 
     @Override
@@ -189,10 +225,45 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rl_advertising:
-                startActivity(new Intent(this, MainActivity.class));
+                if (flFragment.getChildCount() == 0) {
+                    getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment, new GestureActivationFragment()).commitAllowingStateLoss();
+                    ivAd.setVisibility(View.INVISIBLE);
+                    ivAd2.setVisibility(View.INVISIBLE);
+                }
+//                startActivity(new Intent(this, MainActivity.class));
                 break;
             default:
                 break;
+        }
+
+    }
+
+    public void removeGestureFragment() {
+        Message message = mHandler.obtainMessage();
+        message.what = REMOVE_FRAGMENT;
+        mHandler.sendMessageDelayed(message,100);
+    }
+
+    private void getPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA}, 1);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
     }
 }

@@ -62,9 +62,13 @@ public class CameraTools {
     public Camera getCameraInstance() {
         try {
             if (mCamera == null) {
-                findFrontFacingCamera();
-                mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-                cameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
+                synchronized (CameraTools.class) {
+                    if (mCamera == null) {
+                        findFrontFacingCamera();
+                        mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+                        cameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

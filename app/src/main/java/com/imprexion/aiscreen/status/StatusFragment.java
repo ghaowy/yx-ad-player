@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 import com.imprexion.aiscreen.R;
 import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.bean.WeatherInfo;
+import com.imprexion.aiscreen.component.BaiDuLocation;
 import com.imprexion.aiscreen.net.NetContract;
 import com.imprexion.aiscreen.net.NetPresenter;
 import com.imprexion.aiscreen.tools.IconFontTextView;
@@ -38,6 +39,8 @@ public class StatusFragment extends Fragment implements NetContract.StatusView {
     TextView tvWeather;
     @BindView(R.id.tv_weather_icon)
     IconFontTextView tvWeatherIcon;
+    @BindView(R.id.tv_destination_text)
+    TextView tvDestinationText;
     private View mView;
     private Unbinder mUnbinder;
     public final static int UPDATE_WEATHER = 1;
@@ -67,6 +70,7 @@ public class StatusFragment extends Fragment implements NetContract.StatusView {
             }
         }
     };
+    private BaiDuLocation mBdLocation;
 
 
     @Nullable
@@ -118,9 +122,23 @@ public class StatusFragment extends Fragment implements NetContract.StatusView {
             mNetPresenter = new NetPresenter(this);
         }
 
-        if (Tools.isNetworkConnected(getContext())) {
-            mNetPresenter.updateWeather();
-        }
+        requestWeather();
+
+    }
+
+    private void requestWeather() {
+        mBdLocation = new BaiDuLocation();
+        mBdLocation.setLocationUpdateListener(new BaiDuLocation.LocationUpdateListener() {
+            @Override
+            public void updateLoaction(String city, String address) {
+                Log.d(TAG, "address =" + address);
+                if (Tools.isNetworkConnected(getContext())) {
+                    mNetPresenter.updateWeather(city);
+                }
+                tvDestinationText.setText(address);
+            }
+        });
+        mBdLocation.initLocationOption();
     }
 
     @Override

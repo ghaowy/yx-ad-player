@@ -214,7 +214,7 @@ public class AdActivity extends AppCompatActivity implements NetContract.StatusV
         }
 
         if (Tools.isNetworkConnected(this)) {
-            mAdPresenter.updateWeather();
+            mAdPresenter.updateWeather(null);
         }
     }
 
