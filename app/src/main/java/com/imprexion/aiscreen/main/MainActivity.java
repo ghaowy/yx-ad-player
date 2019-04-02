@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -15,16 +17,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.imprexion.aiscreen.ContentInfo;
 import com.imprexion.aiscreen.R;
+import com.imprexion.aiscreen.advertising.AdSecondActivity;
+import com.imprexion.aiscreen.advertising.AdvertisingActivity;
 import com.imprexion.aiscreen.bean.EventBusMessage;
+import com.imprexion.aiscreen.bean.MessageForAIScreenPB;
 import com.imprexion.aiscreen.functionPart.WebViewActivity;
 import com.imprexion.aiscreen.service.AISService;
+import com.imprexion.aiscreen.service.TcpClientConnector;
 import com.imprexion.aiscreen.status.StatusFragment;
 import com.imprexion.aiscreen.tools.ScreenUtils;
 import com.imprexion.aiscreen.tools.Tools;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -38,17 +46,9 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 
     @BindView(R.id.rl_status)
     RelativeLayout rlStatus;
-    //    @BindView(R.id.fl_back)
-//    FrameLayout flBack;
     @BindView(R.id.rl_main)
     RelativeLayout rlMain;
-    //    @BindView(R.id.rv_1)
-//    RippleView rv1;
-//    @BindView(R.id.rv_2)
-//    RippleView rv2;
-//    @BindView(R.id.rv_3)
-//    RippleView rv3;
-//    @BindView(R.id.lav)
+    //    @BindView(R.id.lav)
 //    LottieAnimationView lav;
     @BindView(R.id.iv_navigation)
     ImageView ivNavigation;
@@ -64,10 +64,28 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     ImageView ivEmojidancer;
     private static final String TAG = "MainActivity";
     private static final String URL = "http://172.16.2.207:5000/";
+    private static final int NO_PERSON = 0;
+    private static final int MAIN_PAGE = 100;
+    private static final int AD_PAGE = 101;
+    private int currentPage = 100;//100:MainActivity;101:Ad;
+    @BindView(R.id.tv_wavehands)
+    TextView tvWavehands;
     private StatusFragment mStatusFragment;
-    private boolean bgFlag = true;
     private int ZOOM_WIDTH;
     private int ZOOM_HEIGHT;
+    private ServiceConnection mConnection;
+    private TcpClientConnector mTcpClientConnector = TcpClientConnector.getInstance();
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case NO_PERSON:
+
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,15 +130,45 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     protected void onResume() {
         super.onResume();
         Tools.hideNavigationBarStatusBar(this, true);
-//        ScreenUtils.setNavigationListener(rlMain, this);
-//        rv1.startSpread();
-//        rv2.startSpread();
-//        rv3.startSpread();
         bindAISService();
+        setSocketListener();
+        //test
+        tvWavehands.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, AdSecondActivity.class));
+            }
+        });
+    }
+
+    private void setSocketListener() {
+        mTcpClientConnector.setOnConnectListener(new TcpClientConnector.ConnectListener() {
+            @Override
+            public void onReceiveData(MessageForAIScreenPB.MessageForAIScreen messageForAIScreen) {
+                String mData = "sex=" + messageForAIScreen.getUsrsex() + " ;HavePerson=" + messageForAIScreen.getStandHere() + " ;IsActived=" + messageForAIScreen.getIsActived();
+                Log.d(TAG, "sex=" + messageForAIScreen.getUsrsex());
+                Log.d(TAG, "HavePerson=" + messageForAIScreen.getStandHere());
+                Log.d(TAG, "IsActived=" + messageForAIScreen.getIsActived());
+                dispatchMessage(messageForAIScreen);
+            }
+        });
+    }
+
+    private void dispatchMessage(MessageForAIScreenPB.MessageForAIScreen messageForAIScreen) {
+        int usrsex = messageForAIScreen.getUsrsex();
+        boolean standHere = messageForAIScreen.getStandHere();
+        boolean isActived = messageForAIScreen.getIsActived();
+        if (usrsex == 0 && currentPage == MAIN_PAGE) {
+            currentPage = AD_PAGE;
+            Message message = mHandler.obtainMessage();
+            message.what = NO_PERSON;
+            mHandler.sendMessageDelayed(message, 200);
+        }
+//        EventBus.getDefault().post(new EventBusMessage(EventBusMessage.STANDHERE, standHere));
     }
 
     private void bindAISService() {
-        ServiceConnection connection = new ServiceConnection() {
+        mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 AISService.AISBinder aisBinder = (AISService.AISBinder) service;
@@ -139,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         };
         Intent intent = new Intent(this, AISService.class);
         intent.putExtra("src", 0);
-        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
     }
 
@@ -237,5 +285,11 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateBgByTime(EventBusMessage eventBusMessage) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mConnection);
     }
 }

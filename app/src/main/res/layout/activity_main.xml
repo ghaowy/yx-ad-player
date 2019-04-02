@@ -50,13 +50,13 @@
         android:layout_marginStart="@dimen/title_margin_start"
         android:layout_marginTop="20px"
         android:gravity="center"
+        android:shadowColor="@color/black_color_75"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="5"
         android:text="@string/title_1"
         android:textColor="@color/white"
-        android:textSize="@dimen/title_text_size"
-        android:shadowColor="@color/black_color_75"
-        android:shadowRadius="5"
-        android:shadowDx="2"
-        android:shadowDy="2"/>
+        android:textSize="@dimen/title_text_size" />
 
     <RelativeLayout
         android:id="@+id/rl_park"
@@ -83,13 +83,13 @@
         android:layout_marginStart="@dimen/title_margin_start"
         android:layout_marginTop="20px"
         android:gravity="center"
+        android:shadowColor="@color/black_color_75"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="5"
         android:text="@string/title_3"
         android:textColor="@color/white"
-        android:textSize="@dimen/title_text_size"
-        android:shadowColor="@color/black_color_75"
-        android:shadowRadius="5"
-        android:shadowDx="2"
-        android:shadowDy="2" />
+        android:textSize="@dimen/title_text_size" />
 
     <RelativeLayout
         android:id="@+id/rl_membership"
@@ -116,13 +116,13 @@
         android:layout_marginStart="@dimen/title_margin_start"
         android:layout_marginTop="20px"
         android:gravity="center"
+        android:shadowColor="@color/black_color_75"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="5"
         android:text="@string/title_5"
         android:textColor="@color/white"
-        android:textSize="@dimen/title_text_size"
-        android:shadowColor="@color/black_color_75"
-        android:shadowRadius="5"
-        android:shadowDx="2"
-        android:shadowDy="2" />
+        android:textSize="@dimen/title_text_size" />
 
     <RelativeLayout
         android:id="@+id/rl_promotion"
@@ -148,13 +148,13 @@
         android:layout_marginStart="@dimen/title_margin_start_2"
         android:layout_marginTop="20px"
         android:gravity="center"
+        android:shadowColor="@color/black_color_75"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="5"
         android:text="@string/title_2"
         android:textColor="@color/white"
-        android:textSize="@dimen/title_text_size"
-        android:shadowColor="@color/black_color_75"
-        android:shadowRadius="5"
-        android:shadowDx="2"
-        android:shadowDy="2" />
+        android:textSize="@dimen/title_text_size" />
 
     <RelativeLayout
         android:id="@+id/rl_lottery"
@@ -181,13 +181,13 @@
         android:layout_marginStart="@dimen/title_margin_start_2"
         android:layout_marginTop="20px"
         android:gravity="center"
+        android:shadowColor="@color/black_color_75"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="5"
         android:text="@string/title_4"
         android:textColor="@color/white"
-        android:textSize="@dimen/title_text_size"
-        android:shadowColor="@color/black_color_75"
-        android:shadowRadius="5"
-        android:shadowDx="2"
-        android:shadowDy="2" />
+        android:textSize="@dimen/title_text_size" />
 
     <RelativeLayout
         android:id="@+id/rl_emojidancer"
@@ -214,13 +214,13 @@
         android:layout_marginStart="@dimen/title_margin_start_2"
         android:layout_marginTop="20px"
         android:gravity="center"
+        android:shadowColor="@color/black_color_75"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="5"
         android:text="@string/title_6"
         android:textColor="@color/white"
-        android:textSize="@dimen/title_text_size"
-        android:shadowColor="@color/black_color_75"
-        android:shadowRadius="5"
-        android:shadowDx="2"
-        android:shadowDy="2" />
+        android:textSize="@dimen/title_text_size" />
 
     <RelativeLayout
         android:id="@+id/rl_status"
@@ -297,25 +297,27 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="93px">
+
         <fragment
             android:id="@+id/hand_rock_fragment"
+            android:name="com.imprexion.aiscreen.main.HandRockFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:name="com.imprexion.aiscreen.main.HandRockFragment"/>
+            android:layout_height="match_parent" />
     </RelativeLayout>
 
     <TextView
+        android:id="@+id/tv_wavehands"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hand_rock_hint"
-        android:textSize="@dimen/text_size"
-        android:background="@drawable/hand_rock_text_bg"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="40px"
-        android:paddingTop="10px"
-        android:paddingBottom="10px"
+        android:background="@drawable/hand_rock_text_bg"
         android:paddingStart="20px"
+        android:paddingTop="10px"
         android:paddingEnd="20px"
-        android:textColor="@color/white"/>
+        android:paddingBottom="10px"
+        android:text="@string/hand_rock_hint"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size" />
 </RelativeLayout>

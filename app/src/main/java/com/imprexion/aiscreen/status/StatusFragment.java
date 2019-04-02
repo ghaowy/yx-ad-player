@@ -79,6 +79,8 @@ public class StatusFragment extends Fragment implements NetContract.StatusView {
 
         mView = inflater.inflate(R.layout.fragment_status, container, false);
         mUnbinder = ButterKnife.bind(this, mView);
+        tempretures = getResources().getStringArray(R.array.tempretures);
+        weatherIcon = getContext().getResources().getStringArray(R.array.weather_icon);
         return mView;
     }
 
@@ -143,8 +145,6 @@ public class StatusFragment extends Fragment implements NetContract.StatusView {
 
     @Override
     public void updateWeather(WeatherInfo weatherInfo) {
-        tempretures = getResources().getStringArray(R.array.tempretures);
-        weatherIcon = getContext().getResources().getStringArray(R.array.weather_icon);
         WeatherInfo.HeWeather6 heWeather6 = weatherInfo.getHeWeather6().get(0);
         Log.d(TAG, "heWeather6=" + new Gson().toJson(heWeather6));
         String status = heWeather6.getStatus();

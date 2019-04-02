@@ -22,6 +22,11 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
+import com.imprexion.aiscreen.advertising.AdvertisingActivity;
+import com.imprexion.aiscreen.base.AISApplication;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -103,6 +108,12 @@ public class Tools {
             }
         }
         return false;
+    }
+
+    public static void showPicWithGlide(ImageView imageView, String url) {
+        Glide.with(AISApplication.getInstance().getApplicationContext())
+                .load(url)
+                .into(imageView);
     }
 
 }

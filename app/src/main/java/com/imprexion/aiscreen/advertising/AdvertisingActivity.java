@@ -22,7 +22,12 @@ import com.bumptech.glide.Glide;
 import com.imprexion.aiscreen.R;
 import com.imprexion.aiscreen.advertising.activation.GestureActivationFragment;
 import com.imprexion.aiscreen.bean.ContentPlay;
+import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.tools.Tools;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,12 +110,15 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
     };
     private boolean mIsRoundPlay = true;
     private String[] mPicUrl;
+    private GestureActivationFragment mGestureActivationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_advertising);
         ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
+        mGestureActivationFragment = new GestureActivationFragment();
         mAdEnterObjAnimator = ObjectAnimator.ofFloat(ivAd, "translationX", 1080, 0);
         mAdExitObjAnimator = ObjectAnimator.ofFloat(ivAd, "translationX", 0, -1080);
         mAdEnterObjAnimator_1 = ObjectAnimator.ofFloat(ivAd2, "translationX", 1080, 0);
@@ -182,9 +190,9 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
                                 startTime = mContentPlay.getStart_time();
                             } while (System.currentTimeMillis() / 1000 > startTime);
                         }
-                        Log.d(TAG, "System.currentTimeMillis()=" + System.currentTimeMillis() / 1000);
-                        Log.d(TAG, "startTime=" + startTime);
-                        Log.d(TAG, "k=" + k);
+//                        Log.d(TAG, "System.currentTimeMillis()=" + System.currentTimeMillis() / 1000);
+//                        Log.d(TAG, "startTime=" + startTime);
+//                        Log.d(TAG, "k=" + k);
                         while (System.currentTimeMillis() / 1000 > startTime) {
                             Log.d(TAG, "System.currentTimeMillis()=" + System.currentTimeMillis() / 1000 + "> startTime=" + startTime);
                             startTime++;
@@ -215,7 +223,7 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        EventBus.getDefault().unregister(this);
 //        if (mThread.isAlive()) {
 //            mThread.destroy();
 //        }
@@ -226,7 +234,8 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
         switch (v.getId()) {
             case R.id.rl_advertising:
                 if (flFragment.getChildCount() == 0) {
-                    getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment, new GestureActivationFragment()).commitAllowingStateLoss();
+                    mGestureActivationFragment = new GestureActivationFragment();
+                    getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment, mGestureActivationFragment).commitAllowingStateLoss();
                     ivAd.setVisibility(View.INVISIBLE);
                     ivAd2.setVisibility(View.INVISIBLE);
                 }
@@ -242,6 +251,11 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
         Message message = mHandler.obtainMessage();
         message.what = REMOVE_FRAGMENT;
         mHandler.sendMessageDelayed(message,100);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onShowMessageEvent(EventBusMessage message){
+
     }
 
     private void getPermission() {

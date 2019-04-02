@@ -9,6 +9,7 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.MainThread;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,9 +26,14 @@ import android.widget.TextView;
 
 import com.imprexion.aiscreen.R;
 import com.imprexion.aiscreen.advertising.AdvertisingActivity;
+import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.main.MainActivity;
 import com.imprexion.aiscreen.main.camera.CameraFragment;
 import com.imprexion.aiscreen.main.rainControl.RainControlFragment;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -109,6 +115,8 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     private final static int INJECTED_WATER_FADE_OUT = 16;
     private final static int ADD_CAMERE = 17;
     private final static int ADD_RAIN = 18;
+    private boolean isResume;
+    private boolean isStandHere;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -164,9 +172,16 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
 
     private void startRotateFootprint() {
         if (!mFootprintRotateObjAnimator.isRunning()) {
-            mFootprintRotateObjAnimator.setRepeatCount(ObjectAnimator.INFINITE);
+            mFootprintRotateObjAnimator.setRepeatCount(5);
             mFootprintRotateObjAnimator.setDuration(1500);
             mFootprintRotateObjAnimator.start();
+            mFootprintRotateObjAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    nextAfterStandRight();
+                }
+            });
         }
     }
 
@@ -176,6 +191,7 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
 //        super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_gesture_activation, container, false);
         mUnbinder = ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
         mEEnterObjAnimator = ObjectAnimator.ofFloat(ivElephantEnter, "translationX", 400, 0);
         mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, 400);
         mFootprintRotateObjAnimator = ObjectAnimator.ofFloat(rlFootprint, "rotationX", 0, 30, 0);
@@ -195,6 +211,7 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     @Override
     public void onResume() {
         super.onResume();
+        isResume = true;
         if (flFragmentGesture.getChildCount() == 0) {
             mMessage = mHandler.obtainMessage();
             mMessage.what = ADD_CAMERE;
@@ -245,6 +262,7 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
                     mEEnterObjAnimator.cancel();
                     mETipEnterObjAnimator.cancel();
                     mFloorEnterObjAnimator.cancel();
+                    tvGuideTip1.setText(getString(R.string.guide_tips_1));
                     startElephantStopAnimation();
                 }
             });
@@ -254,23 +272,21 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     private void startElephantStopAnimation() {
         ivElephantEnter.setVisibility(View.INVISIBLE);
         ivElephantStop.setVisibility(View.VISIBLE);
-        tvGuideTip1.setText(getString(R.string.guide_tips_1));
         if (!mElephantStopAnimation.isRunning()) {
             mElephantStopAnimation.start();
-            ivElephantStop.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    startElephantExitAnimation();
-                }
-            }, 12000);
         }
+//        nextAfterStandRight();
+
+    }
+
+    private void nextAfterStandRight() {
         tvGuideTip1.postDelayed(new Runnable() {
             @Override
             public void run() {
                 tvGuideTip1.setText(getString(R.string.guide_tips_2));
                 showFullFootprint();
             }
-        }, 4000);
+        }, 500);
         tvGuideTip1.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -278,8 +294,13 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
                 hideFullFootprint();
                 startInjectWaterAnimation();
             }
-        }, 7000);
-
+        }, 1500);
+        ivElephantStop.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startElephantExitAnimation();
+            }
+        }, 5500);//此处提示摇手3000ms+注水的一半时间1000ms =4000ms，后开始退出动画
     }
 
     private void startElephantExitAnimation() {
@@ -371,7 +392,11 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     private void startInjectWaterAnimation() {
         fadeIn(ivInjectWaterTip);
         mInjectWaterAnimation.start();
+        //test
+        waveActiveSucess();
+    }
 
+    private void waveActiveSucess() {
         //接收信号执行注水ing动画
         mMessage = mHandler.obtainMessage();
         mMessage.what = INJECT_WATER;
@@ -422,6 +447,7 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     @Override
     public void onPause() {
         super.onPause();
+        isResume = false;
 //        onDestroy();
         if (mElephantEnterAnimation.isRunning()) {
             mElephantEnterAnimation.stop();
@@ -462,9 +488,18 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageShowEvent(EventBusMessage message) {
+        if (isResume && message.getType() == EventBusMessage.STANDHERE) {
+            isStandHere = (boolean) message.getObject();
+        }
+
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         mUnbinder.unbind();
+        EventBus.getDefault().unregister(this);
     }
 }
