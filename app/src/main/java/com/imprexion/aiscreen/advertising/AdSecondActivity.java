@@ -1,6 +1,8 @@
 package com.imprexion.aiscreen.advertising;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -15,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,17 +32,32 @@ public class AdSecondActivity extends AppCompatActivity {
     private String picUrl1 = "https://cn.bing.com/sa/simg/hpb/NorthMale_EN-US8782628354_1366x768.jpg";
     private String picUrl2 = "https://cn.bing.com/th?id=OHR.AthensNight_ZH-CN1280970241_1920x1080.jpg&rf=NorthMale_1920x1080.jpg";
 
-    private String[] pics = {picUrl, picUrl1, picUrl2};
+    private String[] pics = {picUrl, picUrl1, picUrl2, picUrl};
 
     private List<Fragment> mFragmentList;
     private FragmentPagerAdapter mFragmentPagerAdapter;
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
-    private int i;
+    private int mPagerPage;
     private ExecutorService mExecutorService;
     private final static String TAG = "AdSecondActivity";
+    private final static int PLAY_NEXT = 1;
     private boolean isPlay = true;
     private int mCurrentPosition;
     private int mSize;
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case PLAY_NEXT:
+                    viewPager.setCurrentItem(mPagerPage++ % mSize);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
 
     @Override
@@ -60,11 +76,11 @@ public class AdSecondActivity extends AppCompatActivity {
             ((AdContentImageFragment) fragment).setUrl(pics[i]);
             mFragmentList.add(fragment);
         }
-//        Fragment fragment = new AdContentImageFragment();
-//        ((AdContentImageFragment) fragment).setUrl(pics[0]);
-//        mFragmentList.add(fragment);
+        Fragment fragment = new AdContentImageFragment();
+        ((AdContentImageFragment) fragment).setUrl(pics[0]);
+        mFragmentList.add(fragment);
 //        mFragmentList.add(mFragmentList.get(0));
-//        mSize = mFragmentList.size();
+        mSize = mFragmentList.size();
 
 
     }
@@ -76,14 +92,17 @@ public class AdSecondActivity extends AppCompatActivity {
         btnChangeVp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewPager.setCurrentItem(i++ % 3);
+                viewPager.setCurrentItem(mPagerPage++ % 3);
             }
         });
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 do {
-                    viewPager.setCurrentItem(i++ % 3);
+//                    viewPager.setCurrentItem(mPagerPage++ % 3);
+                    Message message = mHandler.obtainMessage();
+                    message.what = PLAY_NEXT;
+                    mHandler.sendMessage(message);
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e) {
@@ -122,17 +141,19 @@ public class AdSecondActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int i) {
-//                if (i == ViewPager.SCROLL_STATE_IDLE) {
-//                    return;
-//                }
-//                if (mCurrentPosition == mSize - 1) {
-//                    viewPager.setCurrentItem(0, false);
-//                }
+                if (i != ViewPager.SCROLL_STATE_IDLE) {
+                    return;
+                }
+                if (mCurrentPosition == mSize - 1) {
+                    Log.d(TAG, "last->first");
+                    viewPager.setCurrentItem(0, false);
+                    mPagerPage++;
+                }
 
             }
         };
         viewPager.setAdapter(mFragmentPagerAdapter);
-//        viewPager.setOnPageChangeListener(mOnPageChangeListener);
+        viewPager.setOnPageChangeListener(mOnPageChangeListener);
         viewPager.setOffscreenPageLimit(2);
 
     }
