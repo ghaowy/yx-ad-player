@@ -1,4 +1,4 @@
-package com.imprexion.aiscreen.advertising;
+package com.imprexion.aiscreen.advertising.content;
 
 
 import android.os.Bundle;

@@ -21,7 +21,7 @@ public class TcpClientConnector {
     private final static int RECEIVE_DATA = 100;
     private final static String TAG = "TcpClientConnector";
 
-    //10.2.26.181 23333
+    //10.2.26.181 20002
 
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override

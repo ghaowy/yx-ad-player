@@ -1,5 +1,7 @@
 package com.imprexion.aiscreen.advertising;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,6 +14,8 @@ import android.view.View;
 import android.widget.Button;
 
 import com.imprexion.aiscreen.R;
+import com.imprexion.aiscreen.advertising.content.AdContentImageFragment;
+import com.imprexion.aiscreen.advertising.content.CameraRainFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +48,9 @@ public class AdSecondActivity extends AppCompatActivity {
     private boolean isPlay = true;
     private int mCurrentPosition;
     private int mSize;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
+    private int mCurrentPage;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -51,7 +58,8 @@ public class AdSecondActivity extends AppCompatActivity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case PLAY_NEXT:
-                    viewPager.setCurrentItem(mPagerPage++ % mSize);
+                    mCurrentPage = mPagerPage++ % mSize;
+                    viewPager.setCurrentItem(mCurrentPage);
                     break;
                 default:
                     break;
@@ -69,6 +77,8 @@ public class AdSecondActivity extends AppCompatActivity {
     }
 
     private void initData() {
+        mSharedPreferences = getSharedPreferences("AIScreenSP", Context.MODE_PRIVATE);
+        mEditor = mSharedPreferences.edit();
         mExecutorService = Executors.newSingleThreadExecutor();
         mFragmentList = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
@@ -76,7 +86,9 @@ public class AdSecondActivity extends AppCompatActivity {
             ((AdContentImageFragment) fragment).setUrl(pics[i]);
             mFragmentList.add(fragment);
         }
-        Fragment fragment = new AdContentImageFragment();
+        Fragment fragment = new CameraRainFragment();
+        mFragmentList.add(fragment);
+        fragment = new AdContentImageFragment();
         ((AdContentImageFragment) fragment).setUrl(pics[0]);
         mFragmentList.add(fragment);
 //        mFragmentList.add(mFragmentList.get(0));
@@ -89,6 +101,9 @@ public class AdSecondActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         initViewPager();
+        mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
+        Log.d(TAG, "mCurrentPage=" + mPagerPage);
+        isPlay = true;
         btnChangeVp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -159,10 +174,16 @@ public class AdSecondActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        isPlay = false;
+        mEditor.putInt("mCurrentPage", mCurrentPage);
+        mEditor.commit();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        isPlay = false;
 //        mExecutorService.shutdown();
     }
 }
