@@ -1,0 +1,3 @@
+[submodule "trackingproto"]
+	path = trackingproto
+	url = https://gitlab.com/imprexionData/android/protobuf/trackingproto.git

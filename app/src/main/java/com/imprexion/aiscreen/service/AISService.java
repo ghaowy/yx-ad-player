@@ -34,9 +34,11 @@ public class AISService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
-        if ("com.imprexion.push.MESSAGE".equals(intent.getAction())) {
+        if (intent.getAction() != null && "com.imprexion.push.MESSAGE".equals(intent.getAction())) {
             String data = intent.getExtras().getString("data");
             Toast.makeText(this, "MyService received Msg: " + data, Toast.LENGTH_LONG).show();
+            Log.d(TAG, "content=" + data);
+            mIContentInfoCallBack.setContentInfo(data);
         }
         return super.onStartCommand(intent, flags, startId);
     }
@@ -44,7 +46,7 @@ public class AISService extends Service {
     IAISAidlInterface.Stub mAISServer = new IAISAidlInterface.Stub() {
         @Override
         public void receiveContentInfoByServer(ContentInfo contentInfo) throws RemoteException {
-            mIContentInfoCallBack.setContentInfo(contentInfo);
+            mIContentInfoCallBack.setContentInfo(contentInfo.toString());
         }
     };
 
@@ -53,7 +55,7 @@ public class AISService extends Service {
     }
 
     public interface IContentInfoCallBack {
-        void setContentInfo(ContentInfo contentInfo);
+        void setContentInfo(String content);
     }
 
     public class AISBinder extends Binder {

@@ -2,6 +2,7 @@ package com.imprexion.aiscreen.bean;
 
 public class EventBusMessage {
     public static final int STANDHERE = 200;
+    public static final int AD_PLAY_CONTENT = 201;
 
     private int type;
     private Object mObject;

@@ -12,10 +12,14 @@
 
     </android.support.v4.view.ViewPager>
 
-    <Button
-        android:id="@+id/btn_change_vp"
+    <FrameLayout
+        android:id="@+id/fl_gestureActive"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:text="vp切换图片" />
+        android:layout_height="match_parent"/>
 
+    <fragment
+        android:id="@+id/ad2_status_frgament"
+        android:name="com.imprexion.aiscreen.status.StatusFragment"
+        android:layout_width="match_parent"
+        android:layout_height="50px" />
 </RelativeLayout>

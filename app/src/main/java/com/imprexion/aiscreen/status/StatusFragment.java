@@ -137,7 +137,9 @@ public class StatusFragment extends Fragment implements NetContract.StatusView {
                 if (Tools.isNetworkConnected(getContext())) {
                     mNetPresenter.updateWeather(city);
                 }
-                tvDestinationText.setText(address);
+                if (!address.equals("nullnull")) {
+                    tvDestinationText.setText(address);
+                }
             }
         });
         mBdLocation.initLocationOption();

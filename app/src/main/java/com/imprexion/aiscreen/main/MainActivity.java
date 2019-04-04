@@ -19,10 +19,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.imprexion.aiscreen.ContentInfo;
+import com.airbnb.lottie.LottieAnimationView;
 import com.imprexion.aiscreen.R;
 import com.imprexion.aiscreen.advertising.AdSecondActivity;
-import com.imprexion.aiscreen.advertising.AdvertisingActivity;
 import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.bean.MessageForAIScreenPB;
 import com.imprexion.aiscreen.functionPart.WebViewActivity;
@@ -48,8 +47,8 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     RelativeLayout rlStatus;
     @BindView(R.id.rl_main)
     RelativeLayout rlMain;
-    //    @BindView(R.id.lav)
-//    LottieAnimationView lav;
+    @BindView(R.id.lav)
+    LottieAnimationView lav;
     @BindView(R.id.iv_navigation)
     ImageView ivNavigation;
     @BindView(R.id.iv_park)
@@ -132,6 +131,9 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         Tools.hideNavigationBarStatusBar(this, true);
         bindAISService();
         setSocketListener();
+        lav.setImageAssetsFolder("imagesGohomeDay");
+        lav.setAnimation("gohome_day_json.json");
+        lav.playAnimation();
         //test
         tvWavehands.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,8 +176,8 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 AISService.AISBinder aisBinder = (AISService.AISBinder) service;
                 aisBinder.getService().setContentInfoToActivity(new AISService.IContentInfoCallBack() {
                     @Override
-                    public void setContentInfo(ContentInfo contentInfo) {
-                        pushMessage(contentInfo);
+                    public void setContentInfo(String content) {
+                        pushMessage(content);
                     }
                 });
             }
@@ -191,8 +193,10 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 
     }
 
-    private void pushMessage(ContentInfo contentInfo) {
-        Log.d(TAG, "ContentInfo=" + contentInfo.toString());
+    private void pushMessage(String content) {
+        Log.d(TAG, "ContentInfo=" + content);
+        EventBusMessage eventBusMessage = new EventBusMessage(EventBusMessage.AD_PLAY_CONTENT,content);
+        EventBus.getDefault().post(eventBusMessage);
     }
 
     @Override

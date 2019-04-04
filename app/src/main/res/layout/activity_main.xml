@@ -7,24 +7,24 @@
     android:layout_height="match_parent"
     tools:context=".main.MainActivity">
 
-    <!--<com.airbnb.lottie.LottieAnimationView-->
-    <!--android:id="@+id/lav"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--app:lottie_autoPlay="true"-->
-    <!--app:lottie_loop="true" />-->
-
-    <fragment
-        android:id="@+id/camera_fragment"
-        android:name="com.imprexion.aiscreen.main.camera.CameraFragment"
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lav"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true" />
 
-    <fragment
-        android:id="@+id/rainView_fragment"
-        android:name="com.imprexion.aiscreen.main.rainControl.RainControlFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <!--<fragment-->
+        <!--android:id="@+id/camera_fragment"-->
+        <!--android:name="com.imprexion.aiscreen.main.camera.CameraFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+
+    <!--<fragment-->
+        <!--android:id="@+id/rainView_fragment"-->
+        <!--android:name="com.imprexion.aiscreen.main.rainControl.RainControlFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
 
     <RelativeLayout
         android:id="@+id/rl_navigation"
