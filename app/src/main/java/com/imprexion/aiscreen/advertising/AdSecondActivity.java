@@ -11,7 +11,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.View;
 import android.widget.Button;
 
@@ -23,6 +23,7 @@ import com.imprexion.aiscreen.advertising.content.CameraRainFragment;
 import com.imprexion.aiscreen.bean.ADContentInfo;
 import com.imprexion.aiscreen.bean.ADContentPlay;
 import com.imprexion.aiscreen.bean.EventBusMessage;
+import com.imprexion.aiscreen.main.MainActivity;
 import com.imprexion.aiscreen.tools.Tools;
 
 import org.greenrobot.eventbus.EventBus;
@@ -68,7 +69,6 @@ public class AdSecondActivity extends AppCompatActivity {
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
     private int mCurrentPage;
-    private static final String AD_SUFFIX = "ADContent";
 
     private Handler mHandler = new Handler() {
         @Override
@@ -106,9 +106,9 @@ public class AdSecondActivity extends AppCompatActivity {
             mFragmentList = new ArrayList<>();
         }
 //        ADContentPlay adContentPlay = JSON.parseObject(getString("adJson.text", this), ADContentPlay.class);
-        String adContentPlayString = mSharedPreferences.getString(getCurrentDate() + AD_SUFFIX, null);
+        String adContentPlayString = mSharedPreferences.getString(Tools.getCurrentDate("yyyy-MM-dd") + MainActivity.AD_SUFFIX, null);
         if (adContentPlayString == null) {
-            Log.d(TAG, "adContentPlayString is null");
+            ALog.d(TAG, "adContentPlayString is null");
             return;
         }
         ADContentPlay adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
@@ -150,7 +150,7 @@ public class AdSecondActivity extends AppCompatActivity {
         Tools.hideNavigationBarStatusBar(this, true);
         initViewPager();
         mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
-        Log.d(TAG, "mCurrentPage=" + mPagerPage);
+        ALog.d(TAG, "mCurrentPage=" + mPagerPage);
         isPlay = true;
         Runnable runnable = new Runnable() {
             @Override
@@ -165,7 +165,7 @@ public class AdSecondActivity extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    Log.d(TAG, "runnable next,playTime = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime());
+                    ALog.d(TAG, "runnable next,playTime = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime());
                 } while (isPlay);
             }
         };
@@ -206,7 +206,7 @@ public class AdSecondActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int i) {
-                Log.d(TAG, "onPageSelected=" + i);
+                ALog.d(TAG, "onPageSelected=" + i);
                 mCurrentPosition = i;
             }
 
@@ -216,7 +216,7 @@ public class AdSecondActivity extends AppCompatActivity {
                     return;
                 }
                 if (mCurrentPosition == mSize - 1) {
-                    Log.d(TAG, "last->first");
+                    ALog.d(TAG, "last->first");
                     viewPager.setCurrentItem(0, false);
                     mPagerPage++;
                 }
@@ -258,39 +258,19 @@ public class AdSecondActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d(TAG, "ADjson=" + stringBuilder.toString());
+        ALog.d(TAG, "ADjson=" + stringBuilder.toString());
         return stringBuilder.toString();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onShowAdPlayContent(EventBusMessage eventBusMessage) {
         if (eventBusMessage.getType() == EventBusMessage.AD_PLAY_CONTENT) {
-            String adPlayContent = (String) eventBusMessage.getObject();
-            Log.d(TAG, "adPlayContent=" + adPlayContent);
-            ADContentPlay adContentPlay = JSON.parseObject(adPlayContent, ADContentPlay.class);
-            if (mSharedPreferences == null) {
-                mSharedPreferences = getSharedPreferences("AIScreenSP", Context.MODE_PRIVATE);
-                mEditor = mSharedPreferences.edit();
-            }
-            mEditor.putString(adContentPlay.getPlayDate() + AD_SUFFIX, adPlayContent);
-            Log.d(TAG, "adContentPlay.getPlayDate()=" + adContentPlay.getPlayDate());
-            Log.d(TAG, "getCurrentDate()=" + getCurrentDate());
-            mEditor.commit();
-            if (adContentPlay.getPlayDate().equals(getCurrentDate())) {
+            ADContentPlay adContentPlay = (ADContentPlay) eventBusMessage.getObject();
+            if (adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
                 initData();
 //                viewPager.notifyAll();
                 mFragmentStatePagerAdapter.notifyDataSetChanged();
             }
         }
     }
-
-    private String getCurrentDate() {
-        long time = System.currentTimeMillis();
-        Date date = new Date(time);
-        String pattern = "yyyy-MM-dd";//格式yy-MM
-        String currentDate = new SimpleDateFormat(pattern, Locale.getDefault()).format(date);
-        Log.d(TAG, "currentDate=" + currentDate);
-        return currentDate;
-    }
-
 }

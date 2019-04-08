@@ -16,7 +16,7 @@ import android.os.Message;
 import android.os.Process;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -79,7 +79,7 @@ public class BrowserActivity extends Activity {
     private URL mIntentUrl;
 
     public static void startActivity(Context context, String url) {
-        Log.d(TAG, " startActivity --- url = " + url);
+        ALog.d(TAG, " startActivity --- url = " + url);
         Intent intent = new Intent(context, BrowserActivity.class);
         intent.putExtra(EXTRA_URL, url);
         context.startActivity(intent);
@@ -93,7 +93,7 @@ public class BrowserActivity extends Activity {
         Intent intent = getIntent();
         if (intent != null) {
             String url = intent.getStringExtra(EXTRA_URL)/* + addExtendParams()*/;
-            Log.e(TAG, "onCreate --- url = " + url);
+            ALog.e(TAG, "onCreate --- url = " + url);
 
             try {
 //                mIntentUrl = new URL(intent.getData().toString());

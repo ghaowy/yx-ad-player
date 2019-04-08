@@ -6,7 +6,7 @@ import android.animation.ObjectAnimator;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -69,7 +69,7 @@ public class BackButtonFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
-                Log.d(TAG, "back button click");
+                ALog.d(TAG, "back button click");
             }
         });
         view.setOnHoverListener(new View.OnHoverListener() {

@@ -2,7 +2,7 @@ package com.imprexion.aiscreen.main.camera;
 
 import android.content.Context;
 import android.hardware.Camera;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
@@ -32,7 +32,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.startPreview();
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d(TAG, "Error setting camera view: surfaceCreated");
+            ALog.d(TAG, "Error setting camera view: surfaceCreated");
         }
     }
 
@@ -50,13 +50,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.startPreview();
         } catch (IOException e) {
             e.printStackTrace();
-            Log.d(TAG, "Error setting camera view: surfaceChanged");
+            ALog.d(TAG, "Error setting camera view: surfaceChanged");
         }
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceDestroyed");
+        ALog.d(TAG, "surfaceDestroyed");
         mSurfaceHolder.removeCallback(this);
         mCamera.setPreviewCallback(null);
         mCamera.stopPreview();

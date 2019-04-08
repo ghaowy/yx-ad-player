@@ -3,8 +3,7 @@ package com.imprexion.aiscreen.service;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Base64;
-import android.util.Log;
-
+import com.imprexion.aiscreen.tools.ALog;
 import com.imprexion.aiscreen.bean.MessageForAIScreenPB;
 
 import java.io.BufferedReader;
@@ -47,9 +46,9 @@ public class TcpClientConnector {
     }
 
     public void createConnect(final String ip, final int port) {
-        Log.d(TAG, "createConnect");
+        ALog.d(TAG, "createConnect");
         if (mConnectThread == null) {
-            Log.d(TAG, "new mConnectThread");
+            ALog.d(TAG, "new mConnectThread");
             mConnectThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -104,7 +103,7 @@ public class TcpClientConnector {
     }
 
     public void disconnect() {
-        Log.d(TAG, "disconnect()");
+        ALog.d(TAG, "disconnect()");
         if (mSocket != null) {
             try {
                 mSocket.close();

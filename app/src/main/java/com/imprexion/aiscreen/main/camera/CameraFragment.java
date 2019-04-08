@@ -3,7 +3,7 @@ package com.imprexion.aiscreen.main.camera;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +51,7 @@ public class CameraFragment extends Fragment {
             return;
         }
         if (mCamera == null) {
-            Log.d(TAG, "camera is null");
+            ALog.d(TAG, "camera is null");
             return;
         }
         mCameraPreview = new CameraPreview(getActivity());

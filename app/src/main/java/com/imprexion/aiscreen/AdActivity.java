@@ -14,7 +14,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.LinearInterpolator;
@@ -30,6 +29,7 @@ import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.bean.WeatherInfo;
 import com.imprexion.aiscreen.main.MainActivity;
 import com.imprexion.aiscreen.status.StatusFragment;
+import com.imprexion.aiscreen.tools.ALog;
 import com.imprexion.aiscreen.tools.IconFontTextView;
 import com.imprexion.aiscreen.tools.Tools;
 
@@ -157,7 +157,7 @@ public class AdActivity extends AppCompatActivity implements NetContract.StatusV
         mLength = videoPaths.size();
         /*String videoPath = videoPaths.get(mVideoCount++ % mLength);
         if (videoPath.contains(".jpg") || videoPath.contains(".png")) {
-            Log.d(TAG,"adcontent is pic.");
+            ALog.d(TAG,"adcontent is pic.");
             Bitmap bitmap = BitmapFactory.decodeFile(mVideoBasePath + "/" + videoPath);
             rlAdContent.setBackground(new BitmapDrawable(bitmap));
             new Thread(new Runnable() {
@@ -323,7 +323,7 @@ public class AdActivity extends AppCompatActivity implements NetContract.StatusV
     public void updateWeather(WeatherInfo weatherInfo) {
         tempretures = getResources().getStringArray(R.array.tempretures);
         WeatherInfo.HeWeather6 heWeather6 = weatherInfo.getHeWeather6().get(0);
-//        Log.d(TAG,"heWeather6="+new Gson().toJson(heWeather6));
+//        ALog.d(TAG,"heWeather6="+new Gson().toJson(heWeather6));
         String status = heWeather6.getStatus();
         if (!status.equals("ok")) {
             return;
@@ -348,7 +348,7 @@ public class AdActivity extends AppCompatActivity implements NetContract.StatusV
     private void updateBg(String weather) {
         boolean isNight;
         Date date = new Date();
-//        Log.d(TAG, "hour = " + date.getHours());
+//        ALog.d(TAG, "hour = " + date.getHours());
         if (date.getHours() < 18 && date.getHours() >= 8) {
             isNight = false;
         } else {
@@ -407,7 +407,7 @@ public class AdActivity extends AppCompatActivity implements NetContract.StatusV
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updateWeatherByHour(EventBusMessage eventBusMessage) {
-        Log.d(TAG, "updateWeatherByHour");
+        ALog.d(TAG, "updateWeatherByHour");
         if (eventBusMessage.getType() == StatusFragment.UPDATE_WEATHER) {
             setWeatherInfo();
         }

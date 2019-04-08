@@ -11,7 +11,7 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
@@ -156,7 +156,7 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
 
     private void getImges() {
         mImges = Tools.getFilesAllName(mAdpath);
-//        Log.d(TAG, "mImges size = " + mImges.size());
+//        ALog.d(TAG, "mImges size = " + mImges.size());
 
     }
 
@@ -171,7 +171,7 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
                     int i = 0;
                     int k = 0;
                     int size = mContentPlayList.size();
-                    Log.d(TAG, "mContentPlayList.size=" + size);
+                    ALog.d(TAG, "mContentPlayList.size=" + size);
                     do {
                         mContentPlay = mContentPlayList.get(k++ % size);
                         startTime = mContentPlay.getStart_time();
@@ -190,11 +190,11 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
                                 startTime = mContentPlay.getStart_time();
                             } while (System.currentTimeMillis() / 1000 > startTime);
                         }
-//                        Log.d(TAG, "System.currentTimeMillis()=" + System.currentTimeMillis() / 1000);
-//                        Log.d(TAG, "startTime=" + startTime);
-//                        Log.d(TAG, "k=" + k);
+//                        ALog.d(TAG, "System.currentTimeMillis()=" + System.currentTimeMillis() / 1000);
+//                        ALog.d(TAG, "startTime=" + startTime);
+//                        ALog.d(TAG, "k=" + k);
                         while (System.currentTimeMillis() / 1000 > startTime) {
-                            Log.d(TAG, "System.currentTimeMillis()=" + System.currentTimeMillis() / 1000 + "> startTime=" + startTime);
+                            ALog.d(TAG, "System.currentTimeMillis()=" + System.currentTimeMillis() / 1000 + "> startTime=" + startTime);
                             startTime++;
                         }
                         isTimeToShowAd = System.currentTimeMillis() / 1000 == startTime ? true : false;

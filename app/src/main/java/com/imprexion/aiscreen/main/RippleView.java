@@ -7,7 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.View;
 
 import com.imprexion.aiscreen.R;
@@ -67,7 +67,7 @@ public class RippleView extends View {
                 public void onAnimationUpdate(ValueAnimator animation) {
                     mRadiu = (float) animation.getAnimatedValue();
                     mAlpha = (int) (255 - mRadiu / (mWidth / 2) * 255);
-//                    Log.d(TAG, "mAlpha = " + mAlpha);
+//                    ALog.d(TAG, "mAlpha = " + mAlpha);
                     mPaint.setAlpha(mAlpha);
                     postInvalidate();
                 }

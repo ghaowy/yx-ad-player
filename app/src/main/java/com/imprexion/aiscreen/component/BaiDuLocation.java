@@ -1,6 +1,6 @@
 package com.imprexion.aiscreen.component;
 
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;

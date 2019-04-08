@@ -5,7 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.hardware.Camera;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -40,12 +40,12 @@ public class CameraTools {
     public boolean checkCameraHardware(Context context) {
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
 //            toast(context, "有相机");
-            Log.d(TAG, "有相机");
+            ALog.d(TAG, "有相机");
             init(context);
             return true;
         } else {
 //            toast(context, "无相机");
-            Log.d(TAG, "无相机");
+            ALog.d(TAG, "无相机");
             return false;
         }
     }
@@ -56,7 +56,7 @@ public class CameraTools {
         wm.getDefaultDisplay().getSize(p);
         mScreenWidth = p.x;
         mScreenHeight = p.y;
-        Log.d(TAG, "mScreenWidth=" + mScreenWidth + " mScreenHeight=" + mScreenHeight);
+        ALog.d(TAG, "mScreenWidth=" + mScreenWidth + " mScreenHeight=" + mScreenHeight);
     }
 
     public Camera getCameraInstance() {
@@ -72,7 +72,7 @@ public class CameraTools {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, "相机打开失败");
+            ALog.d(TAG, "相机打开失败");
             return null;
         }
         initParam();
@@ -110,7 +110,7 @@ public class CameraTools {
         // 获取摄像头支持的PictureSize列表
         List<Camera.Size> picSizeList = mParameters.getSupportedPictureSizes();
 //        for (Camera.Size size : picSizeList) {
-//            Log.i(TAG, "pictureSizeList size.width=" + size.width + "  size.height=" + size.height);
+//            ALog.i(TAG, "pictureSizeList size.width=" + size.width + "  size.height=" + size.height);
 //        }
         Camera.Size picSize = getProperSize(picSizeList, ((float) mScreenHeight / mScreenWidth));
         mParameters.setPictureSize(picSize.width, picSize.height);
@@ -118,12 +118,12 @@ public class CameraTools {
         // 获取摄像头支持的PreviewSize列表
         List<Camera.Size> previewSizeList = mParameters.getSupportedPreviewSizes();
 //        for (Camera.Size size : previewSizeList) {
-//            Log.i(TAG, "previewSizeList size.width=" + size.width + "  size.height=" + size.height);
+//            ALog.i(TAG, "previewSizeList size.width=" + size.width + "  size.height=" + size.height);
 //        }
         Camera.Size preSize = getProperSize(previewSizeList, ((float) mScreenHeight) / mScreenWidth);
-        Log.i(TAG, "final size is: " + picSize.width + " " + picSize.height);
+        ALog.i(TAG, "final size is: " + picSize.width + " " + picSize.height);
         if (null != preSize) {
-            Log.i(TAG, "preSize.width=" + preSize.width + "  preSize.height=" + preSize.height);
+            ALog.i(TAG, "preSize.width=" + preSize.width + "  preSize.height=" + preSize.height);
             mParameters.setPreviewSize(preSize.width, preSize.height);
         }
 
@@ -131,11 +131,11 @@ public class CameraTools {
     }
 
     private Camera.Size getProperSize(List<Camera.Size> pictureSizeList, float screenRatio) {
-        Log.i(TAG, "screenRatio=" + screenRatio);
+        ALog.i(TAG, "screenRatio=" + screenRatio);
         Camera.Size result = null;
         for (Camera.Size size : pictureSizeList) {
             float currentRatio = ((float) size.width) / size.height;//0.5625
-            Log.d(TAG, "currentRatio = " + currentRatio);
+            ALog.d(TAG, "currentRatio = " + currentRatio);
             if (currentRatio - screenRatio == 0) {
                 result = size;
                 break;
@@ -146,7 +146,7 @@ public class CameraTools {
             for (Camera.Size size : pictureSizeList) {
                 float curRatio = ((float) size.width) / size.height;
                 if (curRatio == 4f / 3) {// 默认w:h = 4:3
-                    Log.d(TAG, "currentRatio = 4f / 3");
+                    ALog.d(TAG, "currentRatio = 4f / 3");
                     result = size;
                     break;
                 }
@@ -171,11 +171,11 @@ public class CameraTools {
 
     public void findFrontFacingCamera() {
         int numberOfCamera = Camera.getNumberOfCameras();
-        Log.d(TAG, "CameraInfo.CAMERA_FACING_FRONT = " + Camera.CameraInfo.CAMERA_FACING_FRONT);
+        ALog.d(TAG, "CameraInfo.CAMERA_FACING_FRONT = " + Camera.CameraInfo.CAMERA_FACING_FRONT);
         for (int i = 0; i < numberOfCamera; i++) {
             Camera.CameraInfo info = new Camera.CameraInfo();
             Camera.getCameraInfo(i, info);
-            Log.d(TAG, "info.facing = " + info.facing + " ,i=" + i);
+            ALog.d(TAG, "info.facing = " + info.facing + " ,i=" + i);
         }
     }
 }

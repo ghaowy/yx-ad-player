@@ -9,7 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -106,13 +106,13 @@ public class RainControlFragment extends Fragment {
                     case MotionEvent.ACTION_UP:
                         if (x - lastX > 120) {
                             //右移
-                            Log.d(TAG, "右移");
+                            ALog.d(TAG, "右移");
                             if (isStop) {
                                 rainDropView.remove(false, true, false, false);
                             }
                         } else if (lastX - x > 120) {
                             //左移
-                            Log.d(TAG, "左移");
+                            ALog.d(TAG, "左移");
                             if (isStop) {
                                 rainDropView.remove(true, false, false, false);
                             }
@@ -130,7 +130,7 @@ public class RainControlFragment extends Fragment {
                             }
                         } else {
                             //点击
-                            Log.d(TAG, "点击");
+                            ALog.d(TAG, "点击");
                             if (!isStop) {
                                 mRainVoice.playRainDropVoice();
                                 rainView1.setVisibility(View.INVISIBLE);

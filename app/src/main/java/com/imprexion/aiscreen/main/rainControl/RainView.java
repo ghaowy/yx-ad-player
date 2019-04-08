@@ -9,7 +9,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.View;
 
 import com.imprexion.aiscreen.R;
@@ -57,7 +57,7 @@ public class RainView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        Log.d(TAG, "onMeasure");
+        ALog.d(TAG, "onMeasure");
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         mScreenWidth = getMeasuredWidth();
         mScreenHeight = getMeasuredHeight();
@@ -65,7 +65,7 @@ public class RainView extends View {
     }
 
     public void initData() {
-//        Log.d(TAG, "initData");
+//        ALog.d(TAG, "initData");
         Random random = new Random();
         mMatrix = new Matrix();
         mPaint = new Paint();
@@ -88,7 +88,7 @@ public class RainView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-//        Log.d(TAG, "size=" + mRainSize + " isScale=" + isScale + " mBitmap=" + mBitmap.getGenerationId());
+//        ALog.d(TAG, "size=" + mRainSize + " isScale=" + isScale + " mBitmap=" + mBitmap.getGenerationId());
         if (mRainList.size() == 0) {
             return;
         }

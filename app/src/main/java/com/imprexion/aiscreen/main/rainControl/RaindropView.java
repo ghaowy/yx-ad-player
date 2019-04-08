@@ -12,7 +12,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.util.Size;
 import android.view.View;
 
@@ -85,7 +85,7 @@ public class RaindropView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-//        Log.d(TAG, "mIsRemoveLeft =" + mIsRemoveLeft + " mIsRemoveRight=" + mIsRemoveRight);
+//        ALog.d(TAG, "mIsRemoveLeft =" + mIsRemoveLeft + " mIsRemoveRight=" + mIsRemoveRight);
         Matrix matrix = new Matrix();
         for (int i = 0; i < SIZE; i++) {
             matrix.reset();
@@ -129,7 +129,7 @@ public class RaindropView extends View {
                 int value = Integer.valueOf(animation.getAnimatedValue().toString());
                 if (mValue != value) {
                     postInvalidate();
-                    Log.d(TAG, "removeLeft invalide ,mvalue=" + value);
+                    ALog.d(TAG, "removeLeft invalide ,mvalue=" + value);
                 }
                 mValue = value;
             }

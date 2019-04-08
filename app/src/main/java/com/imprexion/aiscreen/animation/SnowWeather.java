@@ -11,7 +11,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.View;
 
 import com.imprexion.aiscreen.R;
@@ -53,7 +53,7 @@ public class SnowWeather extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        Log.d(TAG, "onMeasure");
+        ALog.d(TAG, "onMeasure");
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         mWidth = getMeasuredWidth();
         mHeight = getMeasuredHeight();
@@ -80,7 +80,7 @@ public class SnowWeather extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         mCanvas = canvas;
-//        Log.d(TAG, "onDraw");
+//        ALog.d(TAG, "onDraw");
         super.onDraw(canvas);
         for (int i = 0; i < mItemSnows.size(); i++) {
             ItemSnow itemSnow = mItemSnows.get(i);

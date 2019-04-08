@@ -4,7 +4,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 
 import com.imprexion.aiscreen.R;
 
@@ -25,7 +25,7 @@ public class RainVoice {
     }
 
     public void playRainDropVoice() {
-        Log.d(TAG, "playRainDropVoice");
+        ALog.d(TAG, "playRainDropVoice");
         if (mSoundPool != null) {
             mSoundPool.pause(mSoundId);
         }
@@ -44,7 +44,7 @@ public class RainVoice {
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                Log.d(TAG, "playRainDropVoice mMediaPlayer onCompletion");
+                ALog.d(TAG, "playRainDropVoice mMediaPlayer onCompletion");
             }
         });
     }
@@ -75,15 +75,15 @@ public class RainVoice {
         }
         mSoundId = mSoundPool.load(mContext, mRainVoiceId, 1);
         if (mSoundId == 0) {
-            Log.d(TAG, "soundpool 加载失败");
+            ALog.d(TAG, "soundpool 加载失败");
             return;
         } else {
-            Log.d(TAG, "soundId =" + mSoundId);
+            ALog.d(TAG, "soundId =" + mSoundId);
         }
         mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-                Log.d(TAG, "soundPool load complete");
+                ALog.d(TAG, "soundPool load complete");
                 mSoundPool.play(mSoundId, 0.5f, 0.5f, 0, -1, 0.8f);
             }
         });

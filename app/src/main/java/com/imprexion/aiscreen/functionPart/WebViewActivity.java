@@ -3,7 +3,7 @@ package com.imprexion.aiscreen.functionPart;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.View;
 import android.webkit.JsPromptResult;
 import android.webkit.WebChromeClient;
@@ -48,7 +48,7 @@ public class WebViewActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     result.confirm(jsonObject.toString());
-                    Log.d(TAG, "webForParam=" + jsonObject.toString());
+                    ALog.d(TAG, "webForParam=" + jsonObject.toString());
                     return true;
                 }
                 return super.onJsPrompt(view, url, message, defaultValue, result);

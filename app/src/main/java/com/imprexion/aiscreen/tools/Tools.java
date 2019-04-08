@@ -15,7 +15,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.View;
 import android.webkit.JsPromptResult;
 import android.webkit.WebChromeClient;
@@ -29,9 +29,12 @@ import com.imprexion.aiscreen.advertising.AdvertisingActivity;
 import com.imprexion.aiscreen.base.AISApplication;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class Tools {
 
@@ -86,14 +89,14 @@ public class Tools {
         File file = new File(path);
         File[] files = file.listFiles();
         if (files == null) {
-            Log.e(TAG, "空目录");
+            ALog.e(TAG, "空目录");
             return null;
         }
         List<String> s = new ArrayList<>();
         for (int i = 0; i < files.length; i++) {
             String[] splits = files[i].getAbsolutePath().split("/");
             s.add(splits[splits.length - 1]);
-            Log.d(TAG, "filename = " + s.get(i));
+            ALog.d(TAG, "filename = " + s.get(i));
         }
         return s;
     }
@@ -116,4 +119,14 @@ public class Tools {
                 .into(imageView);
     }
 
+
+
+    public static String getCurrentDate(String pattern) {
+        long time = System.currentTimeMillis();
+        Date date = new Date(time);
+//        String pattern = "yyyy-MM-dd";//格式yy-MM-dd(年份取末两位) ;yyyy-MM-dd HH:mm:ss(格式可以自行取舍)
+        String currentDate = new SimpleDateFormat(pattern, Locale.getDefault()).format(date);
+        ALog.d(TAG, "currentDate=" + currentDate);
+        return currentDate;
+    }
 }

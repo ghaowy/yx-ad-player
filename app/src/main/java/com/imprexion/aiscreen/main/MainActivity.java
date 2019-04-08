@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +13,7 @@ import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import com.imprexion.aiscreen.tools.ALog;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,8 +21,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.alibaba.fastjson.JSON;
 import com.imprexion.aiscreen.R;
 import com.imprexion.aiscreen.advertising.AdSecondActivity;
+import com.imprexion.aiscreen.bean.ADContentPlay;
 import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.bean.MessageForAIScreenPB;
 import com.imprexion.aiscreen.functionPart.WebViewActivity;
@@ -66,12 +69,15 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     private static final int NO_PERSON = 0;
     private static final int MAIN_PAGE = 100;
     private static final int AD_PAGE = 101;
+    public static final String AD_SUFFIX = "ADContent";
     private int currentPage = 100;//100:MainActivity;101:Ad;
     @BindView(R.id.tv_wavehands)
     TextView tvWavehands;
     private StatusFragment mStatusFragment;
     private int ZOOM_WIDTH;
     private int ZOOM_HEIGHT;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
     private ServiceConnection mConnection;
     private TcpClientConnector mTcpClientConnector = TcpClientConnector.getInstance();
     private Handler mHandler = new Handler() {
@@ -148,9 +154,9 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
             @Override
             public void onReceiveData(MessageForAIScreenPB.MessageForAIScreen messageForAIScreen) {
                 String mData = "sex=" + messageForAIScreen.getUsrsex() + " ;HavePerson=" + messageForAIScreen.getStandHere() + " ;IsActived=" + messageForAIScreen.getIsActived();
-                Log.d(TAG, "sex=" + messageForAIScreen.getUsrsex());
-                Log.d(TAG, "HavePerson=" + messageForAIScreen.getStandHere());
-                Log.d(TAG, "IsActived=" + messageForAIScreen.getIsActived());
+                ALog.d(TAG, "sex=" + messageForAIScreen.getUsrsex());
+                ALog.d(TAG, "HavePerson=" + messageForAIScreen.getStandHere());
+                ALog.d(TAG, "IsActived=" + messageForAIScreen.getIsActived());
                 dispatchMessage(messageForAIScreen);
             }
         });
@@ -194,8 +200,17 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     }
 
     private void pushMessage(String content) {
-        Log.d(TAG, "ContentInfo=" + content);
-        EventBusMessage eventBusMessage = new EventBusMessage(EventBusMessage.AD_PLAY_CONTENT,content);
+        ALog.d(TAG, "ContentInfo=" + content);
+        ADContentPlay adContentPlay = JSON.parseObject(content, ADContentPlay.class);
+        if (mSharedPreferences == null) {
+            mSharedPreferences = getSharedPreferences("AIScreenSP", Context.MODE_PRIVATE);
+            mEditor = mSharedPreferences.edit();
+        }
+        mEditor.putString(adContentPlay.getPlayDate() + AD_SUFFIX, content);
+        ALog.d(TAG, "adContentPlay.getPlayDate()=" + adContentPlay.getPlayDate());
+        ALog.d(TAG, "getCurrentDate()=" + Tools.getCurrentDate("yyyy-MM-dd"));
+        mEditor.commit();
+        EventBusMessage eventBusMessage = new EventBusMessage(EventBusMessage.AD_PLAY_CONTENT,adContentPlay);
         EventBus.getDefault().post(eventBusMessage);
     }
 
@@ -228,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/VipCard"));
                 break;
             case R.id.iv_promotion:
-                Log.d(TAG, "back button click");
+                ALog.d(TAG, "back button click");
                 startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Promotion"));
                 break;
             case R.id.iv_lottery:
@@ -275,14 +290,14 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 
     @Override
     public void show() {
-        Log.d(TAG, "navigation show");
+        ALog.d(TAG, "navigation show");
         rlMain.postInvalidate();
         rlMain.invalidate();
     }
 
     @Override
     public void hide() {
-        Log.d(TAG, "navigation hide");
+        ALog.d(TAG, "navigation hide");
 
     }
 
