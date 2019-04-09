@@ -15,16 +15,55 @@
         app:lottie_loop="true" />
 
     <!--<fragment-->
-        <!--android:id="@+id/camera_fragment"-->
-        <!--android:name="com.imprexion.aiscreen.main.camera.CameraFragment"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
+    <!--android:id="@+id/camera_fragment"-->
+    <!--android:name="com.imprexion.aiscreen.main.camera.CameraFragment"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent" />-->
 
     <!--<fragment-->
-        <!--android:id="@+id/rainView_fragment"-->
-        <!--android:name="com.imprexion.aiscreen.main.rainControl.RainControlFragment"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
+    <!--android:id="@+id/rainView_fragment"-->
+    <!--android:name="com.imprexion.aiscreen.main.rainControl.RainControlFragment"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50px"
+        android:layout_marginTop="100px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="性别=" />
+
+        <TextView
+            android:id="@+id/tv_usersex"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="     standhere=" />
+
+        <TextView
+            android:id="@+id/tv_standhere"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="     isActived=" />
+
+        <TextView
+            android:id="@+id/tv_isactived"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="null" />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/rl_navigation"

@@ -57,7 +57,7 @@ public class RainView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        ALog.d(TAG, "onMeasure");
+//        ALog.d(TAG, "onMeasure");
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         mScreenWidth = getMeasuredWidth();
         mScreenHeight = getMeasuredHeight();

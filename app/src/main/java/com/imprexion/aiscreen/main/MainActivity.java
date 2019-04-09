@@ -13,10 +13,6 @@ import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-
-import com.imprexion.aiscreen.net.NetPresenter;
-import com.imprexion.aiscreen.tools.ALog;
-
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -30,10 +26,13 @@ import com.imprexion.aiscreen.advertising.AdSecondActivity;
 import com.imprexion.aiscreen.bean.ADContentPlay;
 import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.bean.MessageForAIScreenPB;
+import com.imprexion.aiscreen.bean.TrackingMessage;
 import com.imprexion.aiscreen.functionPart.WebViewActivity;
+import com.imprexion.aiscreen.net.NetPresenter;
 import com.imprexion.aiscreen.service.AISService;
 import com.imprexion.aiscreen.service.TcpClientConnector;
 import com.imprexion.aiscreen.status.StatusFragment;
+import com.imprexion.aiscreen.tools.ALog;
 import com.imprexion.aiscreen.tools.ScreenUtils;
 import com.imprexion.aiscreen.tools.Tools;
 
@@ -70,15 +69,24 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     private static final String TAG = "MainActivity";
     private static final String URL = "http://172.16.2.207:5000/";
     private static final int NO_PERSON = 0;
+    private static final int HAVE_PERSON = 1;
     private static final int OTHER_PAGE = 100;
     private static final int AD_PAGE = 101;
     public static final String AD_SUFFIX = "ADContent";
+    @BindView(R.id.tv_usersex)
+    TextView tvUsersex;
+    @BindView(R.id.tv_standhere)
+    TextView tvStandhere;
+    @BindView(R.id.tv_isactived)
+    TextView tvIsactived;
     private int currentPage = 100;//100:MainActivity;101:Ad;
     @BindView(R.id.tv_wavehands)
     TextView tvWavehands;
     private StatusFragment mStatusFragment;
     private int ZOOM_WIDTH;
     private int ZOOM_HEIGHT;
+    private int lastUsrsex;
+    private int UsrsexCount;
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
     private NetPresenter mNetPresenter;
@@ -92,9 +100,11 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 case NO_PERSON:
                     startAdActivity();
                     break;
+                case HAVE_PERSON:
+                    startActivity(new Intent(MainActivity.this, MainActivity.class));
+                    break;
                 default:
                     break;
-
             }
         }
     };
@@ -163,37 +173,51 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     }
 
     private void setSocketListener() {
-        mTcpClientConnector.createConnect("10.2.26.185", 23333);
+        mTcpClientConnector.createConnect("10.2.26.7", 20002);
+//        mTcpClientConnector.createConnect("127.0.0.1", 20002);
         mTcpClientConnector.setOnConnectListener(new TcpClientConnector.ConnectListener() {
             @Override
             public void onReceiveData(MessageForAIScreenPB.MessageForAIScreen messageForAIScreen) {
                 String mData = "sex=" + messageForAIScreen.getUsrsex() + " ;HavePerson=" + messageForAIScreen.getStandHere() + " ;IsActived=" + messageForAIScreen.getIsActived();
-                ALog.d(TAG, "sex=" + messageForAIScreen.getUsrsex());
-                ALog.d(TAG, "HavePerson=" + messageForAIScreen.getStandHere());
-                ALog.d(TAG, "IsActived=" + messageForAIScreen.getIsActived());
+//                ALog.d(TAG, "sex=" + messageForAIScreen.getUsrsex());
+//                ALog.d(TAG, "HavePerson=" + messageForAIScreen.getStandHere());
+//                ALog.d(TAG, "IsActived=" + messageForAIScreen.getIsActived());
                 dispatchMessage(messageForAIScreen);
             }
         });
     }
 
     private void dispatchMessage(MessageForAIScreenPB.MessageForAIScreen messageForAIScreen) {
-        int usrsex = messageForAIScreen.getUsrsex();
-        boolean standHere = messageForAIScreen.getStandHere();
-        boolean isActived = messageForAIScreen.getIsActived();
-        ALog.d(TAG, "usrsex=" + usrsex + " ;standHere=" + standHere + " ;isActived=" + isActived);
-        if (usrsex == 0 && currentPage != AD_PAGE) {
+        TrackingMessage trackingMessage = new TrackingMessage();
+        trackingMessage.setUsrsex(messageForAIScreen.getUsrsex());
+        trackingMessage.setActived(messageForAIScreen.getIsActived());
+        trackingMessage.setStandHere(messageForAIScreen.getStandHere());
+        tvUsersex.setText("" + trackingMessage.getUsrsex());
+        tvStandhere.setText(trackingMessage.isStandHere() == true ? "true" : "false");
+        tvIsactived.setText(trackingMessage.isActived() == true ? "true" : "false");
+        ALog.d(TAG, "usrsex=" + trackingMessage.getUsrsex() + " ;standHere=" + trackingMessage.isStandHere()
+                + " ;isActived=" + trackingMessage.isActived());
+        if (trackingMessage.getUsrsex() == 0 && currentPage != AD_PAGE && !trackingMessage.isActived() ) {
             currentPage = AD_PAGE;
             Message message = mHandler.obtainMessage();
             message.what = NO_PERSON;
-            mHandler.sendMessageDelayed(message, 200);
+            mHandler.sendMessageDelayed(message, 500);
         }
-//        EventBus.getDefault().post(new EventBusMessage(EventBusMessage.STANDHERE, standHere));
+
+        if (trackingMessage.getUsrsex() != 0 && currentPage == AD_PAGE && trackingMessage.isActived()) {
+            currentPage = OTHER_PAGE;
+            Message message = mHandler.obtainMessage();
+            message.what = HAVE_PERSON;
+            mHandler.sendMessageDelayed(message, 1000);
+        }
+//        EventBus.getDefault().post(new EventBusMessage(EventBusMessage.STANDHERE, trackingMessage));
     }
 
     private void bindAISService() {
         mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
+                ALog.d(TAG, "onServiceConnected");
                 AISService.AISBinder aisBinder = (AISService.AISBinder) service;
                 aisBinder.getService().setContentInfoToActivity(new AISService.IContentInfoCallBack() {
                     @Override

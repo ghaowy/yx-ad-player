@@ -38,7 +38,11 @@ public class AISService extends Service {
             String data = intent.getExtras().getString("data");
             Toast.makeText(this, "MyService received Msg: " + data, Toast.LENGTH_LONG).show();
             ALog.d(TAG, "content=" + data);
-            mIContentInfoCallBack.setContentInfo(data);
+            if (mIContentInfoCallBack != null) {
+                mIContentInfoCallBack.setContentInfo(data);
+            } else {
+                ALog.d(TAG, "mIContentInfoCallBack is null");
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }

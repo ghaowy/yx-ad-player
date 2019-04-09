@@ -1,14 +1,18 @@
 package com.imprexion.aiscreen.advertising;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
@@ -86,6 +90,7 @@ public class AdSecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ad_second);
         ButterKnife.bind(this);
+        getPermission();
         EventBus.getDefault().register(this);
         initData();
     }
@@ -138,13 +143,15 @@ public class AdSecondActivity extends AppCompatActivity {
         if (mExecutorService == null) {
             mExecutorService = Executors.newSingleThreadExecutor();
         }
+        initViewPager();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Tools.hideNavigationBarStatusBar(this, true);
-        initViewPager();
+//        initViewPager();
         mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
         ALog.d(TAG, "mCurrentPage=" + mPagerPage);
         isPlay = true;
@@ -159,7 +166,7 @@ public class AdSecondActivity extends AppCompatActivity {
 //                    ALog.d(TAG, "mAdContentInfoList size = " + mAdContentInfoList.size());
 //                    ALog.d(TAG, "mSize = " + mSize);
 //                    ALog.d(TAG, "mCurrentPage = " + mCurrentPage);
-//                    ALog.d(TAG, "runnable next,playTime = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime());
+                    ALog.d(TAG, "runnable next,playTime = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime());
                     try {
                         Thread.sleep(mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime() * 1000);
                     } catch (InterruptedException e) {
@@ -194,7 +201,7 @@ public class AdSecondActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int i) {
-                ALog.d(TAG, "onPageSelected=" + i);
+//                ALog.d(TAG, "onPageSelected=" + i);
                 mCurrentPosition = i;
             }
 
@@ -204,7 +211,7 @@ public class AdSecondActivity extends AppCompatActivity {
                     return;
                 }
                 if (mCurrentPosition == mSize - 1) {
-                    ALog.d(TAG, "last->first");
+//                    ALog.d(TAG, "last->first");
                     viewPager.setCurrentItem(0, false);
                     mPagerPage++;
                 }
@@ -259,6 +266,29 @@ public class AdSecondActivity extends AppCompatActivity {
 //                viewPager.notifyAll();
                 mFragmentStatePagerAdapter.notifyDataSetChanged();
             }
+        }
+    }
+
+    private void getPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA}, 1);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
     }
 }

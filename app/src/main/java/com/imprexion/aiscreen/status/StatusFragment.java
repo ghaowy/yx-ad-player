@@ -6,7 +6,9 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+
 import com.imprexion.aiscreen.tools.ALog;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -154,7 +156,9 @@ public class StatusFragment extends Fragment implements NetContract.StatusView {
             return;
         }
         String weather = heWeather6.getNow().getCond_txt();
-        tvWeather.setText(weather);
+        if (tvWeather != null) {
+            tvWeather.setText(weather);
+        }
 
         if (weather.contains("晴")) {
             tvWeatherIcon.setText(weatherIcon[0]);

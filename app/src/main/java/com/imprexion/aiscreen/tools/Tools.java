@@ -15,7 +15,9 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+
 import com.imprexion.aiscreen.tools.ALog;
+
 import android.view.View;
 import android.webkit.JsPromptResult;
 import android.webkit.WebChromeClient;
@@ -114,11 +116,11 @@ public class Tools {
     }
 
     public static void showPicWithGlide(ImageView imageView, String url) {
+        ALog.d(TAG, "url=" + url);
         Glide.with(AISApplication.getInstance().getApplicationContext())
                 .load(url)
                 .into(imageView);
     }
-
 
 
     public static String getCurrentDate(String pattern) {
