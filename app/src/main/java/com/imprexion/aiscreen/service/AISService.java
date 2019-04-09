@@ -34,7 +34,7 @@ public class AISService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         ALog.d(TAG, "onStartCommand");
-        if (intent.getAction() != null && "com.imprexion.push.MESSAGE".equals(intent.getAction())) {
+        if (intent != null && "com.imprexion.push.MESSAGE".equals(intent.getAction())) {
             String data = intent.getExtras().getString("data");
             Toast.makeText(this, "MyService received Msg: " + data, Toast.LENGTH_LONG).show();
             ALog.d(TAG, "content=" + data);

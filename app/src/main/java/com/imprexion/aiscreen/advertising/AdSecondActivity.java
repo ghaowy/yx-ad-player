@@ -11,12 +11,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import com.imprexion.aiscreen.tools.ALog;
-import android.view.View;
-import android.widget.Button;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.imprexion.aiscreen.R;
 import com.imprexion.aiscreen.advertising.content.AdContentImageFragment;
 import com.imprexion.aiscreen.advertising.content.CameraRainFragment;
@@ -24,6 +20,7 @@ import com.imprexion.aiscreen.bean.ADContentInfo;
 import com.imprexion.aiscreen.bean.ADContentPlay;
 import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.main.MainActivity;
+import com.imprexion.aiscreen.tools.ALog;
 import com.imprexion.aiscreen.tools.Tools;
 
 import org.greenrobot.eventbus.EventBus;
@@ -32,13 +29,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -105,11 +98,14 @@ public class AdSecondActivity extends AppCompatActivity {
         if (mFragmentList == null) {
             mFragmentList = new ArrayList<>();
         }
+        mFragmentList.clear();
 //        ADContentPlay adContentPlay = JSON.parseObject(getString("adJson.text", this), ADContentPlay.class);
         String adContentPlayString = mSharedPreferences.getString(Tools.getCurrentDate("yyyy-MM-dd") + MainActivity.AD_SUFFIX, null);
         if (adContentPlayString == null) {
             ALog.d(TAG, "adContentPlayString is null");
             return;
+        } else {
+            ALog.d(TAG, "adContentPlayString=" + adContentPlayString);
         }
         ADContentPlay adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
         mAdContentInfoList = adContentPlay.getContentPlayVOList();
@@ -160,12 +156,15 @@ public class AdSecondActivity extends AppCompatActivity {
                     Message message = mHandler.obtainMessage();
                     message.what = PLAY_NEXT;
                     mHandler.sendMessage(message);
+//                    ALog.d(TAG, "mAdContentInfoList size = " + mAdContentInfoList.size());
+//                    ALog.d(TAG, "mSize = " + mSize);
+//                    ALog.d(TAG, "mCurrentPage = " + mCurrentPage);
+//                    ALog.d(TAG, "runnable next,playTime = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime());
                     try {
                         Thread.sleep(mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime() * 1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    ALog.d(TAG, "runnable next,playTime = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime());
                 } while (isPlay);
             }
         };
@@ -175,17 +174,6 @@ public class AdSecondActivity extends AppCompatActivity {
     }
 
     private void initViewPager() {
-//        mFragmentPagerAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
-//            @Override
-//            public Fragment getItem(int i) {
-//                return mFragmentList.get(i);
-//            }
-//
-//            @Override
-//            public int getCount() {
-//                return mFragmentList.size();
-//            }
-//        };
         mFragmentStatePagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
 
             @Override

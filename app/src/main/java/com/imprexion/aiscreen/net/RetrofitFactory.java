@@ -7,25 +7,42 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitFactory {
 
     private static Retrofit mRetrofit;
-    private String baseurl = "https://free-api.heweather.com/s6/weather/";
+    private static Retrofit mRetrofitAD;
+    private static final String baseurl = "https://free-api.heweather.com/s6/weather/";
+    private static final String baseurlAdCallback = "http:/10.2.26.163:9010/android/gateway/adcarousel/";
 
     public RetrofitFactory() {
-        mRetrofit = new Retrofit.Builder().
-                baseUrl(baseurl)
+        mRetrofit = new Retrofit.Builder()
+                .baseUrl(baseurl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
     }
 
-    public static Retrofit getInstance(){
-        if(mRetrofit == null){
-            synchronized (RetrofitFactory.class){
-                if (mRetrofit == null){
+    public static Retrofit getInstance() {
+        if (mRetrofit == null) {
+            synchronized (RetrofitFactory.class) {
+                if (mRetrofit == null) {
                     new RetrofitFactory();
                 }
             }
         }
         return mRetrofit;
+    }
+
+    public static Retrofit getInstanceForAD() {
+        if (mRetrofitAD == null) {
+            synchronized (RetrofitFactory.class) {
+                if (mRetrofitAD == null) {
+                    mRetrofitAD = new Retrofit.Builder()
+                            .baseUrl(baseurlAdCallback)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                            .build();
+                }
+            }
+        }
+        return mRetrofitAD;
     }
 
 }

@@ -13,7 +13,10 @@ import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+
+import com.imprexion.aiscreen.net.NetPresenter;
 import com.imprexion.aiscreen.tools.ALog;
+
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     private static final String TAG = "MainActivity";
     private static final String URL = "http://172.16.2.207:5000/";
     private static final int NO_PERSON = 0;
-    private static final int MAIN_PAGE = 100;
+    private static final int OTHER_PAGE = 100;
     private static final int AD_PAGE = 101;
     public static final String AD_SUFFIX = "ADContent";
     private int currentPage = 100;//100:MainActivity;101:Ad;
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     private int ZOOM_HEIGHT;
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
+    private NetPresenter mNetPresenter;
     private ServiceConnection mConnection;
     private TcpClientConnector mTcpClientConnector = TcpClientConnector.getInstance();
     private Handler mHandler = new Handler() {
@@ -86,6 +90,10 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
             super.handleMessage(msg);
             switch (msg.what) {
                 case NO_PERSON:
+                    startAdActivity();
+                    break;
+                default:
+                    break;
 
             }
         }
@@ -134,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     @Override
     protected void onResume() {
         super.onResume();
+        currentPage = OTHER_PAGE;
         Tools.hideNavigationBarStatusBar(this, true);
         bindAISService();
         setSocketListener();
@@ -144,12 +153,17 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         tvWavehands.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, AdSecondActivity.class));
+                startAdActivity();
             }
         });
     }
 
+    private void startAdActivity() {
+        startActivity(new Intent(MainActivity.this, AdSecondActivity.class));
+    }
+
     private void setSocketListener() {
+        mTcpClientConnector.createConnect("10.2.26.185", 23333);
         mTcpClientConnector.setOnConnectListener(new TcpClientConnector.ConnectListener() {
             @Override
             public void onReceiveData(MessageForAIScreenPB.MessageForAIScreen messageForAIScreen) {
@@ -166,7 +180,8 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         int usrsex = messageForAIScreen.getUsrsex();
         boolean standHere = messageForAIScreen.getStandHere();
         boolean isActived = messageForAIScreen.getIsActived();
-        if (usrsex == 0 && currentPage == MAIN_PAGE) {
+        ALog.d(TAG, "usrsex=" + usrsex + " ;standHere=" + standHere + " ;isActived=" + isActived);
+        if (usrsex == 0 && currentPage != AD_PAGE) {
             currentPage = AD_PAGE;
             Message message = mHandler.obtainMessage();
             message.what = NO_PERSON;
@@ -202,6 +217,10 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     private void pushMessage(String content) {
         ALog.d(TAG, "ContentInfo=" + content);
         ADContentPlay adContentPlay = JSON.parseObject(content, ADContentPlay.class);
+        if (mNetPresenter == null) {
+            mNetPresenter = new NetPresenter();
+        }
+        mNetPresenter.onADCallback(adContentPlay);
         if (mSharedPreferences == null) {
             mSharedPreferences = getSharedPreferences("AIScreenSP", Context.MODE_PRIVATE);
             mEditor = mSharedPreferences.edit();
@@ -209,8 +228,9 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         mEditor.putString(adContentPlay.getPlayDate() + AD_SUFFIX, content);
         ALog.d(TAG, "adContentPlay.getPlayDate()=" + adContentPlay.getPlayDate());
         ALog.d(TAG, "getCurrentDate()=" + Tools.getCurrentDate("yyyy-MM-dd"));
+        ALog.d(TAG, "adContentPlay=" + JSON.toJSONString(adContentPlay));
         mEditor.commit();
-        EventBusMessage eventBusMessage = new EventBusMessage(EventBusMessage.AD_PLAY_CONTENT,adContentPlay);
+        EventBusMessage eventBusMessage = new EventBusMessage(EventBusMessage.AD_PLAY_CONTENT, adContentPlay);
         EventBus.getDefault().post(eventBusMessage);
     }
 
@@ -237,7 +257,8 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/Floor"));
                 break;
             case R.id.iv_park:
-                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", URL + "app/park"));
+//                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", URL + "app/park"));
+                startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://120.79.245.58:88/#/app/park"));
                 break;
             case R.id.iv_membership:
                 startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://m.mallcoo.cn/a/custom/10919/SGT/VipCard"));
@@ -250,6 +271,23 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                 startActivity(new Intent(this, WebViewActivity.class).putExtra("url", "http://oss.imprexion.cn/application/lottery/index.html"));
                 break;
             case R.id.iv_emojidancer:
+                if (mNetPresenter == null) {
+                    mNetPresenter = new NetPresenter();
+                }
+//                mNetPresenter.onADCallback("广告推送成功~~~~");
+                if (mSharedPreferences == null) {
+                    mSharedPreferences = getSharedPreferences("AIScreenSP", Context.MODE_PRIVATE);
+                    mEditor = mSharedPreferences.edit();
+                }
+                String adContentPlayString = mSharedPreferences.getString(Tools.getCurrentDate("yyyy-MM-dd") + MainActivity.AD_SUFFIX, null);
+                if (adContentPlayString == null) {
+                    ALog.d(TAG, "adContentPlayString is null");
+                    return;
+                } else {
+                    ALog.d(TAG, "adContentPlayString=" + adContentPlayString);
+                }
+                ADContentPlay adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
+                mNetPresenter.onADCallback(adContentPlay);
 //                startActivity(new Intent(this, JsonActivity.class).putExtra("url", URL + "app"));
 //                AISApplication.getSmdtManager().setMouseIcon(i++%5);
                 break;
