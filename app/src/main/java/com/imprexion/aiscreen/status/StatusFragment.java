@@ -160,6 +160,9 @@ public class StatusFragment extends Fragment implements NetContract.StatusView {
             tvWeather.setText(weather);
         }
 
+        if (tvWeatherIcon == null) {
+            tvWeatherIcon = mView.findViewById(R.id.tv_weather_icon);
+        }
         if (weather.contains("晴")) {
             tvWeatherIcon.setText(weatherIcon[0]);
         } else if (weather.contains("雨")) {

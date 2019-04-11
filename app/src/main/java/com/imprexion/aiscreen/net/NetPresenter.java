@@ -39,13 +39,18 @@ public class NetPresenter {
                     public void accept(WeatherInfo weatherInfo) throws Exception {
                         mAdView.updateWeather(weatherInfo);
                     }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        throwable.printStackTrace();
+                    }
                 });
     }
 
     public void onADCallback(ADContentPlay adContent) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("token", "30EFKHab7C5C56K9");
-        jsonObject.put("adcontent", adContent);
+//        JSONObject jsonObject = new JSONObject();
+//        jsonObject.put("token", "30EFKHab7C5C56K9");
+//        jsonObject.put("adcontent", adContent);
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), JSON.toJSONString(adContent));
 
         RetrofitFactory.getInstanceForAD()

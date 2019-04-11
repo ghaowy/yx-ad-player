@@ -9,7 +9,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.MainThread;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +24,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.imprexion.aiscreen.R;
-import com.imprexion.aiscreen.advertising.AdvertisingActivity;
 import com.imprexion.aiscreen.bean.EventBusMessage;
+import com.imprexion.aiscreen.bean.TrackingMessage;
 import com.imprexion.aiscreen.main.MainActivity;
 import com.imprexion.aiscreen.main.camera.CameraFragment;
 import com.imprexion.aiscreen.main.rainControl.RainControlFragment;
+import com.imprexion.aiscreen.tools.ALog;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -77,8 +77,8 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     RelativeLayout rlFootprint;
     @BindView(R.id.iv_bottom_floor)
     ImageView ivBottomFloor;
-    @BindView(R.id.iv_inject_water_tip)
-    ImageView ivInjectWaterTip;
+    @BindView(R.id.iv_wave_hands_tip)
+    ImageView ivWaveHandsTip;
     @BindView(R.id.iv_leftprint)
     ImageView ivLeftprint;
     @BindView(R.id.iv_rightprint)
@@ -93,7 +93,7 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     private AnimationDrawable mElephantExitAnimation;
     private AnimationDrawable mInjectingWaterAnimation;
     private Message mMessage;
-    private AnimationDrawable mInjectWaterAnimation;
+    private AnimationDrawable mWaveHandsAnimation;
     private ObjectAnimator mFootprintRotateObjAnimator;
     private ObjectAnimator mEEnterObjAnimator;
     private ObjectAnimator mEExitObjAnimator;
@@ -115,8 +115,12 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     private final static int INJECTED_WATER_FADE_OUT = 16;
     private final static int ADD_CAMERE = 17;
     private final static int ADD_RAIN = 18;
+    private final static int ELEPHANT_EXIT = 19;
     private boolean isResume;
     private boolean isStandHere;
+    private boolean isWaveForActive;
+    private static final String TAG = "GestureActivationFragment";
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -164,15 +168,19 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
                 case ADD_RAIN:
                     getActivity().getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_gesture, new RainControlFragment()).commitAllowingStateLoss();
                     break;
+                case ELEPHANT_EXIT:
+                    startElephantExitAnimation();
+                    break;
                 default:
                     break;
             }
         }
     };
+    private TrackingMessage mTrackingMessage;
 
     private void startRotateFootprint() {
         if (!mFootprintRotateObjAnimator.isRunning()) {
-            mFootprintRotateObjAnimator.setRepeatCount(5);
+            mFootprintRotateObjAnimator.setRepeatCount(2);
             mFootprintRotateObjAnimator.setDuration(1500);
             mFootprintRotateObjAnimator.start();
             mFootprintRotateObjAnimator.addListener(new AnimatorListenerAdapter() {
@@ -203,7 +211,7 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
         mElephantEnterAnimation = (AnimationDrawable) ivElephantEnter.getDrawable();
         mElephantStopAnimation = (AnimationDrawable) ivElephantStop.getDrawable();
         mInjectingWaterAnimation = (AnimationDrawable) ivInjectingWaterTip.getDrawable();
-        mInjectWaterAnimation = (AnimationDrawable) ivInjectWaterTip.getDrawable();
+        mWaveHandsAnimation = (AnimationDrawable) ivWaveHandsTip.getDrawable();
 
         return view;
     }
@@ -212,19 +220,20 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     public void onResume() {
         super.onResume();
         isResume = true;
-        if (flFragmentGesture.getChildCount() == 0) {
-            mMessage = mHandler.obtainMessage();
-            mMessage.what = ADD_CAMERE;
-            mHandler.sendMessageDelayed(mMessage, 100);
-            mMessage = mHandler.obtainMessage();
-            mMessage.what = ADD_RAIN;
-            mHandler.sendMessageDelayed(mMessage, 400);
-        }
+//        if (flFragmentGesture.getChildCount() == 0) {
+//            mMessage = mHandler.obtainMessage();
+//            mMessage.what = ADD_CAMERE;
+//            mHandler.sendMessageDelayed(mMessage, 100);
+//            mMessage = mHandler.obtainMessage();
+//            mMessage.what = ADD_RAIN;
+//            mHandler.sendMessageDelayed(mMessage, 400);
+//        }
         startElephantEnterAnimation();
 
     }
 
     private void startElephantEnterAnimation() {
+        ALog.d(TAG, "startElephantEnterAnimation");
         if (!mElephantEnterAnimation.isRunning()) {
             mElephantEnterAnimation.start();
         }
@@ -280,6 +289,10 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     }
 
     private void nextAfterStandRight() {
+        ALog.d(TAG, "nextAfterStandRight");
+        if (mFootprintRotateObjAnimator != null) {
+            mFootprintRotateObjAnimator.cancel();
+        }
         tvGuideTip1.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -292,15 +305,20 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
             public void run() {
                 tvGuideTip1.setText(getString(R.string.guide_tips_3));
                 hideFullFootprint();
-                startInjectWaterAnimation();
+                startWaveHandTipAnimation();
             }
         }, 1500);
-        ivElephantStop.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startElephantExitAnimation();
-            }
-        }, 5500);//此处提示摇手3000ms+注水的一半时间1000ms =4000ms，后开始退出动画
+    }
+
+    private void startWaveHandTipAnimation() {
+        ALog.d(TAG, "startWaveHandTipAnimation");
+        fadeIn(ivWaveHandsTip);
+        mWaveHandsAnimation.start();
+        //test,isActived=true接收信号执行注水ing动画
+        isWaveForActive = true;
+        if (mTrackingMessage != null && mTrackingMessage.isActived()) {
+            waveActiveSucess();
+        }
     }
 
     private void startElephantExitAnimation() {
@@ -326,6 +344,14 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
             mAnimatorSet.setDuration(3000);
             mAnimatorSet.addListener(new AnimatorListenerAdapter() {
                 @Override
+                public void onAnimationStart(Animator animation) {
+                    super.onAnimationStart(animation);
+                    mMessage = mHandler.obtainMessage();
+                    mMessage.what = INJECTED_WATER_FADE_OUT;
+                    mHandler.sendMessageDelayed(mMessage, 1000);
+                }
+
+                @Override
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
                     mElephantExitAnimation.stop();
@@ -333,20 +359,36 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
                     mETipEnterObjAnimator.cancel();
                     ivElephantExit.setVisibility(View.INVISIBLE);
                     tvGuideTip1.setText(R.string.guide_tips_1);
-//                    startElephantEnterAnimation();
                     startActivity(new Intent(getActivity(), MainActivity.class));
-                }
-
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    super.onAnimationStart(animation);
-                    mMessage = mHandler.obtainMessage();
-                    mMessage.what = INJECTED_WATER_FADE_OUT;
-                    mHandler.sendMessageDelayed(mMessage, 1000);
                 }
             });
             mAnimatorSet.start();
         }
+    }
+
+    private void waveActiveSucess() {
+        //接收信号执行注水ing动画
+        mMessage = mHandler.obtainMessage();
+        mMessage.what = INJECT_WATER;
+        mHandler.sendMessageDelayed(mMessage, 3000);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)
+
+        mMessage = mHandler.obtainMessage();
+        mMessage.what = ELEPHANT_EXIT;
+        mHandler.sendMessageDelayed(mMessage, 3000 + 1000);////此处提示摇手3000ms(自定义摇多久，是循环的帧动画)+注水的一半时间1000ms =4000ms，后开始退出动画
+    }
+
+    private void stopInjectWaterAnimation() {
+        fadeOut(ivInjectingWaterTip, 2000);
+    }
+
+    private void injectingWaterAnimation() {
+        ivInjectingWaterTip.setVisibility(View.VISIBLE);
+        ivWaveHandsTip.setVisibility(View.INVISIBLE);
+        mWaveHandsAnimation.stop();
+        mInjectingWaterAnimation.start();
+        mMessage = mHandler.obtainMessage();
+        mMessage.what = INJECTED_WATER;
+        mHandler.sendMessageDelayed(mMessage, 1970);
     }
 
 
@@ -359,19 +401,19 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     }
 
     private void hideFootprint() {
-        ivLeftprint1.setVisibility(View.INVISIBLE);
-        ivLeftprint2.setVisibility(View.INVISIBLE);
-        ivLeftprint3.setVisibility(View.INVISIBLE);
-        ivLeftprint4.setVisibility(View.INVISIBLE);
-        ivLeftprint5.setVisibility(View.INVISIBLE);
-        ivLeftprint6.setVisibility(View.INVISIBLE);
-        ivRightprint1.setVisibility(View.INVISIBLE);
-        ivRightprint2.setVisibility(View.INVISIBLE);
-        ivRightprint3.setVisibility(View.INVISIBLE);
-        ivRightprint4.setVisibility(View.INVISIBLE);
-        ivRightprint5.setVisibility(View.INVISIBLE);
-        ivRightprint5.setVisibility(View.INVISIBLE);
-        ivRightprint6.setVisibility(View.INVISIBLE);
+        ivLeftprint1.setVisibility(View.GONE);
+        ivLeftprint2.setVisibility(View.GONE);
+        ivLeftprint3.setVisibility(View.GONE);
+        ivLeftprint4.setVisibility(View.GONE);
+        ivLeftprint5.setVisibility(View.GONE);
+        ivLeftprint6.setVisibility(View.GONE);
+        ivRightprint1.setVisibility(View.GONE);
+        ivRightprint2.setVisibility(View.GONE);
+        ivRightprint3.setVisibility(View.GONE);
+        ivRightprint4.setVisibility(View.GONE);
+        ivRightprint5.setVisibility(View.GONE);
+        ivRightprint5.setVisibility(View.GONE);
+        ivRightprint6.setVisibility(View.GONE);
     }
 
     private void hideFullFootprint() {
@@ -380,67 +422,31 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     }
 
     private void showFullFootprint() {
-        if (mFootprintRotateObjAnimator.isRunning()) {
-            mFootprintRotateObjAnimator.cancel();
-        }
         ivLeftprint.setVisibility(View.VISIBLE);
         ivRightprint.setVisibility(View.VISIBLE);
         hideFootprint();
     }
 
-
-    private void startInjectWaterAnimation() {
-        fadeIn(ivInjectWaterTip);
-        mInjectWaterAnimation.start();
-        //test
-        waveActiveSucess();
-    }
-
-    private void waveActiveSucess() {
-        //接收信号执行注水ing动画
-        mMessage = mHandler.obtainMessage();
-        mMessage.what = INJECT_WATER;
-        mHandler.sendMessageDelayed(mMessage, 3000);
-    }
-
-    private void stopInjectWaterAnimation() {
-        fadeOut(ivInjectingWaterTip, 2000);
-    }
-
-    private void injectingWaterAnimation() {
-        ivInjectingWaterTip.setVisibility(View.VISIBLE);
-        ivInjectWaterTip.setVisibility(View.INVISIBLE);
-        mInjectWaterAnimation.stop();
-        mInjectingWaterAnimation.start();
-        mMessage = mHandler.obtainMessage();
-        mMessage.what = INJECTED_WATER;
-        mHandler.sendMessageDelayed(mMessage, 1970);
-    }
-
     private void fadeIn(View view) {
-        view.setVisibility(View.VISIBLE);
         Animation animation = new AlphaAnimation(0f, 1f);
         animation.setDuration(2000);
-        view.startAnimation(animation);
+        if (view != null) {
+            view.setVisibility(View.VISIBLE);
+            view.startAnimation(animation);
+        }
     }
 
     private void fadeOut(View view, int duration) {
         Animation animation = new AlphaAnimation(1f, 0f);
         animation.setDuration(duration);
-        view.startAnimation(animation);
-        view.setVisibility(View.GONE);
+        if (view != null) {
+            view.startAnimation(animation);
+            view.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.rl_gesture:
-                startActivity(new Intent(getContext(), MainActivity.class));
-                ((AdvertisingActivity) getActivity()).removeGestureFragment();
-                break;
-            default:
-                break;
-        }
 
     }
 
@@ -461,8 +467,8 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
         if (mInjectingWaterAnimation.isRunning()) {
             mInjectingWaterAnimation.stop();
         }
-        if (mInjectWaterAnimation.isRunning()) {
-            mInjectWaterAnimation.stop();
+        if (mWaveHandsAnimation.isRunning()) {
+            mWaveHandsAnimation.stop();
         }
 
         if (mFootprintRotateObjAnimator.isRunning()) {
@@ -490,10 +496,14 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageShowEvent(EventBusMessage message) {
-        if (isResume && message.getType() == EventBusMessage.STANDHERE) {
-            isStandHere = (boolean) message.getObject();
+        ALog.d(TAG, "onMessageShowEvent");
+        if (message.getType() == EventBusMessage.ACTIVE_TIP) {
+            mTrackingMessage = (TrackingMessage) message.getObject();
+            if (mTrackingMessage.isActived() && isWaveForActive) {
+                waveActiveSucess();
+                isWaveForActive = false;
+            }
         }
-
     }
 
     @Override

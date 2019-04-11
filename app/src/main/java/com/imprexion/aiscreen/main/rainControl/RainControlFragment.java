@@ -9,7 +9,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
 import com.imprexion.aiscreen.tools.ALog;
+
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -180,13 +182,17 @@ public class RainControlFragment extends Fragment {
                     @Override
                     public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
-                        rainView1.setVisibility(View.VISIBLE);
+                        if (rainView1 != null) {
+                            rainView1.setVisibility(View.VISIBLE);
+                        }
                     }
 
                     @Override
                     public void onAnimationRepeat(Animator animation) {
                         super.onAnimationRepeat(animation);
-                        rainView1.initData();
+                        if (rainView1 != null) {
+                            rainView1.initData();
+                        }
                     }
                 });
             }
@@ -208,13 +214,17 @@ public class RainControlFragment extends Fragment {
                     @Override
                     public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
-                        rainView2.setVisibility(View.VISIBLE);
+                        if (rainView2 != null) {
+                            rainView2.setVisibility(View.VISIBLE);
+                        }
                     }
 
                     @Override
                     public void onAnimationRepeat(Animator animation) {
                         super.onAnimationRepeat(animation);
-                        rainView2.initData();
+                        if (rainView2 != null) {
+                            rainView2.initData();
+                        }
                     }
                 });
             }
@@ -336,15 +346,25 @@ public class RainControlFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mObjectAnimator1.cancel();
-        mObjectAnimator2.cancel();
-        mObjectAnimator3.cancel();
-        mObjectAnimator4.cancel();
-        mObjectAnimator5.cancel();
-        mObjectAnimator6.cancel();
+        if (mObjectAnimator1 != null) {
+            mObjectAnimator1.cancel();
+        }
+        if (mObjectAnimator2 != null) {
+            mObjectAnimator2.cancel();
+        }
+        if (mObjectAnimator3 != null) {
+            mObjectAnimator3.cancel();
+        }
+        if (mObjectAnimator4 != null) {
+            mObjectAnimator4.cancel();
+        }
+        if (mObjectAnimator5 != null) {
+            mObjectAnimator5.cancel();
+        }
+        if (mObjectAnimator6 != null) {
+            mObjectAnimator6.cancel();
+        }
         mRainVoice.pause();
-
-
     }
 
     @Override

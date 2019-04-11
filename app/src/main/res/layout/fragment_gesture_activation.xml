@@ -34,11 +34,12 @@
         android:src="@drawable/bottom_grid" />
 
     <ImageView
-        android:id="@+id/iv_inject_water_tip"
+        android:id="@+id/iv_wave_hands_tip"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/inject_water_tip_list"
+    android:src="@drawable/wave_hands_tip_list"
         android:visibility="gone" />
+
 
     <ImageView
         android:id="@+id/iv_injecting_water_tip"

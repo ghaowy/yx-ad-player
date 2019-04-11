@@ -40,8 +40,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.Date;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -69,10 +67,11 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     private static final String TAG = "MainActivity";
     private static final String URL = "http://172.16.2.207:5000/";
     private static final int NO_PERSON = 0;
-    private static final int HAVE_PERSON = 1;
+    private static final int ACTIVED = 1;
     private static final int OTHER_PAGE = 100;
     private static final int AD_PAGE = 101;
-    public static final String AD_SUFFIX = "ADContent";
+    public static final String AD_CURRENT = "ADContentCurrent";
+    public static final String AD_NEXT = "ADContentNext";
     @BindView(R.id.tv_usersex)
     TextView tvUsersex;
     @BindView(R.id.tv_standhere)
@@ -91,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     private SharedPreferences.Editor mEditor;
     private NetPresenter mNetPresenter;
     private ServiceConnection mConnection;
+    private boolean isShowActiveTip;
     private TcpClientConnector mTcpClientConnector = TcpClientConnector.getInstance();
     private Handler mHandler = new Handler() {
         @Override
@@ -98,9 +98,13 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
             super.handleMessage(msg);
             switch (msg.what) {
                 case NO_PERSON:
-                    startAdActivity();
+                    if (mTrackingMessage.getUsrsex() == 0) {
+                        startAdActivity();
+                    } else {
+                        ALog.d(TAG, "have person in 2s");
+                    }
                     break;
-                case HAVE_PERSON:
+                case ACTIVED:
                     startActivity(new Intent(MainActivity.this, MainActivity.class));
                     break;
                 default:
@@ -108,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
             }
         }
     };
+    private TrackingMessage mTrackingMessage;
 
 
     @Override
@@ -115,8 +120,23 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        setMainBg();
+        EventBus.getDefault().register(this);
+        initData();
         initStatus();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        Tools.hideNavigationBarStatusBar(this, hasFocus);
+    }
+
+    private void initData() {
+        bindAISService();
+        setSocketListener();
+        lav.setImageAssetsFolder("imagesGohomeDay");
+        lav.setAnimation("gohome_day_json.json");
+        lav.playAnimation();
         ZOOM_WIDTH = (int) getResources().getDimension(R.dimen.title_width);
         ZOOM_HEIGHT = (int) getResources().getDimension(R.dimen.title_height);
         setOnHoverListener(ivNavigation);
@@ -127,18 +147,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         setOnHoverListener(ivEmojidancer);
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        Tools.hideNavigationBarStatusBar(this, hasFocus);
-    }
-
-    private void setMainBg() {
-        Date date = new Date();
-    }
-
     private void initStatus() {
-
         if (mStatusFragment == null) {
             mStatusFragment = new StatusFragment();
         }
@@ -152,13 +161,9 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     @Override
     protected void onResume() {
         super.onResume();
+        isShowActiveTip = false;
         currentPage = OTHER_PAGE;
         Tools.hideNavigationBarStatusBar(this, true);
-        bindAISService();
-        setSocketListener();
-        lav.setImageAssetsFolder("imagesGohomeDay");
-        lav.setAnimation("gohome_day_json.json");
-        lav.playAnimation();
         //test
         tvWavehands.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,8 +178,8 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     }
 
     private void setSocketListener() {
-        mTcpClientConnector.createConnect("10.2.26.7", 20002);
-//        mTcpClientConnector.createConnect("127.0.0.1", 20002);
+//        mTcpClientConnector.createConnect("10.2.26.7", 20002);
+        mTcpClientConnector.createConnect("127.0.0.1", 20002);
         mTcpClientConnector.setOnConnectListener(new TcpClientConnector.ConnectListener() {
             @Override
             public void onReceiveData(MessageForAIScreenPB.MessageForAIScreen messageForAIScreen) {
@@ -188,29 +193,32 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     }
 
     private void dispatchMessage(MessageForAIScreenPB.MessageForAIScreen messageForAIScreen) {
-        TrackingMessage trackingMessage = new TrackingMessage();
-        trackingMessage.setUsrsex(messageForAIScreen.getUsrsex());
-        trackingMessage.setActived(messageForAIScreen.getIsActived());
-        trackingMessage.setStandHere(messageForAIScreen.getStandHere());
-        tvUsersex.setText("" + trackingMessage.getUsrsex());
-        tvStandhere.setText(trackingMessage.isStandHere() == true ? "true" : "false");
-        tvIsactived.setText(trackingMessage.isActived() == true ? "true" : "false");
-        ALog.d(TAG, "usrsex=" + trackingMessage.getUsrsex() + " ;standHere=" + trackingMessage.isStandHere()
-                + " ;isActived=" + trackingMessage.isActived());
-        if (trackingMessage.getUsrsex() == 0 && currentPage != AD_PAGE && !trackingMessage.isActived() ) {
+        if (mTrackingMessage == null) {
+            mTrackingMessage = new TrackingMessage();
+        }
+        mTrackingMessage.setUsrsex(messageForAIScreen.getUsrsex());
+        mTrackingMessage.setActived(messageForAIScreen.getIsActived());
+        mTrackingMessage.setStandHere(messageForAIScreen.getStandHere());
+        tvUsersex.setText("" + mTrackingMessage.getUsrsex());
+        tvStandhere.setText(mTrackingMessage.isStandHere() == true ? "true" : "false");
+        tvIsactived.setText(mTrackingMessage.isActived() == true ? "true" : "false");
+        ALog.d(TAG, "usrsex=" + mTrackingMessage.getUsrsex() + " ;standHere=" + mTrackingMessage.isStandHere()
+                + " ;isActived=" + mTrackingMessage.isActived());
+        if (mTrackingMessage.getUsrsex() == 0 && currentPage != AD_PAGE) {
             currentPage = AD_PAGE;
             Message message = mHandler.obtainMessage();
             message.what = NO_PERSON;
-            mHandler.sendMessageDelayed(message, 500);
+            mHandler.sendMessageDelayed(message, 2000);
         }
+        ALog.d(TAG, "isShowActiveTip=" + isShowActiveTip);
 
-        if (trackingMessage.getUsrsex() != 0 && currentPage == AD_PAGE && trackingMessage.isActived()) {
+        if (mTrackingMessage.getUsrsex() != 0 && currentPage == AD_PAGE && mTrackingMessage.isActived() && !isShowActiveTip) {
             currentPage = OTHER_PAGE;
             Message message = mHandler.obtainMessage();
-            message.what = HAVE_PERSON;
-            mHandler.sendMessageDelayed(message, 1000);
+            message.what = ACTIVED;
+            mHandler.sendMessageDelayed(message, 2000);
         }
-//        EventBus.getDefault().post(new EventBusMessage(EventBusMessage.STANDHERE, trackingMessage));
+        EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
     }
 
     private void bindAISService() {
@@ -249,13 +257,19 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
             mSharedPreferences = getSharedPreferences("AIScreenSP", Context.MODE_PRIVATE);
             mEditor = mSharedPreferences.edit();
         }
-        mEditor.putString(adContentPlay.getPlayDate() + AD_SUFFIX, content);
+
         ALog.d(TAG, "adContentPlay.getPlayDate()=" + adContentPlay.getPlayDate());
         ALog.d(TAG, "getCurrentDate()=" + Tools.getCurrentDate("yyyy-MM-dd"));
         ALog.d(TAG, "adContentPlay=" + JSON.toJSONString(adContentPlay));
-        mEditor.commit();
-        EventBusMessage eventBusMessage = new EventBusMessage(EventBusMessage.AD_PLAY_CONTENT, adContentPlay);
-        EventBus.getDefault().post(eventBusMessage);
+        if (adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
+            mEditor.putString(AD_CURRENT, content);
+            mEditor.commit();
+            EventBusMessage eventBusMessage = new EventBusMessage(EventBusMessage.AD_PLAY_CONTENT, adContentPlay);
+            EventBus.getDefault().post(eventBusMessage);
+        } else {
+            mEditor.putString(AD_NEXT, content);
+            mEditor.commit();
+        }
     }
 
     @Override
@@ -303,14 +317,21 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
                     mSharedPreferences = getSharedPreferences("AIScreenSP", Context.MODE_PRIVATE);
                     mEditor = mSharedPreferences.edit();
                 }
-                String adContentPlayString = mSharedPreferences.getString(Tools.getCurrentDate("yyyy-MM-dd") + MainActivity.AD_SUFFIX, null);
+                String adContentPlayString = mSharedPreferences.getString(AD_CURRENT, null);
+                ADContentPlay adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
+                if (!adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
+                    adContentPlayString = mSharedPreferences.getString(AD_NEXT, null);
+                    adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
+                    if (!adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
+                        adContentPlayString = null;
+                    }
+                }
                 if (adContentPlayString == null) {
                     ALog.d(TAG, "adContentPlayString is null");
                     return;
                 } else {
                     ALog.d(TAG, "adContentPlayString=" + adContentPlayString);
                 }
-                ADContentPlay adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
                 mNetPresenter.onADCallback(adContentPlay);
 //                startActivity(new Intent(this, JsonActivity.class).putExtra("url", URL + "app"));
 //                AISApplication.getSmdtManager().setMouseIcon(i++%5);
@@ -320,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
 //                break;
 //            case R.id.rl_main:
 //                bgFlag = !bgFlag;
-//                setMainBg();
+//                initData();
 //                break;
             default:
                 break;
@@ -364,13 +385,18 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void updateBgByTime(EventBusMessage eventBusMessage) {
-
+    public void onShowEventBusMessage(EventBusMessage eventBusMessage) {
+        ALog.d(TAG, "onShowEventBusMessage=" + isShowActiveTip);
+        if (eventBusMessage.getType() == EventBusMessage.IS_SHOW_ACTIVE_TIP) {
+            isShowActiveTip = true;
+            ALog.d(TAG, "isShowActiveTip=" + isShowActiveTip);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mConnection);
+        EventBus.getDefault().unregister(this);
     }
 }

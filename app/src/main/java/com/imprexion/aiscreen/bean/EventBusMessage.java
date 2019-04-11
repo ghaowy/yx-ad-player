@@ -1,8 +1,9 @@
 package com.imprexion.aiscreen.bean;
 
 public class EventBusMessage {
-    public static final int STANDHERE = 200;
+    public static final int ACTIVE_TIP = 200;
     public static final int AD_PLAY_CONTENT = 201;
+    public static final int IS_SHOW_ACTIVE_TIP = 202;
 
     private int type;
     private Object mObject;

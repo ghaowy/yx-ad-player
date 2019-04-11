@@ -15,14 +15,17 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.imprexion.aiscreen.R;
+import com.imprexion.aiscreen.advertising.activation.GestureActivationFragment;
 import com.imprexion.aiscreen.advertising.content.AdContentImageFragment;
 import com.imprexion.aiscreen.advertising.content.CameraRainFragment;
 import com.imprexion.aiscreen.bean.ADContentInfo;
 import com.imprexion.aiscreen.bean.ADContentPlay;
 import com.imprexion.aiscreen.bean.EventBusMessage;
+import com.imprexion.aiscreen.bean.TrackingMessage;
 import com.imprexion.aiscreen.main.MainActivity;
 import com.imprexion.aiscreen.tools.ALog;
 import com.imprexion.aiscreen.tools.Tools;
@@ -46,6 +49,12 @@ public class AdSecondActivity extends AppCompatActivity {
 
     @BindView(R.id.viewPager)
     ViewPager viewPager;
+    @BindView(R.id.tv_usersex)
+    TextView tvUsersex;
+    @BindView(R.id.tv_standhere)
+    TextView tvStandhere;
+    @BindView(R.id.tv_isactived)
+    TextView tvIsactived;
 
     private String picUrl = "https://cn.bing.com/th?id=OHR.SakuraFes_ZH-CN1341601988_1920x1080.jpg&rf=NorthMale_1920x1080.jpg";
     private String picUrl1 = "https://cn.bing.com/sa/simg/hpb/NorthMale_EN-US8782628354_1366x768.jpg";
@@ -60,12 +69,15 @@ public class AdSecondActivity extends AppCompatActivity {
     private ExecutorService mExecutorService;
     private final static String TAG = "AdSecondActivity";
     private final static int PLAY_NEXT = 1;
+    private final static int SHOW_ACTIVE_TIP_FROM_FOOT = 2;
+    private final static int SHOW_ACTIVE_TIP_FROM_WAVE_HAND = 3;
     private boolean isPlay = true;
     private int mCurrentPosition;
     private int mSize;
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
     private int mCurrentPage;
+    private boolean isShowGestureActive;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -76,11 +88,29 @@ public class AdSecondActivity extends AppCompatActivity {
                     mCurrentPage = mPagerPage++ % mSize;
                     viewPager.setCurrentItem(mCurrentPage);
                     break;
+                case SHOW_ACTIVE_TIP_FROM_FOOT:
+                    if (!mTrackingMessage.isActived()) {
+                        showGestureActiveView();
+                    }
+                    break;
+                case SHOW_ACTIVE_TIP_FROM_WAVE_HAND:
+                    if (!mTrackingMessage.isActived()) {
+                        showGestureActiveView();
+                    }
+                    break;
                 default:
                     break;
             }
         }
     };
+    private TrackingMessage mTrackingMessage;
+
+    private void showGestureActiveView() {
+        ALog.d(TAG, "showGestureActiveView");
+        EventBus.getDefault().post(new EventBusMessage(EventBusMessage.IS_SHOW_ACTIVE_TIP, null));
+        getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, new GestureActivationFragment()).commitAllowingStateLoss();
+    }
+
     private FragmentStatePagerAdapter mFragmentStatePagerAdapter;
     private List<ADContentInfo> mAdContentInfoList;
 
@@ -104,15 +134,31 @@ public class AdSecondActivity extends AppCompatActivity {
             mFragmentList = new ArrayList<>();
         }
         mFragmentList.clear();
-//        ADContentPlay adContentPlay = JSON.parseObject(getString("adJson.text", this), ADContentPlay.class);
-        String adContentPlayString = mSharedPreferences.getString(Tools.getCurrentDate("yyyy-MM-dd") + MainActivity.AD_SUFFIX, null);
-        if (adContentPlayString == null) {
-            ALog.d(TAG, "adContentPlayString is null");
-            return;
+        String adContentPlayString = mSharedPreferences.getString(MainActivity.AD_CURRENT, null);
+        ADContentPlay adContentPlay;
+        if (adContentPlayString != null) {
+            adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
         } else {
-            ALog.d(TAG, "adContentPlayString=" + adContentPlayString);
+            ALog.d(TAG, "adContentPlayString current is null");
+            return;
         }
-        ADContentPlay adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
+        if (!adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
+            adContentPlayString = mSharedPreferences.getString(MainActivity.AD_NEXT, null);
+            if (adContentPlayString != null) {
+                adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
+            } else {
+                ALog.d(TAG, "adContentPlayString next is null");
+                return;
+            }
+            if (!adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
+                ALog.d(TAG, "there is not today adContent");
+                return;
+            } else {
+                mEditor.putString(MainActivity.AD_CURRENT, adContentPlayString);
+                mEditor.commit();
+            }
+        }
+//        ADContentPlay adContentPlay = JSON.parseObject(getString("adJson.text", this), ADContentPlay.class);
         mAdContentInfoList = adContentPlay.getContentPlayVOList();
         int size = mAdContentInfoList.size();
         for (int i = 0; i < size; i++) {
@@ -150,6 +196,7 @@ public class AdSecondActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        isShowGestureActive = false;
         Tools.hideNavigationBarStatusBar(this, true);
 //        initViewPager();
         mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
@@ -265,6 +312,26 @@ public class AdSecondActivity extends AppCompatActivity {
                 initData();
 //                viewPager.notifyAll();
                 mFragmentStatePagerAdapter.notifyDataSetChanged();
+            }
+        }
+        if (eventBusMessage.getType() == EventBusMessage.ACTIVE_TIP) {
+            mTrackingMessage = (TrackingMessage) eventBusMessage.getObject();
+            tvUsersex.setText("" + mTrackingMessage.getUsrsex());
+            tvStandhere.setText(mTrackingMessage.isStandHere() == true ? "true" : "false");
+            tvIsactived.setText(mTrackingMessage.isActived() == true ? "true" : "false");
+
+            if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived() && !isShowGestureActive) {
+                if (mTrackingMessage.isStandHere()) {
+                    isShowGestureActive = true;
+                    Message message = mHandler.obtainMessage();
+                    message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
+                    mHandler.sendMessageDelayed(message, 3000);
+                } else {
+                    isShowGestureActive = true;
+                    Message message = mHandler.obtainMessage();
+                    message.what = SHOW_ACTIVE_TIP_FROM_WAVE_HAND;
+                    mHandler.sendMessageDelayed(message, 3000);
+                }
             }
         }
     }
