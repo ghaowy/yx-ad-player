@@ -68,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
     private static final String URL = "http://172.16.2.207:5000/";
     private static final int NO_PERSON = 0;
     private static final int ACTIVED = 1;
+    private static final int REMOVE_GESTURE_ACTIVE = 2;
+    private static final int START_AD_FIRST = 3;
     private static final int OTHER_PAGE = 100;
     private static final int AD_PAGE = 101;
     public static final String AD_CURRENT = "ADContentCurrent";
@@ -99,13 +101,28 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
             switch (msg.what) {
                 case NO_PERSON:
                     if (mTrackingMessage.getUsrsex() == 0) {
+                        currentPage = AD_PAGE;
                         startAdActivity();
                     } else {
                         ALog.d(TAG, "have person in 2s");
                     }
                     break;
                 case ACTIVED:
-                    startActivity(new Intent(MainActivity.this, MainActivity.class));
+                    if (mTrackingMessage.getUsrsex() != 0) {
+                        currentPage = OTHER_PAGE;
+                        startActivity(new Intent(MainActivity.this, MainActivity.class));
+                    } else {
+                        ALog.d(TAG, "have no person in 2s");
+
+                    }
+                    break;
+                case REMOVE_GESTURE_ACTIVE:
+                    if (mTrackingMessage.getUsrsex() == 0) {
+                        EventBus.getDefault().post(new EventBusMessage(EventBusMessage.REMOVE_GESTURE_ACTIVE, null));
+                    }
+                    break;
+                case START_AD_FIRST:
+                    startAdActivity();
                     break;
                 default:
                     break;
@@ -123,6 +140,9 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         EventBus.getDefault().register(this);
         initData();
         initStatus();
+        Message message = mHandler.obtainMessage();
+        message.what = START_AD_FIRST;
+        mHandler.sendMessageDelayed(message, 1000);
     }
 
     @Override
@@ -205,7 +225,6 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         ALog.d(TAG, "usrsex=" + mTrackingMessage.getUsrsex() + " ;standHere=" + mTrackingMessage.isStandHere()
                 + " ;isActived=" + mTrackingMessage.isActived());
         if (mTrackingMessage.getUsrsex() == 0 && currentPage != AD_PAGE) {
-            currentPage = AD_PAGE;
             Message message = mHandler.obtainMessage();
             message.what = NO_PERSON;
             mHandler.sendMessageDelayed(message, 2000);
@@ -213,10 +232,15 @@ public class MainActivity extends AppCompatActivity implements ScreenUtils.Navig
         ALog.d(TAG, "isShowActiveTip=" + isShowActiveTip);
 
         if (mTrackingMessage.getUsrsex() != 0 && currentPage == AD_PAGE && mTrackingMessage.isActived() && !isShowActiveTip) {
-            currentPage = OTHER_PAGE;
             Message message = mHandler.obtainMessage();
             message.what = ACTIVED;
             mHandler.sendMessageDelayed(message, 2000);
+        }
+
+        if (mTrackingMessage.getUsrsex() == 0 && isShowActiveTip) {
+            Message message = mHandler.obtainMessage();
+            message.what = REMOVE_GESTURE_ACTIVE;
+            mHandler.sendMessageDelayed(message, 3000);
         }
         EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
     }

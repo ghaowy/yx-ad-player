@@ -8,6 +8,7 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -15,6 +16,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -55,6 +57,8 @@ public class AdSecondActivity extends AppCompatActivity {
     TextView tvStandhere;
     @BindView(R.id.tv_isactived)
     TextView tvIsactived;
+    @BindView(R.id.fl_gestureActive)
+    FrameLayout flGestureActive;
 
     private String picUrl = "https://cn.bing.com/th?id=OHR.SakuraFes_ZH-CN1341601988_1920x1080.jpg&rf=NorthMale_1920x1080.jpg";
     private String picUrl1 = "https://cn.bing.com/sa/simg/hpb/NorthMale_EN-US8782628354_1366x768.jpg";
@@ -71,6 +75,7 @@ public class AdSecondActivity extends AppCompatActivity {
     private final static int PLAY_NEXT = 1;
     private final static int SHOW_ACTIVE_TIP_FROM_FOOT = 2;
     private final static int SHOW_ACTIVE_TIP_FROM_WAVE_HAND = 3;
+    public final static String AD_DEFAULT = "adDefalt";
     private boolean isPlay = true;
     private int mCurrentPosition;
     private int mSize;
@@ -89,12 +94,14 @@ public class AdSecondActivity extends AppCompatActivity {
                     viewPager.setCurrentItem(mCurrentPage);
                     break;
                 case SHOW_ACTIVE_TIP_FROM_FOOT:
-                    if (!mTrackingMessage.isActived()) {
+                    if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived()) {
+                        isShowGestureActive = true;
                         showGestureActiveView();
                     }
                     break;
                 case SHOW_ACTIVE_TIP_FROM_WAVE_HAND:
-                    if (!mTrackingMessage.isActived()) {
+                    if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived()) {
+                        isShowGestureActive = true;
                         showGestureActiveView();
                     }
                     break;
@@ -108,7 +115,10 @@ public class AdSecondActivity extends AppCompatActivity {
     private void showGestureActiveView() {
         ALog.d(TAG, "showGestureActiveView");
         EventBus.getDefault().post(new EventBusMessage(EventBusMessage.IS_SHOW_ACTIVE_TIP, null));
-        getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, new GestureActivationFragment()).commitAllowingStateLoss();
+        if (flGestureActive.getChildCount() == 0) {
+            ALog.d(TAG, "add gestureFragment");
+            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, new GestureActivationFragment()).commitAllowingStateLoss();
+        }
     }
 
     private FragmentStatePagerAdapter mFragmentStatePagerAdapter;
@@ -138,26 +148,28 @@ public class AdSecondActivity extends AppCompatActivity {
         ADContentPlay adContentPlay;
         if (adContentPlayString != null) {
             adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
+            if (!adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
+                adContentPlayString = mSharedPreferences.getString(MainActivity.AD_NEXT, null);
+                if (adContentPlayString != null) {
+                    adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
+                    if (!adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
+                        ALog.d(TAG, "there is not today adContent");
+                        adContentPlay = getDefaultADContentPlay();
+                    } else {
+                        mEditor.putString(MainActivity.AD_CURRENT, adContentPlayString);
+                        mEditor.commit();
+                    }
+                } else {
+                    ALog.d(TAG, "adContentPlayString next is null");
+                    adContentPlay = getDefaultADContentPlay();
+                }
+
+            }
         } else {
             ALog.d(TAG, "adContentPlayString current is null");
-            return;
+            adContentPlay = getDefaultADContentPlay();
         }
-        if (!adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
-            adContentPlayString = mSharedPreferences.getString(MainActivity.AD_NEXT, null);
-            if (adContentPlayString != null) {
-                adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
-            } else {
-                ALog.d(TAG, "adContentPlayString next is null");
-                return;
-            }
-            if (!adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
-                ALog.d(TAG, "there is not today adContent");
-                return;
-            } else {
-                mEditor.putString(MainActivity.AD_CURRENT, adContentPlayString);
-                mEditor.commit();
-            }
-        }
+
 //        ADContentPlay adContentPlay = JSON.parseObject(getString("adJson.text", this), ADContentPlay.class);
         mAdContentInfoList = adContentPlay.getContentPlayVOList();
         int size = mAdContentInfoList.size();
@@ -193,6 +205,20 @@ public class AdSecondActivity extends AppCompatActivity {
 
     }
 
+    @NonNull
+    private ADContentPlay getDefaultADContentPlay() {
+        ADContentPlay adContentPlay;
+        adContentPlay = new ADContentPlay();
+        ADContentInfo adContentInfo = new ADContentInfo();
+        adContentInfo.setFileUrl(AD_DEFAULT);
+        adContentInfo.setContentType(1);
+        adContentInfo.setPlayTime(10);
+        List<ADContentInfo> adContentInfoList = new ArrayList<>();
+        adContentInfoList.add(adContentInfo);
+        adContentPlay.setContentPlayVOList(adContentInfoList);
+        return adContentPlay;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -211,8 +237,11 @@ public class AdSecondActivity extends AppCompatActivity {
                     message.what = PLAY_NEXT;
                     mHandler.sendMessage(message);
 //                    ALog.d(TAG, "mAdContentInfoList size = " + mAdContentInfoList.size());
-//                    ALog.d(TAG, "mSize = " + mSize);
-//                    ALog.d(TAG, "mCurrentPage = " + mCurrentPage);
+                    ALog.d(TAG, "mSize = " + mSize);
+                    ALog.d(TAG, "mCurrentPage = " + mCurrentPage);
+                    if (mCurrentPage >= mSize) {
+                        mCurrentPage = 0;
+                    }
                     ALog.d(TAG, "runnable next,playTime = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime());
                     try {
                         Thread.sleep(mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime() * 1000);
@@ -322,16 +351,20 @@ public class AdSecondActivity extends AppCompatActivity {
 
             if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived() && !isShowGestureActive) {
                 if (mTrackingMessage.isStandHere()) {
-                    isShowGestureActive = true;
                     Message message = mHandler.obtainMessage();
                     message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
-                    mHandler.sendMessageDelayed(message, 3000);
+                    mHandler.sendMessageDelayed(message, 5000);
                 } else {
-                    isShowGestureActive = true;
                     Message message = mHandler.obtainMessage();
                     message.what = SHOW_ACTIVE_TIP_FROM_WAVE_HAND;
-                    mHandler.sendMessageDelayed(message, 3000);
+                    mHandler.sendMessageDelayed(message, 5000);
                 }
+            }
+        }
+        if (eventBusMessage.getType() == EventBusMessage.REMOVE_GESTURE_ACTIVE) {
+            if (flGestureActive.getChildCount() != 0) {
+                flGestureActive.removeAllViews();
+                isShowGestureActive = false;
             }
         }
     }

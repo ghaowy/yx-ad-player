@@ -16,6 +16,8 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
+import com.imprexion.aiscreen.R;
+import com.imprexion.aiscreen.advertising.AdSecondActivity;
 import com.imprexion.aiscreen.tools.ALog;
 
 import android.view.View;
@@ -117,9 +119,15 @@ public class Tools {
 
     public static void showPicWithGlide(ImageView imageView, String url) {
         ALog.d(TAG, "url=" + url);
-        Glide.with(AISApplication.getInstance().getApplicationContext())
-                .load(url)
-                .into(imageView);
+        if (!url.equals(AdSecondActivity.AD_DEFAULT)) {
+            Glide.with(AISApplication.getInstance().getApplicationContext())
+                    .load(url)
+                    .into(imageView);
+        } else {
+            Glide.with(AISApplication.getInstance().getApplicationContext())
+                    .load(R.drawable.ad_default)
+                    .into(imageView);
+        }
     }
 
 

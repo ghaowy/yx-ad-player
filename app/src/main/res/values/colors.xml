@@ -18,7 +18,7 @@
     <color name="weather_cloud_night_Color">#4393BD</color>
     <color name="weather_cloud_day_Color">#6CB1FD</color>
     <color name="weather_sunny_night_Color">#439FDE</color>
-    <color name="guide_text_bg_color">#ECE2E2</color>
+    <color name="guide_text_bg_color">#7FFFFFFF</color>
 
 
 

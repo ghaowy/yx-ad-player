@@ -212,7 +212,7 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
         mElephantStopAnimation = (AnimationDrawable) ivElephantStop.getDrawable();
         mInjectingWaterAnimation = (AnimationDrawable) ivInjectingWaterTip.getDrawable();
         mWaveHandsAnimation = (AnimationDrawable) ivWaveHandsTip.getDrawable();
-
+        startElephantEnterAnimation();
         return view;
     }
 
@@ -228,8 +228,6 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
 //            mMessage.what = ADD_RAIN;
 //            mHandler.sendMessageDelayed(mMessage, 400);
 //        }
-        startElephantEnterAnimation();
-
     }
 
     private void startElephantEnterAnimation() {
@@ -388,7 +386,7 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
         mInjectingWaterAnimation.start();
         mMessage = mHandler.obtainMessage();
         mMessage.what = INJECTED_WATER;
-        mHandler.sendMessageDelayed(mMessage, 1970);
+        mHandler.sendMessageDelayed(mMessage, 1570);
     }
 
 
