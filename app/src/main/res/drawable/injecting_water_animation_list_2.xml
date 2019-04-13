@@ -20,11 +20,5 @@
     <item
         android:drawable="@drawable/injecting2_water_6"
         android:duration="200" />
-    <item
-        android:drawable="@drawable/injecting2_water_7"
-        android:duration="200" />
-    <item
-        android:drawable="@drawable/injecting2_water_8"
-        android:duration="200" />
 
 </animation-list>

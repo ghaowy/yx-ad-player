@@ -5,7 +5,7 @@
     android:id="@+id/rl_gesture"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".advertising.activation.GestureActivationFragment">
+    tools:context=".advertising.activation.GestureActiveFragment">
     <!--android:background="@drawable/gezhixuan">-->
 
     <!--<fragment-->
@@ -35,8 +35,8 @@
 
     <ImageView
         android:id="@+id/iv_wave_hands_tip"
-        android:layout_width="550px"
-        android:layout_height="830px"
+        android:layout_width="800px"
+        android:layout_height="860px"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:src="@drawable/wave_hands_tip_list_2"
@@ -45,8 +45,8 @@
 
     <ImageView
         android:id="@+id/iv_injecting_water_tip"
-        android:layout_width="550px"
-        android:layout_height="830px"
+        android:layout_width="800px"
+        android:layout_height="860px"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:src="@drawable/injecting_water_animation_list_2"

@@ -11,6 +11,8 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+
+import com.imprexion.aiscreen.advertising.activation.GestureActiveFragment;
 import com.imprexion.aiscreen.tools.ALog;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -20,7 +22,6 @@ import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 import com.imprexion.aiscreen.R;
-import com.imprexion.aiscreen.advertising.activation.GestureActivationFragment;
 import com.imprexion.aiscreen.bean.ContentPlay;
 import com.imprexion.aiscreen.bean.EventBusMessage;
 import com.imprexion.aiscreen.tools.Tools;
@@ -110,7 +111,7 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
     };
     private boolean mIsRoundPlay = true;
     private String[] mPicUrl;
-    private GestureActivationFragment mGestureActivationFragment;
+    private GestureActiveFragment mGestureActiveFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +119,7 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_advertising);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-        mGestureActivationFragment = new GestureActivationFragment();
+        mGestureActiveFragment = new GestureActiveFragment();
         mAdEnterObjAnimator = ObjectAnimator.ofFloat(ivAd, "translationX", 1080, 0);
         mAdExitObjAnimator = ObjectAnimator.ofFloat(ivAd, "translationX", 0, -1080);
         mAdEnterObjAnimator_1 = ObjectAnimator.ofFloat(ivAd2, "translationX", 1080, 0);
@@ -234,8 +235,8 @@ public class AdvertisingActivity extends AppCompatActivity implements View.OnCli
         switch (v.getId()) {
             case R.id.rl_advertising:
                 if (flFragment.getChildCount() == 0) {
-                    mGestureActivationFragment = new GestureActivationFragment();
-                    getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment, mGestureActivationFragment).commitAllowingStateLoss();
+                    mGestureActiveFragment = new GestureActiveFragment();
+                    getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment, mGestureActiveFragment).commitAllowingStateLoss();
                     ivAd.setVisibility(View.INVISIBLE);
                     ivAd2.setVisibility(View.INVISIBLE);
                 }

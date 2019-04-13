@@ -39,7 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class GestureActivationFragment extends Fragment implements View.OnClickListener {
+public class GestureActiveFragment extends Fragment implements View.OnClickListener {
 
     @BindView(R.id.iv_elephant_enter)
     ImageView ivElephantEnter;
@@ -119,7 +119,7 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
     private boolean isResume;
     private boolean isStandHere;
     private boolean isWaveForActive;
-    private static final String TAG = "GestureActivationFragment";
+    private static final String TAG = "GestureActiveFragment";
 
     private Handler mHandler = new Handler() {
         @Override
@@ -372,7 +372,7 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
 
         mMessage = mHandler.obtainMessage();
         mMessage.what = ELEPHANT_EXIT;
-        mHandler.sendMessageDelayed(mMessage, 3000 + 1000);////此处提示摇手3000ms(自定义摇多久，是循环的帧动画)+注水的一半时间1000ms =4000ms，后开始退出动画
+        mHandler.sendMessageDelayed(mMessage, 3000 + 1000);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)+注水的一半时间1000ms =4000ms，后开始退出动画
     }
 
     private void stopInjectWaterAnimation() {
@@ -386,7 +386,7 @@ public class GestureActivationFragment extends Fragment implements View.OnClickL
         mInjectingWaterAnimation.start();
         mMessage = mHandler.obtainMessage();
         mMessage.what = INJECTED_WATER;
-        mHandler.sendMessageDelayed(mMessage, 1570);
+        mHandler.sendMessageDelayed(mMessage, 1170);
     }
 
 

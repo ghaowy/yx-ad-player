@@ -20,11 +20,5 @@
     <item
         android:drawable="@drawable/wave_hands_6"
         android:duration="200" />
-    <item
-        android:drawable="@drawable/wave_hands_7"
-        android:duration="200" />
-    <item
-        android:drawable="@drawable/wave_hands_8"
-        android:duration="200" />
 
 </animation-list>

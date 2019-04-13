@@ -21,7 +21,7 @@ import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.imprexion.aiscreen.R;
-import com.imprexion.aiscreen.advertising.activation.GestureActivationFragment;
+import com.imprexion.aiscreen.advertising.activation.GestureActiveFragment;
 import com.imprexion.aiscreen.advertising.content.AdContentImageFragment;
 import com.imprexion.aiscreen.advertising.content.CameraRainFragment;
 import com.imprexion.aiscreen.bean.ADContentInfo;
@@ -83,7 +83,7 @@ public class AdSecondActivity extends AppCompatActivity {
     private SharedPreferences.Editor mEditor;
     private int mCurrentPage;
     private boolean isShowGestureActive;
-
+    private GestureActiveFragment mGestureActiveFragment;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -115,9 +115,10 @@ public class AdSecondActivity extends AppCompatActivity {
     private void showGestureActiveView() {
         ALog.d(TAG, "showGestureActiveView");
         EventBus.getDefault().post(new EventBusMessage(EventBusMessage.IS_SHOW_ACTIVE_TIP, null));
-        if (flGestureActive.getChildCount() == 0) {
+        if (mGestureActiveFragment == null && flGestureActive.getChildCount() == 0) {
             ALog.d(TAG, "add gestureFragment");
-            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, new GestureActivationFragment()).commitAllowingStateLoss();
+            mGestureActiveFragment = new GestureActiveFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveFragment).commitAllowingStateLoss();
         }
     }
 
@@ -353,11 +354,11 @@ public class AdSecondActivity extends AppCompatActivity {
                 if (mTrackingMessage.isStandHere()) {
                     Message message = mHandler.obtainMessage();
                     message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
-                    mHandler.sendMessageDelayed(message, 5000);
+                    mHandler.sendMessageDelayed(message, 1000);
                 } else {
                     Message message = mHandler.obtainMessage();
                     message.what = SHOW_ACTIVE_TIP_FROM_WAVE_HAND;
-                    mHandler.sendMessageDelayed(message, 5000);
+                    mHandler.sendMessageDelayed(message, 1000);
                 }
             }
         }
@@ -365,6 +366,7 @@ public class AdSecondActivity extends AppCompatActivity {
             if (flGestureActive.getChildCount() != 0) {
                 flGestureActive.removeAllViews();
                 isShowGestureActive = false;
+                mGestureActiveFragment = null;
             }
         }
     }
