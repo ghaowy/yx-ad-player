@@ -8,13 +8,13 @@
     <!-- TODO: Update blank fragment layout -->
     <fragment
         android:id="@+id/camera_fragment"
-        android:name="com.imprexion.aiscreen.main.camera.CameraFragment"
+        android:name="com.imprexion.adplay.main.camera.CameraFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <fragment
         android:id="@+id/rainView_fragment"
-        android:name="com.imprexion.aiscreen.main.rainControl.RainControlFragment"
+        android:name="com.imprexion.adplay.main.rainControl.RainControlFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

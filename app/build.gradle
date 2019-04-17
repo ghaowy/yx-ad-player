@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.imprexion.aiscreen"
+        applicationId "com.imprexion.adplay"
         minSdkVersion 22
         targetSdkVersion 28
         versionCode 1
@@ -31,9 +31,9 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            def postFix = buildType.name == "debug" ? "-debug" : "_v${variant.versionName}"
+            def postFix = buildType.name == "debug" ? "debug" : "_v${variant.versionName}"
             def flavorName = variant.flavorName == "App" ? "" : "_${variant.flavorName}"
-            def filename = "AIScreen${flavorName}${postFix}.apk"
+            def filename = "ADPlay${flavorName}${postFix}.apk"
             outputFileName = filename
         }
     }

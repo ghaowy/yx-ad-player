@@ -58,7 +58,7 @@
 
     <fragment
         android:id="@+id/ad2_status_frgament"
-        android:name="com.imprexion.aiscreen.status.StatusFragment"
+        android:name="com.imprexion.adplay.status.StatusFragment"
         android:layout_width="match_parent"
         android:layout_height="50px" />
 </RelativeLayout>

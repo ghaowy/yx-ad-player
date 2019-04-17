@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.imprexion.aiscreen">
+    package="com.imprexion.adplay">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -15,46 +15,24 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <application
-        android:name=".base.AISApplication"
+        android:name="com.imprexion.adplay.base.ADPlayApplication"
         android:allowBackup="true"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <!-- <activity android:name=".AdActivity"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-        <!-- </intent-filter> -->
-        <!-- </activity> -->
         <activity
-            android:name=".advertising.AdvertisingActivity"
-            android:launchMode="singleTop" />
-        <activity
-            android:name=".main.MainActivity"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name="com.imprexion.adplay.main.MainActivity"
+            android:launchMode="singleTask"></activity>
         <activity
             android:name=".functionPart.WebViewActivity"
             android:launchMode="singleTop" />
-        <service
-            android:name=".service.AISService"
-            android:enabled="true"
-            android:exported="true">
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="com.imprexion.AISService" /> -->
-            <!-- </intent-filter> -->
-        </service>
+        <service
+            android:name="com.imprexion.adplay.service.AdPlayService"
+            android:enabled="true"
+            android:exported="true"></service>
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
@@ -65,7 +43,12 @@
             android:enabled="true"
             android:process=":remote" />
 
-        <activity android:name=".advertising.AdSecondActivity"></activity>
+        <activity android:name="com.imprexion.adplay.advertising.AdSecondActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

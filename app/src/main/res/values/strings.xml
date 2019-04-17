@@ -1,28 +1,12 @@
 <resources>
-    <string name="app_name">印象数据</string>
-    <string name="history_today">历史上的今天</string>
-    <string name="hands_move">手掌移动选择</string>
-    <string name="fist_select">保持握拳选中</string>
-    <string name="elephant_talk_1">Hi~你们好~我叫小像~很高兴认识你们喔~</string>
-    <string name="fist_select_2">保持握拳进入主界面</string>
-    <string name="imprexion_toutiao">印像屏正式上线了哦，快来体验一下有什么好玩的！</string>
+    <string name="app_name">广告轮播</string>
     <string name="scplaza">深圳印力中心</string>
     <string name="scplaza_welcome">印像欢迎您！</string>
     <string name="weather_default">晴</string>
-    <string name="weather_place_default">北京.多云</string>
-    <string name="weather_place_default_trans">ShenZhen.Sunny</string>
     <string name="time_default">2019/1/7 下午6:11:18</string>
-    <string name="title_1">导航导视</string>
-    <string name="title_2">优惠活动</string>
-    <string name="title_3">停车缴费</string>
-    <string name="title_4">人脸签到抽奖</string>
-    <string name="title_5">电子会员卡</string>
-    <string name="title_6">表情帝舞蹈机</string>
-    <string name="hand_rock_hint">挥挥手试试~</string>
     <string name="guide_tips_1">请站在贴纸上喔~</string>
     <string name="guide_tips_2">太棒了~</string>
     <string name="guide_tips_3">请挥动你的右手~</string>
-    <string name="back_tip">进入主界面</string>
 
 
     <string-array name="tempretures">
@@ -53,5 +37,4 @@
     </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

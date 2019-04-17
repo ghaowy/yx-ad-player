@@ -5,45 +5,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.imprexion.aiscreen.main.rainControl.RainView
+    <com.imprexion.adplay.main.rainControl.RainView
         android:id="@+id/rainView_1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         imprexion:isScale="true"
         imprexion:size="120" />
 
-    <com.imprexion.aiscreen.main.rainControl.RainView
+    <com.imprexion.adplay.main.rainControl.RainView
         android:id="@+id/rainView_2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         imprexion:size="40" />
 
-    <com.imprexion.aiscreen.main.rainControl.RainView
+    <com.imprexion.adplay.main.rainControl.RainView
         android:id="@+id/rainView_3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         imprexion:isScale="true"
         imprexion:size="120" />
 
-    <com.imprexion.aiscreen.main.rainControl.RainView
+    <com.imprexion.adplay.main.rainControl.RainView
         android:id="@+id/rainView_4"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         imprexion:size="40" />
 
-    <com.imprexion.aiscreen.main.rainControl.RainView
+    <com.imprexion.adplay.main.rainControl.RainView
         android:id="@+id/rainView_5"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         imprexion:size="40" />
 
-    <com.imprexion.aiscreen.main.rainControl.RainView
+    <com.imprexion.adplay.main.rainControl.RainView
         android:id="@+id/rainView_6"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         imprexion:size="40" />
 
-    <com.imprexion.aiscreen.main.rainControl.RaindropView
+    <com.imprexion.adplay.main.rainControl.RaindropView
         android:id="@+id/rainDropView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

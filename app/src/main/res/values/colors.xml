@@ -3,21 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="ad_bgcolor1">#FFDB4F </color>
-    <color name="ad_bgcolor2">#FFA22B</color>
-    <color name="hands_bg_color">#19000000</color>
-    <color name="guide_bg_color">#09000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="black_color_75">#BF000000</color>
     <color name="spreadColor">#5BFFFFFF</color>
-    <color name="black_Color_10">#19000000</color>
-    <color name="white_Color_50">#5BFFFFFF</color>
-    <color name="toutiao_Color">#A0522D</color>
-    <color name="weather_rain_night_Color">#7160EF</color>
-    <color name="weather_rain_day_Color">#A0D7F1</color>
-    <color name="weather_cloud_night_Color">#4393BD</color>
-    <color name="weather_cloud_day_Color">#6CB1FD</color>
-    <color name="weather_sunny_night_Color">#439FDE</color>
     <color name="guide_text_bg_color">#7FFFFFFF</color>
 
 
