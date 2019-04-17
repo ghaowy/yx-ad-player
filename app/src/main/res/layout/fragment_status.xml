@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="50px"
+    android:orientation="vertical">
+
+    <com.imprexion.adplay.tools.IconFontTextView
+        android:id="@+id/tv_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/left_right_margin"
+        android:gravity="center_vertical"
+        android:text="&#xe649;"
+        android:textColor="@color/white"
+        android:textSize="@dimen/icon_text_size" />
+
+    <com.imprexion.adplay.tools.IconFontTextView
+        android:id="@+id/tv_destination_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/hands_text_margin"
+        android:layout_toEndOf="@+id/tv_icon"
+        android:gravity="center_vertical"
+        android:text="&#xe648;"
+        android:textColor="@color/white"
+        android:textSize="@dimen/hands_text_size" />
+
+    <TextView
+        android:id="@+id/tv_destination_text"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@+id/tv_destination_icon"
+        android:gravity="center_vertical"
+        android:text="@string/scplaza"
+        android:textColor="@color/white"
+        android:textSize="@dimen/hands_text_size" />
+
+    <TextView
+        android:id="@+id/tv_welcome_text"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center_vertical"
+        android:text="@string/scplaza_welcome"
+        android:textColor="@color/white"
+        android:textSize="@dimen/hands_text_size" />
+
+    <TextView
+        android:id="@+id/tv_current_time"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/left_right_margin"
+        android:gravity="center_vertical"
+        android:text="@string/time_default"
+        android:textColor="@color/white"
+        android:textSize="@dimen/hands_text_size" />
+
+    <TextView
+        android:id="@+id/tv_weather"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/left_right_margin"
+        android:layout_toStartOf="@+id/tv_current_time"
+        android:gravity="center_vertical"
+        android:text="@string/weather_default"
+        android:textColor="@color/white"
+        android:textSize="@dimen/hands_text_size" />
+
+
+    <com.imprexion.adplay.tools.IconFontTextView
+        android:id="@+id/tv_weather_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_toStartOf="@+id/tv_weather"
+        android:gravity="center_vertical"
+        android:text="&#xe644;"
+        android:textColor="@color/white"
+        android:textSize="@dimen/hands_text_size" />
+
+</RelativeLayout>

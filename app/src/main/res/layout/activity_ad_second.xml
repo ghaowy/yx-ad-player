@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".advertising.AdSecondActivity">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v4.view.ViewPager>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50px"
+        android:layout_marginTop="100px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="性别=" />
+
+        <TextView
+            android:id="@+id/tv_usersex"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="     standhere=" />
+
+        <TextView
+            android:id="@+id/tv_standhere"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="     isActived=" />
+
+        <TextView
+            android:id="@+id/tv_isactived"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="null" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_gestureActive"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <fragment
+        android:id="@+id/ad2_status_frgament"
+        android:name="com.imprexion.adplay.status.StatusFragment"
+        android:layout_width="match_parent"
+        android:layout_height="50px" />
+</RelativeLayout>

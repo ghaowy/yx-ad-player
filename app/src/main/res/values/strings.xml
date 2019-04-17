@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">广告轮播</string>
+    <string name="scplaza">深圳印力中心</string>
+    <string name="scplaza_welcome">印像欢迎您！</string>
+    <string name="weather_default">晴</string>
+    <string name="time_default">2019/1/7 下午6:11:18</string>
+    <string name="guide_tips_1">请站在贴纸上喔~</string>
+    <string name="guide_tips_2">太棒了~</string>
+    <string name="guide_tips_3">请挥动你的右手~</string>
+
+
+    <string-array name="tempretures">
+        <item>&#xe646;</item>
+        <item>&#xe638;</item>
+        <item>&#xe63e;</item>
+        <item>&#xe63d;</item>
+        <item>&#xe63a;</item>
+        <item>&#xe641;</item>
+        <item>&#xe63b;</item>
+        <item>&#xe63c;</item>
+        <item>&#xe643;</item>
+        <item>&#xe63f;</item>
+    </string-array>
+
+    <string-array name="weather_icon">
+        <!--晴-->
+        <item>&#xe644;</item>
+        <!--雨-->
+        <item>&#xe651;</item>
+        <!--<item>&#xe63f;</item>-->
+        <!--阴天-->
+        <item>&#xe652;</item>
+        <!--雪-->
+        <item>&#xe653;</item>
+        <!--多云-->
+        <item>&#xe654;</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+</resources>

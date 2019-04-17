@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="false">
+
+    <item
+        android:drawable="@drawable/elephant_enter_1"
+        android:duration="80" />
+    <item
+        android:drawable="@drawable/elephant_enter_2"
+        android:duration="80" />
+    <item
+        android:drawable="@drawable/elephant_enter_3"
+        android:duration="80" />
+    <item
+        android:drawable="@drawable/elephant_enter_4"
+        android:duration="80" />
+    <item
+        android:drawable="@drawable/elephant_enter_5"
+        android:duration="80" />
+    <item
+        android:drawable="@drawable/elephant_enter_6"
+        android:duration="80" />
+    <item
+        android:drawable="@drawable/elephant_enter_7"
+        android:duration="80" />
+    <item
+        android:drawable="@drawable/elephant_enter_8"
+        android:duration="80" />
+    <item
+        android:drawable="@drawable/elephant_enter_9"
+        android:duration="80" />
+    <item
+        android:drawable="@drawable/elephant_enter_10"
+        android:duration="80" />
+
+</animation-list>
