@@ -22,12 +22,6 @@
         android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name="com.imprexion.adplay.main.MainActivity"
-            android:launchMode="singleTask"></activity>
-        <activity
-            android:name=".functionPart.WebViewActivity"
-            android:launchMode="singleTop" />
 
         <service
             android:name="com.imprexion.adplay.service.AdPlayService"

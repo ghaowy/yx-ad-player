@@ -127,28 +127,40 @@ public class GestureActiveFragment extends Fragment implements View.OnClickListe
             super.handleMessage(msg);
             switch (msg.what) {
                 case FOOTPRINT_1:
-                    ivLeftprint1.setVisibility(View.VISIBLE);
-                    ivRightprint1.setVisibility(View.VISIBLE);
+                    if (ivRightprint1 != null && ivLeftprint1 != null) {
+                        ivLeftprint1.setVisibility(View.VISIBLE);
+                        ivRightprint1.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case FOOTPRINT_2:
-                    ivLeftprint2.setVisibility(View.VISIBLE);
-                    ivRightprint2.setVisibility(View.VISIBLE);
+                    if (ivRightprint2 != null && ivLeftprint2 != null) {
+                        ivLeftprint2.setVisibility(View.VISIBLE);
+                        ivRightprint2.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case FOOTPRINT_3:
-                    ivLeftprint3.setVisibility(View.VISIBLE);
-                    ivRightprint3.setVisibility(View.VISIBLE);
+                    if (ivRightprint3 != null && ivLeftprint3 != null) {
+                        ivLeftprint3.setVisibility(View.VISIBLE);
+                        ivRightprint3.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case FOOTPRINT_4:
-                    ivLeftprint4.setVisibility(View.VISIBLE);
-                    ivRightprint4.setVisibility(View.VISIBLE);
+                    if (ivRightprint4 != null && ivLeftprint4 != null) {
+                        ivLeftprint4.setVisibility(View.VISIBLE);
+                        ivRightprint4.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case FOOTPRINT_5:
-                    ivLeftprint5.setVisibility(View.VISIBLE);
-                    ivRightprint5.setVisibility(View.VISIBLE);
+                    if (ivRightprint5 != null && ivLeftprint5 != null) {
+                        ivLeftprint5.setVisibility(View.VISIBLE);
+                        ivRightprint5.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case FOOTPRINT_6:
-                    ivLeftprint6.setVisibility(View.VISIBLE);
-                    ivRightprint6.setVisibility(View.VISIBLE);
+                    if (ivRightprint6 != null && ivLeftprint6 != null) {
+                        ivLeftprint6.setVisibility(View.VISIBLE);
+                        ivRightprint6.setVisibility(View.VISIBLE);
+                    }
                     break;
                 case FULL_FOOTPRINT:
                     startRotateFootprint();
@@ -291,21 +303,24 @@ public class GestureActiveFragment extends Fragment implements View.OnClickListe
         if (mFootprintRotateObjAnimator != null) {
             mFootprintRotateObjAnimator.cancel();
         }
-        tvGuideTip1.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                tvGuideTip1.setText(getString(R.string.guide_tips_2));
-                showFullFootprint();
-            }
-        }, 500);
-        tvGuideTip1.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                tvGuideTip1.setText(getString(R.string.guide_tips_3));
-                hideFullFootprint();
-                startWaveHandTipAnimation();
-            }
-        }, 1500);
+        if (tvGuideTip1 != null) {
+            tvGuideTip1.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    tvGuideTip1.setText(getString(R.string.guide_tips_2));
+                    showFullFootprint();
+                }
+            }, 500);
+
+            tvGuideTip1.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    tvGuideTip1.setText(getString(R.string.guide_tips_3));
+                    hideFullFootprint();
+                    startWaveHandTipAnimation();
+                }
+            }, 1500);
+        }
     }
 
     private void startWaveHandTipAnimation() {
@@ -320,8 +335,12 @@ public class GestureActiveFragment extends Fragment implements View.OnClickListe
     }
 
     private void startElephantExitAnimation() {
-        ivElephantStop.setVisibility(View.INVISIBLE);
-        ivElephantExit.setVisibility(View.VISIBLE);
+        if (ivElephantStop != null) {
+            ivElephantStop.setVisibility(View.INVISIBLE);
+        }
+        if (ivElephantExit != null) {
+            ivElephantExit.setVisibility(View.VISIBLE);
+        }
         if (!mElephantStopAnimation.isRunning()) {
             mElephantStopAnimation.stop();
         }
@@ -380,8 +399,12 @@ public class GestureActiveFragment extends Fragment implements View.OnClickListe
     }
 
     private void injectingWaterAnimation() {
-        ivInjectingWaterTip.setVisibility(View.VISIBLE);
-        ivWaveHandsTip.setVisibility(View.INVISIBLE);
+        if (ivInjectingWaterTip != null) {
+            ivInjectingWaterTip.setVisibility(View.VISIBLE);
+        }
+        if (ivWaveHandsTip != null) {
+            ivWaveHandsTip.setVisibility(View.INVISIBLE);
+        }
         mWaveHandsAnimation.stop();
         mInjectingWaterAnimation.start();
         mMessage = mHandler.obtainMessage();

@@ -38,7 +38,7 @@ public class AdPlayService extends Service {
         ALog.d(TAG, "onStartCommand");
         if (mNotification == null) {
             Notification.Builder builder = new Notification.Builder(ADPlayApplication.getInstance().getApplicationContext());
-            Intent nIntent = new Intent(this, AdSecondActivity.class);
+            Intent nIntent = new Intent(this, AdPlayService.class);
             builder.setContentIntent(PendingIntent.getActivity(this, 0, nIntent, 0))
                     .setWhen(System.currentTimeMillis());
             mNotification = builder.build();

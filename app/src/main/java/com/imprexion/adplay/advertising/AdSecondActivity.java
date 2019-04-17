@@ -173,6 +173,7 @@ public class AdSecondActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ALog.d(TAG,"onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ad_second);
         ButterKnife.bind(this);
