@@ -72,7 +72,6 @@ public class TcpClientConnector {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
                     String line = null;
                     while ((line = reader.readLine()) != null) {
-                        System.out.println(line);
                         aiscreen mfas = aiscreen.parseFrom(
                                 Base64.decode(line.getBytes(), Base64.DEFAULT));
                         Message message = mHandler.obtainMessage();
@@ -83,7 +82,7 @@ public class TcpClientConnector {
                 } catch (IOException e) {
                     e.printStackTrace();
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(2000);
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
                     }

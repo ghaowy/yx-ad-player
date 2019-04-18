@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 import com.imprexion.adplay.R;
+import com.imprexion.adplay.tools.VoicePlay;
 
 
 /**
@@ -54,7 +55,7 @@ public class RainControlFragment extends Fragment {
     private int lastY;
     private final static String TAG = "RainControlFragment";
     private boolean isStop;
-    private RainVoice mRainVoice;
+    private VoicePlay mRainVoice;
     private ObjectAnimator mObjectAnimator1;
     private ObjectAnimator mObjectAnimator2;
     private ObjectAnimator mObjectAnimator3;
@@ -74,7 +75,7 @@ public class RainControlFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_rain_control, container, false);
         unbinder = ButterKnife.bind(this, view);
-        mRainVoice = new RainVoice(getContext());
+        mRainVoice = new VoicePlay(getContext());
         return view;
     }
 
@@ -83,7 +84,7 @@ public class RainControlFragment extends Fragment {
         super.onResume();
         startRain();
         setControl();
-        mRainVoice.playRainVoiceBySoundpool();
+        mRainVoice.playVoiceBySoundpool();
         if (mObjectAnimator1 != null) {
             mObjectAnimator1.resume();
             mObjectAnimator2.resume();
@@ -134,7 +135,7 @@ public class RainControlFragment extends Fragment {
                             //点击
                             ALog.d(TAG, "点击");
                             if (!isStop) {
-                                mRainVoice.playRainDropVoice();
+                                mRainVoice.playVoice(R.raw.raindrop_move_voice);
                                 rainView1.setVisibility(View.INVISIBLE);
                                 rainView2.setVisibility(View.INVISIBLE);
                                 rainView3.setVisibility(View.INVISIBLE);
@@ -144,7 +145,7 @@ public class RainControlFragment extends Fragment {
                                 rainDropView.setVisibility(View.VISIBLE);
                                 isStop = true;
                             } else {
-                                mRainVoice.playRainVoiceBySoundpool();
+                                mRainVoice.playVoiceBySoundpool();
                                 rainView1.setVisibility(View.VISIBLE);
                                 rainView2.setVisibility(View.VISIBLE);
                                 rainView3.setVisibility(View.VISIBLE);

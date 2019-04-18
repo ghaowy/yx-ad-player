@@ -20,12 +20,14 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.imprexion.adplay.R;
-import com.imprexion.adplay.advertising.activation.GestureActiveFragment;
+import com.imprexion.adplay.advertising.activation.GestureActiveOneStepFragment;
+import com.imprexion.adplay.advertising.activation.GestureActiveTwoStepFragment;
 import com.imprexion.adplay.advertising.content.AdContentImageFragment;
 import com.imprexion.adplay.advertising.content.CameraRainFragment;
 import com.imprexion.adplay.bean.ADContentInfo;
@@ -98,10 +100,11 @@ public class AdSecondActivity extends AppCompatActivity {
     private boolean isShowGestureActive;
     private ServiceConnection mConnection;
     private NetPresenter mNetPresenter;
-//    private boolean isShowActiveTip;
+    //    private boolean isShowActiveTip;
     private TcpClientConnector mTcpClientConnector = TcpClientConnector.getInstance();
 
-    private GestureActiveFragment mGestureActiveFragment;
+    private GestureActiveTwoStepFragment mGestureActiveTwoStepFragment;
+    private GestureActiveOneStepFragment mGestureActiveOneStepFragment;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -120,7 +123,7 @@ public class AdSecondActivity extends AppCompatActivity {
                 case SHOW_ACTIVE_TIP_FROM_WAVE_HAND:
                     if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived()) {
                         isShowGestureActive = true;
-                        showGestureActiveView();
+                        showGestureActiveOneStepView();
                     }
                     break;
                 case ACTIVED:
@@ -136,7 +139,7 @@ public class AdSecondActivity extends AppCompatActivity {
                         if (flGestureActive.getChildCount() != 0) {
                             flGestureActive.removeAllViews();
                             isShowGestureActive = false;
-                            mGestureActiveFragment = null;
+                            mGestureActiveTwoStepFragment = null;
                         }
                     }
                     break;
@@ -151,7 +154,7 @@ public class AdSecondActivity extends AppCompatActivity {
         try {
             startActivity(new Intent().setComponent(componentName));
         } catch (Exception e) {
-            ALog.d(TAG,"start AIScreen fail");
+            ALog.d(TAG, "start AIScreen fail");
             e.printStackTrace();
         }
     }
@@ -160,10 +163,19 @@ public class AdSecondActivity extends AppCompatActivity {
 
     private void showGestureActiveView() {
         ALog.d(TAG, "showGestureActiveView");
-        if (mGestureActiveFragment == null && flGestureActive.getChildCount() == 0) {
+        if (mGestureActiveTwoStepFragment == null && flGestureActive.getChildCount() == 0) {
             ALog.d(TAG, "add gestureFragment");
-            mGestureActiveFragment = new GestureActiveFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveFragment).commitAllowingStateLoss();
+            mGestureActiveTwoStepFragment = new GestureActiveTwoStepFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveTwoStepFragment).commitAllowingStateLoss();
+        }
+    }
+
+    private void showGestureActiveOneStepView() {
+        ALog.d(TAG, "showGestureActiveView");
+        if (mGestureActiveOneStepFragment == null && flGestureActive.getChildCount() == 0) {
+            ALog.d(TAG, "add gestureFragment");
+            mGestureActiveOneStepFragment = new GestureActiveOneStepFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveOneStepFragment).commitAllowingStateLoss();
         }
     }
 
@@ -173,7 +185,7 @@ public class AdSecondActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ALog.d(TAG,"onCreate");
+        ALog.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ad_second);
         ButterKnife.bind(this);
@@ -181,6 +193,26 @@ public class AdSecondActivity extends AppCompatActivity {
         bindAISService();
         setSocketListener();
         initData();
+
+        //test
+        tvUsersex.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showGestureActiveOneStepView();
+            }
+        });
+        tvIsactived.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mTrackingMessage == null) {
+                    mTrackingMessage = new TrackingMessage();
+                    mTrackingMessage.setActived(true);
+                    mTrackingMessage.setUsrsex(1);
+                    mTrackingMessage.setStandHere(false);
+                }
+                EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
+            }
+        });
     }
 
     private void initData() {
@@ -362,6 +394,7 @@ public class AdSecondActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        unbindService(mConnection);
 //        mExecutorService.shutdown();
     }
 
@@ -476,29 +509,33 @@ public class AdSecondActivity extends AppCompatActivity {
 //        }
         ALog.d(TAG, "isShowActiveTip=" + isShowGestureActive);
 
+        //激活屏幕进入主界面
         if (mTrackingMessage.getUsrsex() != 0 && currentPage == AD_PAGE && mTrackingMessage.isActived() && !isShowGestureActive) {
             Message message = mHandler.obtainMessage();
             message.what = ACTIVED;
             mHandler.sendMessageDelayed(message, 2000);
         }
 
+        //没人了3s,消除小象动画
         if (mTrackingMessage.getUsrsex() == 0 && isShowGestureActive) {
             Message message = mHandler.obtainMessage();
             message.what = REMOVE_GESTURE_ACTIVE;
             mHandler.sendMessageDelayed(message, 3000);
         }
 
+        //显示小象动画
         if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived() && !isShowGestureActive) {
             if (mTrackingMessage.isStandHere()) {
                 Message message = mHandler.obtainMessage();
                 message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
-                mHandler.sendMessageDelayed(message, 5000);
+                mHandler.sendMessageDelayed(message, 1000);
             } else {
                 Message message = mHandler.obtainMessage();
                 message.what = SHOW_ACTIVE_TIP_FROM_WAVE_HAND;
-                mHandler.sendMessageDelayed(message, 5000);
+                mHandler.sendMessageDelayed(message, 1000);
             }
         }
+        //发送tracking消息给小象。小象根据消息刺激执行下一步动画
         EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
 
     }
