@@ -89,7 +89,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     private boolean isWaveForActive;
     private boolean isCanStartElephantExit;
     private TrackingMessage mTrackingMessage;
-    private static final String TAG = "GestureActiveTwoStepFragment";
+    private static final String TAG = "GestureActiveOneStepFragment";
     private VoicePlay mVoicePlay;
 
     private Handler mHandler = new Handler() {
@@ -102,6 +102,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                     break;
                 case INJECTED_WATER:
                     mInjectingWaterAnimation.stop();
+                    ((AdSecondActivity) getActivity()).startAIScreenApp();
                     break;
                 case INJECTED_WATER_FADE_OUT:
                     stopInjectWaterAnimation();
@@ -224,11 +225,26 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
             waveActiveSucess();
         }
     }
+    private void waveActiveSucess() {
+        //接收信号执行注水ing动画
+        mMessage = mHandler.obtainMessage();
+        mMessage.what = INJECT_WATER;
+        mHandler.sendMessageDelayed(mMessage, 100);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)
+
+
+        if (isCanStartElephantExit) {
+            isCanStartElephantExit = false;
+            mMessage = mHandler.obtainMessage();
+            mMessage.what = ELEPHANT_EXIT;
+            mHandler.sendMessageDelayed(mMessage, 0);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)+注水的一半时间1000ms =4000ms，后开始退出动画
+        }
+    }
+
 
     /*
      * 小象退出总时长=ELEPHANT_EXIT_DURATION:2000
      * 地面退出时长300，延时1000执行
-     * 挥手人形退出时长1000，延时1000执行
+     * 挥手人形退出时长1000，延时800执行
      * */
     private void startElephantExitAnimation() {
         if (ivElephantStop != null) {
@@ -250,7 +266,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
             mEExitObjAnimator.setInterpolator(new LinearInterpolator());
             mETipExitObjAnimator.setInterpolator(new LinearInterpolator());
             mFloorExitObjAnimator.setDuration(300);
-            mFloorExitObjAnimator.setStartDelay(1000);
+            mFloorExitObjAnimator.setStartDelay(400);
             mFloorExitObjAnimator.start();
             mFloorExitObjAnimator.setInterpolator(new AccelerateInterpolator());
             if (mAnimatorSet == null) {
@@ -264,7 +280,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                     super.onAnimationStart(animation);
                     mMessage = mHandler.obtainMessage();
                     mMessage.what = INJECTED_WATER_FADE_OUT;
-                    mHandler.sendMessageDelayed(mMessage, 1000);
+//                    mHandler.sendMessageDelayed(mMessage, 800);
                 }
 
                 @Override
@@ -275,25 +291,10 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                     mETipEnterObjAnimator.cancel();
                     ivElephantExit.setVisibility(View.INVISIBLE);
                     tvGuideTip1.setText(R.string.guide_tips_3);
-                    ((AdSecondActivity) getActivity()).startAIScreenApp();
+//                    ((AdSecondActivity) getActivity()).startAIScreenApp();
                 }
             });
             mAnimatorSet.start();
-        }
-    }
-
-    private void waveActiveSucess() {
-        //接收信号执行注水ing动画
-        mMessage = mHandler.obtainMessage();
-        mMessage.what = INJECT_WATER;
-        mHandler.sendMessageDelayed(mMessage, 200);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)
-
-
-        if (isCanStartElephantExit) {
-            isCanStartElephantExit = false;
-            mMessage = mHandler.obtainMessage();
-            mMessage.what = ELEPHANT_EXIT;
-            mHandler.sendMessageDelayed(mMessage, 200);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)+注水的一半时间1000ms =4000ms，后开始退出动画
         }
     }
 

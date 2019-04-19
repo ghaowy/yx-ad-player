@@ -172,6 +172,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     break;
                 case INJECTED_WATER:
                     mInjectingWaterAnimation.stop();
+                    ((AdSecondActivity) getActivity()).startAIScreenApp();
                     break;
                 case INJECTED_WATER_FADE_OUT:
                     stopInjectWaterAnimation();
@@ -340,6 +341,17 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
         }
     }
 
+    private void waveActiveSucess() {
+        //接收信号执行注水ing动画
+        mMessage = mHandler.obtainMessage();
+        mMessage.what = INJECT_WATER;
+        mHandler.sendMessageDelayed(mMessage, 200);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)
+
+        mMessage = mHandler.obtainMessage();
+        mMessage.what = ELEPHANT_EXIT;
+        mHandler.sendMessageDelayed(mMessage, 200);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)+注水的一半时间1000ms =4000ms，后开始退出动画
+    }
+
     /*
      * 小象退出总时长=ELEPHANT_EXIT_DURATION:2000
      * 地面退出时长300，延时1000执行
@@ -387,22 +399,11 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     mETipEnterObjAnimator.cancel();
                     ivElephantExit.setVisibility(View.INVISIBLE);
                     tvGuideTip1.setText(R.string.guide_tips_1);
-                    ((AdSecondActivity) getActivity()).startAIScreenApp();
+//                    ((AdSecondActivity) getActivity()).startAIScreenApp();
                 }
             });
             mAnimatorSet.start();
         }
-    }
-
-    private void waveActiveSucess() {
-        //接收信号执行注水ing动画
-        mMessage = mHandler.obtainMessage();
-        mMessage.what = INJECT_WATER;
-        mHandler.sendMessageDelayed(mMessage, 200);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)
-
-        mMessage = mHandler.obtainMessage();
-        mMessage.what = ELEPHANT_EXIT;
-        mHandler.sendMessageDelayed(mMessage, 200);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)+注水的一半时间1000ms =4000ms，后开始退出动画
     }
 
     private void stopInjectWaterAnimation() {

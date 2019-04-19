@@ -33,12 +33,12 @@ import com.imprexion.adplay.advertising.content.CameraRainFragment;
 import com.imprexion.adplay.bean.ADContentInfo;
 import com.imprexion.adplay.bean.ADContentPlay;
 import com.imprexion.adplay.bean.EventBusMessage;
+import com.imprexion.adplay.bean.TrackingMessage;
 import com.imprexion.adplay.net.NetPresenter;
 import com.imprexion.adplay.service.AdPlayService;
 import com.imprexion.adplay.service.TcpClientConnector;
 import com.imprexion.adplay.tools.ALog;
 import com.imprexion.adplay.tools.Tools;
-import com.imprexion.adplay.bean.TrackingMessage;
 import com.imprexion.service.tracking.bean.aiscreen;
 
 import org.greenrobot.eventbus.EventBus;
@@ -117,7 +117,7 @@ public class AdSecondActivity extends AppCompatActivity {
                 case SHOW_ACTIVE_TIP_FROM_FOOT:
                     if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived()) {
                         isShowGestureActive = true;
-                        showGestureActiveView();
+                        showGestureActiveTowStepView();
                     }
                     break;
                 case SHOW_ACTIVE_TIP_FROM_WAVE_HAND:
@@ -161,8 +161,8 @@ public class AdSecondActivity extends AppCompatActivity {
 
     private TrackingMessage mTrackingMessage;
 
-    private void showGestureActiveView() {
-        ALog.d(TAG, "showGestureActiveView");
+    private void showGestureActiveTowStepView() {
+        ALog.d(TAG, "showGestureActiveTowStepView");
         if (mGestureActiveTwoStepFragment == null && flGestureActive.getChildCount() == 0) {
             ALog.d(TAG, "add gestureFragment");
             mGestureActiveTwoStepFragment = new GestureActiveTwoStepFragment();
@@ -171,7 +171,7 @@ public class AdSecondActivity extends AppCompatActivity {
     }
 
     private void showGestureActiveOneStepView() {
-        ALog.d(TAG, "showGestureActiveView");
+        ALog.d(TAG, "showGestureActiveTowStepView");
         if (mGestureActiveOneStepFragment == null && flGestureActive.getChildCount() == 0) {
             ALog.d(TAG, "add gestureFragment");
             mGestureActiveOneStepFragment = new GestureActiveOneStepFragment();
@@ -513,7 +513,7 @@ public class AdSecondActivity extends AppCompatActivity {
         if (mTrackingMessage.getUsrsex() != 0 && currentPage == AD_PAGE && mTrackingMessage.isActived() && !isShowGestureActive) {
             Message message = mHandler.obtainMessage();
             message.what = ACTIVED;
-            mHandler.sendMessageDelayed(message, 2000);
+            mHandler.sendMessageDelayed(message, 500);
         }
 
         //没人了3s,消除小象动画
@@ -523,16 +523,16 @@ public class AdSecondActivity extends AppCompatActivity {
             mHandler.sendMessageDelayed(message, 3000);
         }
 
-        //显示小象动画
+        //识别到有人但没有激活屏幕。2s后显示小象动画
         if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived() && !isShowGestureActive) {
             if (mTrackingMessage.isStandHere()) {
                 Message message = mHandler.obtainMessage();
                 message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
-                mHandler.sendMessageDelayed(message, 1000);
+                mHandler.sendMessageDelayed(message, 2000);
             } else {
                 Message message = mHandler.obtainMessage();
                 message.what = SHOW_ACTIVE_TIP_FROM_WAVE_HAND;
-                mHandler.sendMessageDelayed(message, 1000);
+                mHandler.sendMessageDelayed(message, 2000);
             }
         }
         //发送tracking消息给小象。小象根据消息刺激执行下一步动画
