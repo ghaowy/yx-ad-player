@@ -82,6 +82,7 @@ public class AdSecondActivity extends AppCompatActivity {
     private final static int PLAY_NEXT = 1;
     private final static int SHOW_ACTIVE_TIP_FROM_FOOT = 2;
     private final static int SHOW_ACTIVE_TIP_FROM_WAVE_HAND = 3;
+    private final static int SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY = 2000;
     private static final int ACTIVED = 5;
     private static final int REMOVE_GESTURE_ACTIVE = 6;
     private static final int START_AD_FIRST = 7;
@@ -98,6 +99,7 @@ public class AdSecondActivity extends AppCompatActivity {
     private SharedPreferences.Editor mEditor;
     private int mCurrentPage;
     private boolean isShowGestureActive;
+    private boolean isSendShowGestureActive;
     private ServiceConnection mConnection;
     private NetPresenter mNetPresenter;
     //    private boolean isShowActiveTip;
@@ -119,12 +121,14 @@ public class AdSecondActivity extends AppCompatActivity {
                         isShowGestureActive = true;
                         showGestureActiveTowStepView();
                     }
+                    isSendShowGestureActive = false;
                     break;
                 case SHOW_ACTIVE_TIP_FROM_WAVE_HAND:
                     if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived()) {
                         isShowGestureActive = true;
                         showGestureActiveOneStepView();
                     }
+                    isSendShowGestureActive = false;
                     break;
                 case ACTIVED:
                     if (mTrackingMessage.getUsrsex() != 0) {
@@ -140,6 +144,7 @@ public class AdSecondActivity extends AppCompatActivity {
                             flGestureActive.removeAllViews();
                             isShowGestureActive = false;
                             mGestureActiveTwoStepFragment = null;
+                            mGestureActiveOneStepFragment = null;
                         }
                     }
                     break;
@@ -525,14 +530,17 @@ public class AdSecondActivity extends AppCompatActivity {
 
         //识别到有人但没有激活屏幕。2s后显示小象动画
         if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived() && !isShowGestureActive) {
-            if (mTrackingMessage.isStandHere()) {
-                Message message = mHandler.obtainMessage();
-                message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
-                mHandler.sendMessageDelayed(message, 2000);
-            } else {
-                Message message = mHandler.obtainMessage();
-                message.what = SHOW_ACTIVE_TIP_FROM_WAVE_HAND;
-                mHandler.sendMessageDelayed(message, 2000);
+            if (!isSendShowGestureActive) {
+                isSendShowGestureActive = true;
+                if (mTrackingMessage.isStandHere()) {
+                    Message message = mHandler.obtainMessage();
+                    message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
+                    mHandler.sendMessageDelayed(message, SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY);
+                } else {
+                    Message message = mHandler.obtainMessage();
+                    message.what = SHOW_ACTIVE_TIP_FROM_WAVE_HAND;
+                    mHandler.sendMessageDelayed(message, SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY);
+                }
             }
         }
         //发送tracking消息给小象。小象根据消息刺激执行下一步动画

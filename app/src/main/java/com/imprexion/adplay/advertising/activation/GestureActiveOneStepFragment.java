@@ -85,7 +85,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     private final static int ADD_RAIN = 18;
     private final static int ELEPHANT_EXIT = 19;
     private final static int ELEPHANT_EXIT_DURATION = 2000;
-    private final static int ELEPHANT_ENTER_DURATION = 2000;
+    private final static int ELEPHANT_ENTER_DURATION = 1500;
     private boolean isWaveForActive;
     private boolean isCanStartElephantExit;
     private TrackingMessage mTrackingMessage;
@@ -165,13 +165,13 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
             mElephantEnterAnimation.start();
         }
         if (!mEEnterObjAnimator.isRunning()) {
-            mETipEnterObjAnimator.setDuration(3000);
+            mETipEnterObjAnimator.setDuration(ELEPHANT_ENTER_DURATION);
             mETipEnterObjAnimator.setStartDelay(500);
             mETipEnterObjAnimator.start();
             mFloorEnterObjAnimator.setDuration(500);
             mFloorEnterObjAnimator.setInterpolator(new DecelerateInterpolator());
             mFloorEnterObjAnimator.start();
-            mEEnterObjAnimator.setDuration(3000);
+            mEEnterObjAnimator.setDuration(ELEPHANT_ENTER_DURATION);
             mEEnterObjAnimator.setInterpolator(new LinearInterpolator());
             mEEnterObjAnimator.setStartDelay(500);
             mEEnterObjAnimator.start();
@@ -265,9 +265,9 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
         if (!mEExitObjAnimator.isRunning()) {
             mEExitObjAnimator.setInterpolator(new LinearInterpolator());
             mETipExitObjAnimator.setInterpolator(new LinearInterpolator());
-            mFloorExitObjAnimator.setDuration(300);
-            mFloorExitObjAnimator.setStartDelay(400);
-            mFloorExitObjAnimator.start();
+//            mFloorExitObjAnimator.setDuration(300);
+//            mFloorExitObjAnimator.setStartDelay(1000);
+//            mFloorExitObjAnimator.start();
             mFloorExitObjAnimator.setInterpolator(new AccelerateInterpolator());
             if (mAnimatorSet == null) {
                 mAnimatorSet = new AnimatorSet();
@@ -313,7 +313,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
         mInjectingWaterAnimation.start();
         mMessage = mHandler.obtainMessage();
         mMessage.what = INJECTED_WATER;
-        mHandler.sendMessageDelayed(mMessage, 1170);
+        mHandler.sendMessageDelayed(mMessage, 570);
     }
 
 

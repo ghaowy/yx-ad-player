@@ -117,6 +117,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     private final static int ADD_RAIN = 18;
     private final static int ELEPHANT_EXIT = 19;
     private final static int ELEPHANT_EXIT_DURATION = 2000;
+    private final static int ELEPHANT_ENTER_DURATION = 1500;
     private boolean isResume;
     private boolean isStandHere;
     private boolean isWaveForActive;
@@ -258,13 +259,13 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 //            }
 //        });
         if (!mEEnterObjAnimator.isRunning()) {
-            mETipEnterObjAnimator.setDuration(3000);
+            mETipEnterObjAnimator.setDuration(ELEPHANT_ENTER_DURATION);
             mETipEnterObjAnimator.setStartDelay(500);
             mETipEnterObjAnimator.start();
             mFloorEnterObjAnimator.setDuration(500);
             mFloorEnterObjAnimator.setInterpolator(new DecelerateInterpolator());
             mFloorEnterObjAnimator.start();
-            mEEnterObjAnimator.setDuration(3000);
+            mEEnterObjAnimator.setDuration(ELEPHANT_ENTER_DURATION);
             mEEnterObjAnimator.setInterpolator(new LinearInterpolator());
             mEEnterObjAnimator.setStartDelay(500);
             mEEnterObjAnimator.start();
@@ -421,7 +422,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
         mInjectingWaterAnimation.start();
         mMessage = mHandler.obtainMessage();
         mMessage.what = INJECTED_WATER;
-        mHandler.sendMessageDelayed(mMessage, 1170);
+        mHandler.sendMessageDelayed(mMessage, 570);
     }
 
 
