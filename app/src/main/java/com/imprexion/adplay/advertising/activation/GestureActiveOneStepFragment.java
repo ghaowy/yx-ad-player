@@ -179,6 +179,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
                 @Override
                 public void onAnimationStart(Animator animation) {
+                    ALog.d(TAG, "onAnimationStart");
                     super.onAnimationStart(animation);
                     ivElephantEnter.setVisibility(View.VISIBLE);
                     tvGuideTip1.setVisibility(View.VISIBLE);
@@ -225,6 +226,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
             waveActiveSucess();
         }
     }
+
     private void waveActiveSucess() {
         //接收信号执行注水ing动画
         mMessage = mHandler.obtainMessage();

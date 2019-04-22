@@ -39,6 +39,7 @@ import com.imprexion.adplay.service.AdPlayService;
 import com.imprexion.adplay.service.TcpClientConnector;
 import com.imprexion.adplay.tools.ALog;
 import com.imprexion.adplay.tools.Tools;
+import com.imprexion.library.logger.YxLogger;
 import com.imprexion.service.tracking.bean.aiscreen;
 
 import org.greenrobot.eventbus.EventBus;
@@ -82,7 +83,7 @@ public class AdSecondActivity extends AppCompatActivity {
     private final static int PLAY_NEXT = 1;
     private final static int SHOW_ACTIVE_TIP_FROM_FOOT = 2;
     private final static int SHOW_ACTIVE_TIP_FROM_WAVE_HAND = 3;
-    private final static int SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY = 2000;
+    private final static int SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY = 10;
     private static final int ACTIVED = 5;
     private static final int REMOVE_GESTURE_ACTIVE = 6;
     private static final int START_AD_FIRST = 7;
@@ -197,6 +198,8 @@ public class AdSecondActivity extends AppCompatActivity {
         getPermission();
         bindAISService();
         setSocketListener();
+        YxLogger.init(this, true, false);
+        YxLogger.setVersion(Tools.getVersionName(this));
         initData();
 
         //test
@@ -260,11 +263,11 @@ public class AdSecondActivity extends AppCompatActivity {
         int size = mAdContentInfoList.size();
         for (int i = 0; i < size; i++) {
             ADContentInfo adContentInfo = mAdContentInfoList.get(i);
-            if (adContentInfo.getContentType() == 1) {
+            if (adContentInfo.getContentType() == 1) {//ContentType==1表示广告图片
                 Fragment fragment = new AdContentImageFragment();
                 ((AdContentImageFragment) fragment).setUrl(adContentInfo.getFileUrl());
                 mFragmentList.add(fragment);
-            } else if (adContentInfo.getContentType() == 2) {
+            } else if (adContentInfo.getContentType() == 2) {//ContentType==2表示播放应用
                 if (adContentInfo.getAppCode().equals("1001")) {//1001代表雨滴
                     Fragment fragment = new CameraRainFragment();
                     mFragmentList.add(fragment);
@@ -330,6 +333,7 @@ public class AdSecondActivity extends AppCompatActivity {
                     }
 //                    ALog.d(TAG, "runnable next,playTime = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime());
                     try {
+                        YxLogger.report("ad_plan_id:" + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAppPlanId() + ";type:1");
                         Thread.sleep(mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime() * 1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -400,7 +404,6 @@ public class AdSecondActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         unbindService(mConnection);
-//        mExecutorService.shutdown();
     }
 
     public static String getString(String fileName, Context context) {

@@ -2,6 +2,8 @@ package com.imprexion.adplay.tools;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -110,7 +112,7 @@ public class Tools {
 
     public static void showPicWithGlide(ImageView imageView, String url) {
         ALog.d(TAG, "url=" + url);
-        if (!url.equals(AdSecondActivity.AD_DEFAULT)) {
+        if (!AdSecondActivity.AD_DEFAULT.equals(url)) {
             Glide.with(ADPlayApplication.getInstance().getApplicationContext())
                     .load(url)
                     .into(imageView);
@@ -129,5 +131,18 @@ public class Tools {
         String currentDate = new SimpleDateFormat(pattern, Locale.getDefault()).format(date);
         ALog.d(TAG, "currentDate=" + currentDate);
         return currentDate;
+    }
+
+    public static String getVersionName(Context context) {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(
+                    context.getPackageName(), 0);
+            ALog.d(TAG, "versionName=" + packageInfo.versionName);
+            return packageInfo.versionName;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

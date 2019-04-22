@@ -273,6 +273,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
                 @Override
                 public void onAnimationStart(Animator animation) {
+                    ALog.d(TAG, "onAnimationStart");
                     super.onAnimationStart(animation);
                     ivElephantEnter.setVisibility(View.VISIBLE);
                     tvGuideTip1.setVisibility(View.VISIBLE);
@@ -313,9 +314,9 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
             tvGuideTip1.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    tvGuideTip1.setText(getString(R.string.guide_tips_2));
+//                    tvGuideTip1.setText(getString(R.string.guide_tips_2));
                     showFullFootprint();
-                    mVoicePlay.playVoice(R.raw.great);
+//                    mVoicePlay.playVoice(R.raw.great);
                 }
             }, 500);
 
