@@ -37,7 +37,9 @@
             android:enabled="true"
             android:process=":remote" />
 
-        <activity android:name="com.imprexion.adplay.advertising.AdSecondActivity">
+        <activity
+            android:name="com.imprexion.adplay.advertising.AdSecondActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -104,8 +104,6 @@ public class AdSecondActivity extends AppCompatActivity {
     private boolean isSendShowGestureActive;
     private ServiceConnection mConnection;
     private NetPresenter mNetPresenter;
-//    private FragmentTransaction mTransaction;
-    //    private boolean isShowActiveTip;
     private TcpClientConnector mTcpClientConnector = TcpClientConnector.getInstance();
 
     private GestureActiveTwoStepFragment mGestureActiveTwoStepFragment;
@@ -144,7 +142,6 @@ public class AdSecondActivity extends AppCompatActivity {
                 case REMOVE_GESTURE_ACTIVE:
                     if (mTrackingMessage.getUsrsex() == 0) {
                         if (flGestureActive.getChildCount() != 0) {
-//                            flGestureActive.removeAllViews();
                             FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
                             if (mGestureActiveOneStepFragment != null) {
                                 mTransaction.remove(mGestureActiveOneStepFragment);
@@ -166,7 +163,7 @@ public class AdSecondActivity extends AppCompatActivity {
     };
 
     public void startAIScreenApp() {
-        ComponentName componentName = new ComponentName("com.imprexion.aiscreen", "com.imprexion.aiscreen.main.MainActivity");
+        ComponentName componentName = new ComponentName("com.imprexion.aiscreenold", "com.imprexion.aiscreenold.main.MainActivity");
         try {
             startActivity(new Intent().setComponent(componentName));
         } catch (Exception e) {
@@ -183,6 +180,8 @@ public class AdSecondActivity extends AppCompatActivity {
             ALog.d(TAG, "add gestureFragment");
             mGestureActiveTwoStepFragment = new GestureActiveTwoStepFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveTwoStepFragment).commitAllowingStateLoss();
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.fl_fragment_gesture,mGestureActiveTwoStepFragment).commitAllowingStateLoss();
         }
     }
 
@@ -216,7 +215,21 @@ public class AdSecondActivity extends AppCompatActivity {
         tvUsersex.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showGestureActiveOneStepView();
+//                showGestureActiveOneStepView();
+                showGestureActiveTowStepView();
+            }
+        });
+        tvStandhere.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mTrackingMessage == null) {
+                    mTrackingMessage = new TrackingMessage();
+
+                }
+                mTrackingMessage.setActived(false);
+                mTrackingMessage.setUsrsex(1);
+                mTrackingMessage.setStandHere(false);
+                EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
             }
         });
         tvIsactived.setOnClickListener(new View.OnClickListener() {
@@ -224,10 +237,10 @@ public class AdSecondActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (mTrackingMessage == null) {
                     mTrackingMessage = new TrackingMessage();
-                    mTrackingMessage.setActived(true);
-                    mTrackingMessage.setUsrsex(1);
-                    mTrackingMessage.setStandHere(false);
                 }
+                mTrackingMessage.setActived(true);
+                mTrackingMessage.setUsrsex(1);
+                mTrackingMessage.setStandHere(false);
                 EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
             }
         });
@@ -409,7 +422,6 @@ public class AdSecondActivity extends AppCompatActivity {
         mEditor.putInt("mCurrentPage", mCurrentPage);
         mEditor.commit();
         if (flGestureActive.getChildCount() != 0) {
-//                            flGestureActive.removeAllViews();
             FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
             if (mGestureActiveOneStepFragment != null) {
                 mTransaction.remove(mGestureActiveOneStepFragment);

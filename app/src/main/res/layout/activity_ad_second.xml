@@ -16,7 +16,8 @@
         android:layout_width="match_parent"
         android:layout_height="50px"
         android:layout_marginTop="100px"
-        android:background="@color/spreadColor">
+        android:background="@color/spreadColor"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
@@ -57,9 +58,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <fragment
-        android:id="@+id/ad2_status_frgament"
-        android:name="com.imprexion.adplay.status.StatusFragment"
-        android:layout_width="match_parent"
-        android:layout_height="50px" />
+    <!--<fragment-->
+        <!--android:id="@+id/ad2_status_frgament"-->
+        <!--android:name="com.imprexion.adplay.status.StatusFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50px" />-->
 </RelativeLayout>

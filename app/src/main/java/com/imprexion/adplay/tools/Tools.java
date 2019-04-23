@@ -111,7 +111,7 @@ public class Tools {
     }
 
     public static void showPicWithGlide(ImageView imageView, String url) {
-        ALog.d(TAG, "url=" + url);
+//        ALog.d(TAG, "url=" + url);
         if (!AdSecondActivity.AD_DEFAULT.equals(url)) {
             Glide.with(ADPlayApplication.getInstance().getApplicationContext())
                     .load(url)

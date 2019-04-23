@@ -26,8 +26,6 @@ import com.imprexion.adplay.R;
 import com.imprexion.adplay.advertising.AdSecondActivity;
 import com.imprexion.adplay.bean.EventBusMessage;
 import com.imprexion.adplay.bean.TrackingMessage;
-import com.imprexion.adplay.main.camera.CameraFragment;
-import com.imprexion.adplay.main.rainControl.RainControlFragment;
 import com.imprexion.adplay.tools.ALog;
 import com.imprexion.adplay.tools.VoicePlay;
 
@@ -121,6 +119,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     private boolean isResume;
     private boolean isStandHere;
     private boolean isWaveForActive;
+    private boolean isRotateForStandRight;
     private VoicePlay mVoicePlay;
     private static final String TAG = "GestureActiveTwoStepFragment";
 
@@ -178,12 +177,6 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                 case INJECTED_WATER_FADE_OUT:
                     stopInjectWaterAnimation();
                     break;
-                case ADD_CAMERE:
-                    getActivity().getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_gesture, new CameraFragment()).commitAllowingStateLoss();
-                    break;
-                case ADD_RAIN:
-                    getActivity().getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_gesture, new RainControlFragment()).commitAllowingStateLoss();
-                    break;
                 case ELEPHANT_EXIT:
                     startElephantExitAnimation();
                     break;
@@ -193,21 +186,6 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
         }
     };
     private TrackingMessage mTrackingMessage;
-
-    private void startRotateFootprint() {
-        if (!mFootprintRotateObjAnimator.isRunning()) {
-            mFootprintRotateObjAnimator.setRepeatCount(2);
-            mFootprintRotateObjAnimator.setDuration(1500);
-            mFootprintRotateObjAnimator.start();
-            mFootprintRotateObjAnimator.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    nextAfterStandRight();
-                }
-            });
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -237,14 +215,6 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     public void onResume() {
         super.onResume();
         isResume = true;
-//        if (flFragmentGesture.getChildCount() == 0) {
-//            mMessage = mHandler.obtainMessage();
-//            mMessage.what = ADD_CAMERE;
-//            mHandler.sendMessageDelayed(mMessage, 100);
-//            mMessage = mHandler.obtainMessage();
-//            mMessage.what = ADD_RAIN;
-//            mHandler.sendMessageDelayed(mMessage, 400);
-//        }
     }
 
     private void startElephantEnterAnimation() {
@@ -252,12 +222,6 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
         if (!mElephantEnterAnimation.isRunning()) {
             mElephantEnterAnimation.start();
         }
-//        ivElephantExit.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(AdvertisingActivity.this, MainActivity.class));
-//            }
-//        });
         if (!mEEnterObjAnimator.isRunning()) {
             mETipEnterObjAnimator.setDuration(ELEPHANT_ENTER_DURATION);
             mETipEnterObjAnimator.setStartDelay(500);
@@ -310,10 +274,22 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 //        nextAfterStandRight();
 
     }
+    private void startRotateFootprint() {
+        if (!mFootprintRotateObjAnimator.isRunning()) {
+            mFootprintRotateObjAnimator.setRepeatCount(20);
+            mFootprintRotateObjAnimator.setDuration(1500);
+            mFootprintRotateObjAnimator.start();
+        }
+        isRotateForStandRight = true;
+        if (mTrackingMessage != null && !mTrackingMessage.isStandHere()) {
+            nextAfterStandRight();
+        }
+    }
 
     private void nextAfterStandRight() {
         ALog.d(TAG, "nextAfterStandRight");
         if (mFootprintRotateObjAnimator != null) {
+            mFootprintRotateObjAnimator.end();
             mFootprintRotateObjAnimator.cancel();
         }
         if (tvGuideTip1 != null) {
@@ -324,7 +300,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     showFullFootprint();
 //                    mVoicePlay.playVoice(R.raw.great);
                 }
-            }, 500);
+            }, 50);
 
             tvGuideTip1.postDelayed(new Runnable() {
                 @Override
@@ -336,7 +312,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                         mVoicePlay.playVoice(R.raw.wave_your_right_hands);
                     }
                 }
-            }, 1500);
+            }, 500);
         }
     }
 
@@ -409,7 +385,6 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     mETipEnterObjAnimator.cancel();
                     ivElephantExit.setVisibility(View.INVISIBLE);
                     tvGuideTip1.setText(R.string.guide_tips_1);
-//                    ((AdSecondActivity) getActivity()).startAIScreenApp();
                 }
             });
             mAnimatorSet.start();
@@ -549,6 +524,10 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
             if (mTrackingMessage.isActived() && isWaveForActive) {
                 waveActiveSucess();
                 isWaveForActive = false;
+            }
+            if (!mTrackingMessage.isStandHere() && isRotateForStandRight && !isWaveForActive) {
+                nextAfterStandRight();
+                isRotateForStandRight = false;
             }
         }
     }

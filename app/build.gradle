@@ -2,6 +2,14 @@ apply plugin: 'com.android.application'
 //apply plugin: 'com.google.protobuf'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('keystore\\imprexion.jks')
+            storePassword 'id123456'
+            keyAlias = 'imprexion'
+            keyPassword 'id123456'
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.imprexion.adplay"
@@ -11,6 +19,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+        signingConfig signingConfigs.release
     }
     buildTypes {
         release {

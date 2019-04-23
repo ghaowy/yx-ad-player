@@ -26,8 +26,6 @@ import com.imprexion.adplay.R;
 import com.imprexion.adplay.advertising.AdSecondActivity;
 import com.imprexion.adplay.bean.EventBusMessage;
 import com.imprexion.adplay.bean.TrackingMessage;
-import com.imprexion.adplay.main.camera.CameraFragment;
-import com.imprexion.adplay.main.rainControl.RainControlFragment;
 import com.imprexion.adplay.tools.ALog;
 import com.imprexion.adplay.tools.VoicePlay;
 
@@ -102,16 +100,12 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                     break;
                 case INJECTED_WATER:
                     mInjectingWaterAnimation.stop();
-                    ((AdSecondActivity) getActivity()).startAIScreenApp();
+                    if (getActivity() != null) {
+                        ((AdSecondActivity) getActivity()).startAIScreenApp();
+                    }
                     break;
                 case INJECTED_WATER_FADE_OUT:
                     stopInjectWaterAnimation();
-                    break;
-                case ADD_CAMERE:
-                    getActivity().getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_gesture, new CameraFragment()).commitAllowingStateLoss();
-                    break;
-                case ADD_RAIN:
-                    getActivity().getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_gesture, new RainControlFragment()).commitAllowingStateLoss();
                     break;
                 case ELEPHANT_EXIT:
                     startElephantExitAnimation();
@@ -151,14 +145,6 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     public void onResume() {
         super.onResume();
         isResume = true;
-//        if (flFragmentGesture.getChildCount() == 0) {
-//            mMessage = mHandler.obtainMessage();
-//            mMessage.what = ADD_CAMERE;
-//            mHandler.sendMessageDelayed(mMessage, 100);
-//            mMessage = mHandler.obtainMessage();
-//            mMessage.what = ADD_RAIN;
-//            mHandler.sendMessageDelayed(mMessage, 400);
-//        }
     }
 
     private void startElephantEnterAnimation() {

@@ -6,9 +6,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.widget.Toast;
 
-import com.imprexion.adplay.advertising.AdSecondActivity;
 import com.imprexion.adplay.base.ADPlayApplication;
 import com.imprexion.adplay.tools.ALog;
 
@@ -47,8 +45,8 @@ public class AdPlayService extends Service {
         }
         if (intent != null && "com.imprexion.push.MESSAGE".equals(intent.getAction())) {
             String data = intent.getExtras().getString("data");
-            Toast.makeText(this, "MyService received Msg: " + data, Toast.LENGTH_LONG).show();
-            ALog.d(TAG, "content=" + data);
+//            Toast.makeText(this, "MyService received Msg: " + data, Toast.LENGTH_LONG).show();
+//            ALog.d(TAG, "content=" + data);
             if (mIContentInfoCallBack != null) {
                 mIContentInfoCallBack.setContentInfo(data);
             } else {
