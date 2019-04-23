@@ -273,12 +273,18 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    ALog.d(TAG, "onAnimationStart");
+                    ALog.d(TAG, toString() + "onAnimationStart");
                     super.onAnimationStart(animation);
-                    ivElephantEnter.setVisibility(View.VISIBLE);
-                    tvGuideTip1.setVisibility(View.VISIBLE);
+                    if (ivElephantEnter != null) {
+                        ivElephantEnter.setVisibility(View.VISIBLE);
+                    }
+                    if (tvGuideTip1 != null) {
+                        tvGuideTip1.setVisibility(View.VISIBLE);
+                    }
                     showFootPrint();
-                    mVoicePlay.playVoice(R.raw.please_stand_footprint);
+                    if (isResume) {
+                        mVoicePlay.playVoice(R.raw.please_stand_footprint);
+                    }
                 }
 
                 @Override
@@ -326,7 +332,9 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     tvGuideTip1.setText(getString(R.string.guide_tips_3));
                     hideFullFootprint();
                     startWaveHandTipAnimation();
-                    mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+                    if (isResume) {
+                        mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+                    }
                 }
             }, 1500);
         }
@@ -390,7 +398,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     super.onAnimationStart(animation);
                     mMessage = mHandler.obtainMessage();
                     mMessage.what = INJECTED_WATER_FADE_OUT;
-                    mHandler.sendMessageDelayed(mMessage, 1000);
+//                    mHandler.sendMessageDelayed(mMessage, 1000);
                 }
 
                 @Override
@@ -490,6 +498,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
         super.onPause();
         isResume = false;
 //        onDestroy();
+        EventBus.getDefault().unregister(this);
         if (mElephantEnterAnimation.isRunning()) {
             mElephantEnterAnimation.stop();
         }
@@ -534,7 +543,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageShowEvent(EventBusMessage message) {
-        ALog.d(TAG, "onMessageShowEvent");
+        ALog.d(TAG, toString() + ": onMessageShowEvent");
         if (message.getType() == EventBusMessage.ACTIVE_TIP) {
             mTrackingMessage = (TrackingMessage) message.getObject();
             if (mTrackingMessage.isActived() && isWaveForActive) {
@@ -551,6 +560,6 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
         if (mVoicePlay != null) {
             mVoicePlay.stop();
         }
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 }

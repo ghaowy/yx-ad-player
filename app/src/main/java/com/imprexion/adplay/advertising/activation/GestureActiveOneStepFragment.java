@@ -121,6 +121,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
             }
         }
     };
+    private boolean isResume;
 
 
     @Override
@@ -149,6 +150,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     @Override
     public void onResume() {
         super.onResume();
+        isResume = true;
 //        if (flFragmentGesture.getChildCount() == 0) {
 //            mMessage = mHandler.obtainMessage();
 //            mMessage.what = ADD_CAMERE;
@@ -179,13 +181,15 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    ALog.d(TAG, "onAnimationStart");
+                    ALog.d(TAG, toString() + "onAnimationStart");
                     super.onAnimationStart(animation);
                     ivElephantEnter.setVisibility(View.VISIBLE);
                     tvGuideTip1.setVisibility(View.VISIBLE);
                     tvGuideTip1.setText(getString(R.string.guide_tips_3));
                     startWaveHandTipAnimation();
-                    mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+                    if (isResume) {
+                        mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+                    }
                 }
 
                 @Override
@@ -345,6 +349,8 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     @Override
     public void onPause() {
         super.onPause();
+        isResume = false;
+        EventBus.getDefault().unregister(this);
         if (mElephantEnterAnimation.isRunning()) {
             mElephantEnterAnimation.stop();
         }
@@ -402,6 +408,6 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
         if (mVoicePlay != null) {
             mVoicePlay.stop();
         }
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
     }
 }

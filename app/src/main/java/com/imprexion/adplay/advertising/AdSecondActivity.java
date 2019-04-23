@@ -17,6 +17,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -103,6 +104,7 @@ public class AdSecondActivity extends AppCompatActivity {
     private boolean isSendShowGestureActive;
     private ServiceConnection mConnection;
     private NetPresenter mNetPresenter;
+//    private FragmentTransaction mTransaction;
     //    private boolean isShowActiveTip;
     private TcpClientConnector mTcpClientConnector = TcpClientConnector.getInstance();
 
@@ -142,7 +144,15 @@ public class AdSecondActivity extends AppCompatActivity {
                 case REMOVE_GESTURE_ACTIVE:
                     if (mTrackingMessage.getUsrsex() == 0) {
                         if (flGestureActive.getChildCount() != 0) {
-                            flGestureActive.removeAllViews();
+//                            flGestureActive.removeAllViews();
+                            FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
+                            if (mGestureActiveOneStepFragment != null) {
+                                mTransaction.remove(mGestureActiveOneStepFragment);
+                            }
+                            if (mGestureActiveTwoStepFragment != null) {
+                                mTransaction.remove(mGestureActiveTwoStepFragment);
+                            }
+                            mTransaction.commitAllowingStateLoss();
                             isShowGestureActive = false;
                             mGestureActiveTwoStepFragment = null;
                             mGestureActiveOneStepFragment = null;
@@ -398,6 +408,20 @@ public class AdSecondActivity extends AppCompatActivity {
         currentPage = OTHER_PAGE;
         mEditor.putInt("mCurrentPage", mCurrentPage);
         mEditor.commit();
+        if (flGestureActive.getChildCount() != 0) {
+//                            flGestureActive.removeAllViews();
+            FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
+            if (mGestureActiveOneStepFragment != null) {
+                mTransaction.remove(mGestureActiveOneStepFragment);
+            }
+            if (mGestureActiveTwoStepFragment != null) {
+                mTransaction.remove(mGestureActiveTwoStepFragment);
+            }
+            mTransaction.commit();
+            isShowGestureActive = false;
+            mGestureActiveTwoStepFragment = null;
+            mGestureActiveOneStepFragment = null;
+        }
     }
 
     @Override
@@ -531,7 +555,7 @@ public class AdSecondActivity extends AppCompatActivity {
             mHandler.sendMessageDelayed(message, 3000);
         }
 
-        //识别到有人但没有激活屏幕。2s后显示小象动画
+        //识别到有人但没有激活屏幕。2s(即时)后显示小象动画
         if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived() && !isShowGestureActive) {
             if (!isSendShowGestureActive) {
                 isSendShowGestureActive = true;
