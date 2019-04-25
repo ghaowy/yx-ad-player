@@ -4,21 +4,21 @@
 
     <item
         android:drawable="@drawable/injecting2_water_1"
-        android:duration="200" />
+        android:duration="100" />
     <item
         android:drawable="@drawable/injecting2_water_2"
-        android:duration="200" />
+        android:duration="100" />
     <item
         android:drawable="@drawable/injecting2_water_3"
-        android:duration="200" />
+        android:duration="100" />
     <item
         android:drawable="@drawable/injecting2_water_4"
-        android:duration="200" />
+        android:duration="100" />
     <item
         android:drawable="@drawable/injecting2_water_5"
-        android:duration="200" />
+        android:duration="100" />
     <item
         android:drawable="@drawable/injecting2_water_6"
-        android:duration="200" />
+        android:duration="100" />
 
 </animation-list>

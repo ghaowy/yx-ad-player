@@ -5,7 +5,7 @@
     android:layout_height="50px"
     android:orientation="vertical">
 
-    <com.imprexion.adplay.tools.IconFontTextView
+    <com.imprexion.adplayer.tools.IconFontTextView
         android:id="@+id/tv_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -15,7 +15,7 @@
         android:textColor="@color/white"
         android:textSize="@dimen/icon_text_size" />
 
-    <com.imprexion.adplay.tools.IconFontTextView
+    <com.imprexion.adplayer.tools.IconFontTextView
         android:id="@+id/tv_destination_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -69,7 +69,7 @@
         android:textSize="@dimen/hands_text_size" />
 
 
-    <com.imprexion.adplay.tools.IconFontTextView
+    <com.imprexion.adplayer.tools.IconFontTextView
         android:id="@+id/tv_weather_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"

@@ -5,7 +5,7 @@
     android:id="@+id/rl_gesture"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".advertising.activation.GestureActiveFragment">
+    tools:context=".advertising.activation.GestureActiveTwoStepFragment">
     <!--android:background="@drawable/gezhixuan">-->
 
     <!--<fragment-->
