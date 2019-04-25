@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.media.SoundPool;
 
 import com.imprexion.adplayer.R;
+import com.imprexion.library.logger.YxLogger;
 
 import java.io.IOException;
 
@@ -24,7 +25,7 @@ public class VoicePlay {
     }
 
     public void playVoice(int voiceSrcId) {//播放一次声音
-        ALog.d(TAG, "playVoice");
+        YxLogger.d(TAG, "playVoice");
         if (mSoundPool != null) {
             mSoundPool.pause(mSoundId);
         }
@@ -43,7 +44,7 @@ public class VoicePlay {
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                ALog.d(TAG, "playVoice mMediaPlayer onCompletion");
+                YxLogger.d(TAG, "playVoice mMediaPlayer onCompletion");
             }
         });
     }
@@ -74,15 +75,15 @@ public class VoicePlay {
         }
         mSoundId = mSoundPool.load(mContext, mRainVoiceId, 1);
         if (mSoundId == 0) {
-            ALog.d(TAG, "soundpool 加载失败");
+            YxLogger.d(TAG, "soundpool 加载失败");
             return;
         } else {
-            ALog.d(TAG, "soundId =" + mSoundId);
+            YxLogger.d(TAG, "soundId =" + mSoundId);
         }
         mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-                ALog.d(TAG, "soundPool load complete");
+                YxLogger.d(TAG, "soundPool load complete");
                 mSoundPool.play(mSoundId, 0.5f, 0.5f, 0, -1, 0.8f);
             }
         });

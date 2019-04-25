@@ -38,7 +38,6 @@ import com.imprexion.adplayer.bean.TrackingMessage;
 import com.imprexion.adplayer.net.NetPresenter;
 import com.imprexion.adplayer.service.AdPlayService;
 import com.imprexion.adplayer.service.TcpClientConnector;
-import com.imprexion.adplayer.tools.ALog;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.library.logger.YxLogger;
 import com.imprexion.service.tracking.bean.aiscreen;
@@ -69,12 +68,6 @@ public class AdSecondActivity extends AppCompatActivity {
     @BindView(R.id.fl_gestureActive)
     FrameLayout flGestureActive;
 
-    private String picUrl = "https://cn.bing.com/th?id=OHR.SakuraFes_ZH-CN1341601988_1920x1080.jpg&rf=NorthMale_1920x1080.jpg";
-    private String picUrl1 = "https://cn.bing.com/sa/simg/hpb/NorthMale_EN-US8782628354_1366x768.jpg";
-    private String picUrl2 = "https://cn.bing.com/th?id=OHR.AthensNight_ZH-CN1280970241_1920x1080.jpg&rf=NorthMale_1920x1080.jpg";
-
-    private String[] pics = {picUrl, picUrl1, picUrl2, picUrl};
-
     private List<Fragment> mFragmentList;
     private FragmentPagerAdapter mFragmentPagerAdapter;
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
@@ -84,7 +77,7 @@ public class AdSecondActivity extends AppCompatActivity {
     private final static int PLAY_NEXT = 1;
     private final static int SHOW_ACTIVE_TIP_FROM_FOOT = 2;
     private final static int SHOW_ACTIVE_TIP_FROM_WAVE_HAND = 3;
-    private final static int SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY = 10;
+    private final static int SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY = 300;
     private static final int ACTIVED = 5;
     private static final int REMOVE_GESTURE_ACTIVE = 6;
     private static final int START_AD_FIRST = 7;
@@ -120,7 +113,11 @@ public class AdSecondActivity extends AppCompatActivity {
                 case SHOW_ACTIVE_TIP_FROM_FOOT:
                     if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived()) {
                         isShowGestureActive = true;
-                        showGestureActiveTowStepView();
+                        if (mTrackingMessage.isStandHere()) {
+                            showGestureActiveTowStepView();
+                        } else {
+                            showGestureActiveOneStepView();
+                        }
                     }
                     isSendShowGestureActive = false;
                     break;
@@ -136,7 +133,7 @@ public class AdSecondActivity extends AppCompatActivity {
                         currentPage = OTHER_PAGE;
                         startAIScreenApp();
                     } else {
-                        ALog.d(TAG, "have no person in 2s");
+                        YxLogger.d(TAG, "have no person in 2s");
                     }
                     break;
                 case REMOVE_GESTURE_ACTIVE:
@@ -167,7 +164,7 @@ public class AdSecondActivity extends AppCompatActivity {
         try {
             startActivity(new Intent().setComponent(componentName));
         } catch (Exception e) {
-            ALog.d(TAG, "start AIScreen fail");
+            YxLogger.d(TAG, "start AIScreen fail");
             e.printStackTrace();
         }
     }
@@ -175,20 +172,18 @@ public class AdSecondActivity extends AppCompatActivity {
     private TrackingMessage mTrackingMessage;
 
     private void showGestureActiveTowStepView() {
-        ALog.d(TAG, "showGestureActiveTowStepView");
+        YxLogger.d(TAG, "showGestureActiveTowStepView");
         if (mGestureActiveTwoStepFragment == null && flGestureActive.getChildCount() == 0) {
-            ALog.d(TAG, "add gestureFragment");
+            YxLogger.d(TAG, "add two gestureFragment");
             mGestureActiveTwoStepFragment = new GestureActiveTwoStepFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveTwoStepFragment).commitAllowingStateLoss();
-
-            getSupportFragmentManager().beginTransaction().replace(R.id.fl_fragment_gesture,mGestureActiveTwoStepFragment).commitAllowingStateLoss();
         }
     }
 
     private void showGestureActiveOneStepView() {
-        ALog.d(TAG, "showGestureActiveTowStepView");
+        YxLogger.d(TAG, "showGestureActiveOneStepView");
         if (mGestureActiveOneStepFragment == null && flGestureActive.getChildCount() == 0) {
-            ALog.d(TAG, "add gestureFragment");
+            YxLogger.d(TAG, "add  one gestureFragment");
             mGestureActiveOneStepFragment = new GestureActiveOneStepFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveOneStepFragment).commitAllowingStateLoss();
         }
@@ -200,7 +195,7 @@ public class AdSecondActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ALog.d(TAG, "onCreate");
+        YxLogger.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ad_second);
         ButterKnife.bind(this);
@@ -209,6 +204,7 @@ public class AdSecondActivity extends AppCompatActivity {
         setSocketListener();
         YxLogger.init(this, true, false);
         YxLogger.setVersion(Tools.getVersionName(this));
+        YxLogger.setPrettyFormatEnable(false);
         initData();
 
         //test
@@ -264,20 +260,20 @@ public class AdSecondActivity extends AppCompatActivity {
                 if (adContentPlayString != null) {
                     adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
                     if (!adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
-                        ALog.d(TAG, "there is not today adContent");
+                        YxLogger.d(TAG, "there is not today adContent");
                         adContentPlay = getDefaultADContentPlay();
                     } else {
                         mEditor.putString(AD_CURRENT, adContentPlayString);
                         mEditor.commit();
                     }
                 } else {
-                    ALog.d(TAG, "adContentPlayString next is null");
+                    YxLogger.d(TAG, "adContentPlayString next is null");
                     adContentPlay = getDefaultADContentPlay();
                 }
 
             }
         } else {
-            ALog.d(TAG, "adContentPlayString current is null");
+            YxLogger.d(TAG, "adContentPlayString current is null");
             adContentPlay = getDefaultADContentPlay();
         }
 
@@ -338,7 +334,7 @@ public class AdSecondActivity extends AppCompatActivity {
         Tools.hideNavigationBarStatusBar(this, true);
 //        initViewPager();
         mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
-        ALog.d(TAG, "mCurrentPage=" + mPagerPage);
+        YxLogger.d(TAG, "mCurrentPage=" + mPagerPage);
         isPlay = true;
         Runnable runnable = new Runnable() {
             @Override
@@ -348,13 +344,13 @@ public class AdSecondActivity extends AppCompatActivity {
                     Message message = mHandler.obtainMessage();
                     message.what = PLAY_NEXT;
                     mHandler.sendMessage(message);
-//                    ALog.d(TAG, "mAdContentInfoList size = " + mAdContentInfoList.size());
-//                    ALog.d(TAG, "mSize = " + mSize);
-//                    ALog.d(TAG, "mCurrentPage = " + mCurrentPage);
+//                    YxLogger.d(TAG, "mAdContentInfoList size = " + mAdContentInfoList.size());
+//                    YxLogger.d(TAG, "mSize = " + mSize);
+//                    YxLogger.d(TAG, "mCurrentPage = " + mCurrentPage);
                     if (mCurrentPage >= mSize) {
                         mCurrentPage = 0;
                     }
-//                    ALog.d(TAG, "runnable next,playTime = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime());
+//                    YxLogger.d(TAG, "runnable next,playTime = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime());
                     try {
                         YxLogger.report("ad_plan_id:" + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAppPlanId() + ";type:1");
                         Thread.sleep(mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime() * 1000);
@@ -390,7 +386,7 @@ public class AdSecondActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int i) {
-//                ALog.d(TAG, "onPageSelected=" + i);
+//                YxLogger.d(TAG, "onPageSelected=" + i);
                 mCurrentPosition = i;
             }
 
@@ -400,7 +396,7 @@ public class AdSecondActivity extends AppCompatActivity {
                     return;
                 }
                 if (mCurrentPosition == mSize - 1) {
-//                    ALog.d(TAG, "last->first");
+//                    YxLogger.d(TAG, "last->first");
                     viewPager.setCurrentItem(0, false);
                     mPagerPage++;
                 }
@@ -455,7 +451,7 @@ public class AdSecondActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ALog.d(TAG, "ADjson=" + stringBuilder.toString());
+        YxLogger.d(TAG, "ADjson=" + stringBuilder.toString());
         return stringBuilder.toString();
     }
 
@@ -463,7 +459,7 @@ public class AdSecondActivity extends AppCompatActivity {
         mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                ALog.d(TAG, "onServiceConnected");
+                YxLogger.d(TAG, "onServiceConnected");
                 AdPlayService.AISBinder aisBinder = (AdPlayService.AISBinder) service;
                 aisBinder.getService().setContentInfoToActivity(new AdPlayService.IContentInfoCallBack() {
                     @Override
@@ -486,7 +482,7 @@ public class AdSecondActivity extends AppCompatActivity {
     }
 
     private void pushMessage(String content) {
-        ALog.d(TAG, "ContentInfo=" + content);
+        YxLogger.d(TAG, "ContentInfo=" + content);
         ADContentPlay adContentPlay = JSON.parseObject(content, ADContentPlay.class);
         if (mNetPresenter == null) {
             mNetPresenter = new NetPresenter();
@@ -497,9 +493,9 @@ public class AdSecondActivity extends AppCompatActivity {
             mEditor = mSharedPreferences.edit();
         }
 
-        ALog.d(TAG, "adContentPlay.getPlayDate()=" + adContentPlay.getPlayDate());
-        ALog.d(TAG, "getCurrentDate()=" + Tools.getCurrentDate("yyyy-MM-dd"));
-        ALog.d(TAG, "adContentPlay=" + JSON.toJSONString(adContentPlay));
+        YxLogger.d(TAG, "adContentPlay.getPlayDate()=" + adContentPlay.getPlayDate());
+        YxLogger.d(TAG, "getCurrentDate()=" + Tools.getCurrentDate("yyyy-MM-dd"));
+        YxLogger.d(TAG, "adContentPlay=" + JSON.toJSONString(adContentPlay));
         if (adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
             mEditor.putString(AD_CURRENT, content);
             mEditor.commit();
@@ -521,9 +517,9 @@ public class AdSecondActivity extends AppCompatActivity {
             @Override
             public void onReceiveData(aiscreen messageForAIScreen) {
                 String mData = "sex=" + messageForAIScreen.getUsrSex() + " ;HavePerson=" + messageForAIScreen.getStandHere() + " ;IsActived=" + messageForAIScreen.getIsActived();
-//                ALog.d(TAG, "sex=" + messageForAIScreen.getUsrsex());
-//                ALog.d(TAG, "HavePerson=" + messageForAIScreen.getStandHere());
-//                ALog.d(TAG, "IsActived=" + messageForAIScreen.getIsActived());
+//                YxLogger.d(TAG, "sex=" + messageForAIScreen.getUsrsex());
+//                YxLogger.d(TAG, "HavePerson=" + messageForAIScreen.getStandHere());
+//                YxLogger.d(TAG, "IsActived=" + messageForAIScreen.getIsActived());
                 dispatchMessage(messageForAIScreen);
             }
         });
@@ -544,14 +540,14 @@ public class AdSecondActivity extends AppCompatActivity {
         tvUsersex.setText("" + mTrackingMessage.getUsrsex());
         tvStandhere.setText(mTrackingMessage.isStandHere() == true ? "true" : "false");
         tvIsactived.setText(mTrackingMessage.isActived() == true ? "true" : "false");
-        ALog.d(TAG, "usrsex=" + mTrackingMessage.getUsrsex() + " ;standHere=" + mTrackingMessage.isStandHere()
+        YxLogger.d(TAG, "usrsex=" + mTrackingMessage.getUsrsex() + " ;standHere=" + mTrackingMessage.isStandHere()
                 + " ;isActived=" + mTrackingMessage.isActived());
 //        if (mTrackingMessage.getUsrsex() == 0 && currentPage != AD_PAGE) {
 //            Message message = mHandler.obtainMessage();
 //            message.what = NO_PERSON;
 //            mHandler.sendMessageDelayed(message, 2000);
 //        }
-        ALog.d(TAG, "isShowActiveTip=" + isShowGestureActive);
+        YxLogger.d(TAG, "isShowActiveTip=" + isShowGestureActive);
 
         //激活屏幕进入主界面
         if (mTrackingMessage.getUsrsex() != 0 && currentPage == AD_PAGE && mTrackingMessage.isActived() && !isShowGestureActive) {
@@ -571,15 +567,20 @@ public class AdSecondActivity extends AppCompatActivity {
         if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived() && !isShowGestureActive) {
             if (!isSendShowGestureActive) {
                 isSendShowGestureActive = true;
-                if (mTrackingMessage.isStandHere()) {
-                    Message message = mHandler.obtainMessage();
-                    message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
-                    mHandler.sendMessageDelayed(message, SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY);
-                } else {
-                    Message message = mHandler.obtainMessage();
-                    message.what = SHOW_ACTIVE_TIP_FROM_WAVE_HAND;
-                    mHandler.sendMessageDelayed(message, SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY);
-                }
+                Message message = mHandler.obtainMessage();
+                message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
+                mHandler.sendMessageDelayed(message, SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY);
+//                if (mTrackingMessage.isStandHere()) {
+//                    YxLogger.d(TAG,"SHOW_ACTIVE_TIP_FROM_FOOT");
+//                    Message message = mHandler.obtainMessage();
+//                    message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
+//                    mHandler.sendMessageDelayed(message, SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY);
+//                } else {
+//                    YxLogger.d(TAG,"SHOW_ACTIVE_TIP_FROM_WAVE_HAND");
+//                    Message message = mHandler.obtainMessage();
+//                    message.what = SHOW_ACTIVE_TIP_FROM_WAVE_HAND;
+//                    mHandler.sendMessageDelayed(message, SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY);
+//                }
             }
         }
         //发送tracking消息给小象。小象根据消息刺激执行下一步动画

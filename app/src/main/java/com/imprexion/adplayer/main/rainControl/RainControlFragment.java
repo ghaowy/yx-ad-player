@@ -10,7 +10,7 @@ import android.graphics.Matrix;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import com.imprexion.adplayer.tools.ALog;
+import com.imprexion.library.logger.YxLogger;
 
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -109,13 +109,13 @@ public class RainControlFragment extends Fragment {
                     case MotionEvent.ACTION_UP:
                         if (x - lastX > 120) {
                             //右移
-                            ALog.d(TAG, "右移");
+                            YxLogger.d(TAG, "右移");
                             if (isStop) {
                                 rainDropView.remove(false, true, false, false);
                             }
                         } else if (lastX - x > 120) {
                             //左移
-                            ALog.d(TAG, "左移");
+                            YxLogger.d(TAG, "左移");
                             if (isStop) {
                                 rainDropView.remove(true, false, false, false);
                             }
@@ -133,7 +133,7 @@ public class RainControlFragment extends Fragment {
                             }
                         } else {
                             //点击
-                            ALog.d(TAG, "点击");
+                            YxLogger.d(TAG, "点击");
                             if (!isStop) {
                                 mRainVoice.playVoice(R.raw.raindrop_move_voice);
                                 rainView1.setVisibility(View.INVISIBLE);

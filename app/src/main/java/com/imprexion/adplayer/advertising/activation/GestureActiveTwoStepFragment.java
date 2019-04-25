@@ -26,7 +26,7 @@ import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.advertising.AdSecondActivity;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
-import com.imprexion.adplayer.tools.ALog;
+import com.imprexion.library.logger.YxLogger;
 import com.imprexion.adplayer.tools.VoicePlay;
 
 import org.greenrobot.eventbus.EventBus;
@@ -111,8 +111,6 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     private final static int INJECT_WATER = 14;
     private final static int INJECTED_WATER = 15;
     private final static int INJECTED_WATER_FADE_OUT = 16;
-    private final static int ADD_CAMERE = 17;
-    private final static int ADD_RAIN = 18;
     private final static int ELEPHANT_EXIT = 19;
     private final static int ELEPHANT_EXIT_DURATION = 2000;
     private final static int ELEPHANT_ENTER_DURATION = 1500;
@@ -172,7 +170,9 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     break;
                 case INJECTED_WATER:
                     mInjectingWaterAnimation.stop();
-                    ((AdSecondActivity) getActivity()).startAIScreenApp();
+                    if (getActivity() != null) {
+                        ((AdSecondActivity) getActivity()).startAIScreenApp();
+                    }
                     break;
                 case INJECTED_WATER_FADE_OUT:
                     stopInjectWaterAnimation();
@@ -218,7 +218,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void startElephantEnterAnimation() {
-        ALog.d(TAG, "startElephantEnterAnimation");
+        YxLogger.d(TAG, "startElephantEnterAnimation");
         if (!mElephantEnterAnimation.isRunning()) {
             mElephantEnterAnimation.start();
         }
@@ -237,7 +237,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    ALog.d(TAG, toString() + "onAnimationStart");
+                    YxLogger.d(TAG, toString() + "onAnimationStart");
                     super.onAnimationStart(animation);
                     if (ivElephantEnter != null) {
                         ivElephantEnter.setVisibility(View.VISIBLE);
@@ -274,6 +274,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 //        nextAfterStandRight();
 
     }
+
     private void startRotateFootprint() {
         if (!mFootprintRotateObjAnimator.isRunning()) {
             mFootprintRotateObjAnimator.setRepeatCount(20);
@@ -287,7 +288,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void nextAfterStandRight() {
-        ALog.d(TAG, "nextAfterStandRight");
+        YxLogger.d(TAG, "nextAfterStandRight");
         if (mFootprintRotateObjAnimator != null) {
             mFootprintRotateObjAnimator.end();
             mFootprintRotateObjAnimator.cancel();
@@ -317,7 +318,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void startWaveHandTipAnimation() {
-        ALog.d(TAG, "startWaveHandTipAnimation");
+        YxLogger.d(TAG, "startWaveHandTipAnimation");
         fadeIn(ivWaveHandsTip);
         mWaveHandsAnimation.start();
         //test,isActived=true接收信号执行注水ing动画
@@ -440,8 +441,12 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void showFullFootprint() {
-        ivLeftprint.setVisibility(View.VISIBLE);
-        ivRightprint.setVisibility(View.VISIBLE);
+        if (ivLeftprint != null) {
+            ivLeftprint.setVisibility(View.VISIBLE);
+        }
+        if (ivRightprint != null) {
+            ivRightprint.setVisibility(View.VISIBLE);
+        }
         hideFootprint();
     }
 
@@ -518,7 +523,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageShowEvent(EventBusMessage message) {
-        ALog.d(TAG, toString() + ": onMessageShowEvent");
+        YxLogger.d(TAG, toString() + ": onMessageShowEvent");
         if (message.getType() == EventBusMessage.ACTIVE_TIP) {
             mTrackingMessage = (TrackingMessage) message.getObject();
             if (mTrackingMessage.isActived() && isWaveForActive) {

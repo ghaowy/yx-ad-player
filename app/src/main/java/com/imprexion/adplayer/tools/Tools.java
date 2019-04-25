@@ -25,6 +25,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.imprexion.adplayer.base.ADPlayApplication;
+import com.imprexion.library.logger.YxLogger;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -86,14 +87,14 @@ public class Tools {
         File file = new File(path);
         File[] files = file.listFiles();
         if (files == null) {
-            ALog.e(TAG, "空目录");
+            YxLogger.e(TAG, "空目录");
             return null;
         }
         List<String> s = new ArrayList<>();
         for (int i = 0; i < files.length; i++) {
             String[] splits = files[i].getAbsolutePath().split("/");
             s.add(splits[splits.length - 1]);
-            ALog.d(TAG, "filename = " + s.get(i));
+            YxLogger.d(TAG, "filename = " + s.get(i));
         }
         return s;
     }
@@ -111,7 +112,7 @@ public class Tools {
     }
 
     public static void showPicWithGlide(ImageView imageView, String url) {
-//        ALog.d(TAG, "url=" + url);
+//        YxLogger.d(TAG, "url=" + url);
         if (!AdSecondActivity.AD_DEFAULT.equals(url)) {
             Glide.with(ADPlayApplication.getInstance().getApplicationContext())
                     .load(url)
@@ -129,7 +130,7 @@ public class Tools {
         Date date = new Date(time);
 //        String pattern = "yyyy-MM-dd";//格式yy-MM-dd(年份取末两位) ;yyyy-MM-dd HH:mm:ss(格式可以自行取舍)
         String currentDate = new SimpleDateFormat(pattern, Locale.getDefault()).format(date);
-        ALog.d(TAG, "currentDate=" + currentDate);
+        YxLogger.d(TAG, "currentDate=" + currentDate);
         return currentDate;
     }
 
@@ -138,7 +139,7 @@ public class Tools {
             PackageManager packageManager = context.getPackageManager();
             PackageInfo packageInfo = packageManager.getPackageInfo(
                     context.getPackageName(), 0);
-            ALog.d(TAG, "versionName=" + packageInfo.versionName);
+            YxLogger.d(TAG, "versionName=" + packageInfo.versionName);
             return packageInfo.versionName;
         } catch (Exception e) {
             e.printStackTrace();

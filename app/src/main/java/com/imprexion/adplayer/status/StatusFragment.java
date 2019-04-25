@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import com.imprexion.adplayer.tools.ALog;
+import com.imprexion.library.logger.YxLogger;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -135,7 +135,7 @@ public class StatusFragment extends Fragment implements NetContract.StatusView {
         mBdLocation.setLocationUpdateListener(new BaiDuLocation.LocationUpdateListener() {
             @Override
             public void updateLoaction(String city, String address) {
-                ALog.d(TAG, "address =" + address);
+                YxLogger.d(TAG, "address =" + address);
                 if (Tools.isNetworkConnected(getContext())) {
                     mNetPresenter.updateWeather(city);
                 }
@@ -150,7 +150,7 @@ public class StatusFragment extends Fragment implements NetContract.StatusView {
     @Override
     public void updateWeather(WeatherInfo weatherInfo) {
         WeatherInfo.HeWeather6 heWeather6 = weatherInfo.getHeWeather6().get(0);
-        ALog.d(TAG, "heWeather6=" + new Gson().toJson(heWeather6));
+        YxLogger.d(TAG, "heWeather6=" + new Gson().toJson(heWeather6));
         String status = heWeather6.getStatus();
         if (!status.equals("ok")) {
             return;

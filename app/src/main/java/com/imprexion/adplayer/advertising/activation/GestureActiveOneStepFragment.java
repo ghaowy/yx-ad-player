@@ -26,7 +26,7 @@ import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.advertising.AdSecondActivity;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
-import com.imprexion.adplayer.tools.ALog;
+import com.imprexion.library.logger.YxLogger;
 import com.imprexion.adplayer.tools.VoicePlay;
 
 import org.greenrobot.eventbus.EventBus;
@@ -79,8 +79,6 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     private final static int INJECT_WATER = 14;
     private final static int INJECTED_WATER = 15;
     private final static int INJECTED_WATER_FADE_OUT = 16;
-    private final static int ADD_CAMERE = 17;
-    private final static int ADD_RAIN = 18;
     private final static int ELEPHANT_EXIT = 19;
     private final static int ELEPHANT_EXIT_DURATION = 2000;
     private final static int ELEPHANT_ENTER_DURATION = 1500;
@@ -148,7 +146,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     }
 
     private void startElephantEnterAnimation() {
-        ALog.d(TAG, "startElephantEnterAnimation");
+        YxLogger.d(TAG, "startElephantEnterAnimation");
         if (!mElephantEnterAnimation.isRunning()) {
             mElephantEnterAnimation.start();
         }
@@ -167,7 +165,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    ALog.d(TAG, toString() + "onAnimationStart");
+                    YxLogger.d(TAG, toString() + "onAnimationStart");
                     super.onAnimationStart(animation);
                     ivElephantEnter.setVisibility(View.VISIBLE);
                     tvGuideTip1.setVisibility(View.VISIBLE);
@@ -207,7 +205,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
 
     private void startWaveHandTipAnimation() {
-        ALog.d(TAG, "startWaveHandTipAnimation");
+        YxLogger.d(TAG, "startWaveHandTipAnimation");
         fadeIn(ivWaveHandsTip);
         mWaveHandsAnimation.start();
         //test,isActived=true接收信号执行注水ing动画
@@ -377,7 +375,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageShowEvent(EventBusMessage message) {
-        ALog.d(TAG, "onMessageShowEvent");
+        YxLogger.d(TAG, "onMessageShowEvent");
         if (message.getType() == EventBusMessage.ACTIVE_TIP) {
             mTrackingMessage = (TrackingMessage) message.getObject();
             if (mTrackingMessage.isActived() && isWaveForActive) {

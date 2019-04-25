@@ -3,7 +3,7 @@ package com.imprexion.adplayer.service;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Base64;
-import com.imprexion.adplayer.tools.ALog;
+import com.imprexion.library.logger.YxLogger;
 import com.imprexion.service.tracking.bean.aiscreen;
 
 import java.io.BufferedReader;
@@ -46,9 +46,9 @@ public class TcpClientConnector {
     }
 
     public void createConnect(final String ip, final int port) {
-        ALog.d(TAG, "createConnect");
+        YxLogger.d(TAG, "createConnect");
         if (mConnectThread == null) {
-            ALog.d(TAG, "new mConnectThread");
+            YxLogger.d(TAG, "new mConnectThread");
             mConnectThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -102,7 +102,7 @@ public class TcpClientConnector {
     }
 
     public void disconnect() {
-        ALog.d(TAG, "disconnect()");
+        YxLogger.d(TAG, "disconnect()");
         if (mSocket != null) {
             try {
                 mSocket.close();

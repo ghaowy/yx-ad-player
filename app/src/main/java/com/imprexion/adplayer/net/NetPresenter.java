@@ -3,7 +3,7 @@ package com.imprexion.adplayer.net;
 import com.alibaba.fastjson.JSON;
 import com.imprexion.adplayer.bean.ADContentPlay;
 import com.imprexion.adplayer.bean.WeatherInfo;
-import com.imprexion.adplayer.tools.ALog;
+import com.imprexion.library.logger.YxLogger;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -58,7 +58,7 @@ public class NetPresenter {
                 .enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        ALog.d(TAG, "adcallback=" + response.body());
+                        YxLogger.d(TAG, "adcallback=" + response.body());
                     }
 
                     @Override

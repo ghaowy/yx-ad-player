@@ -12,7 +12,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import com.imprexion.adplayer.tools.ALog;
+import com.imprexion.library.logger.YxLogger;
 
 import android.view.View;
 
@@ -85,7 +85,7 @@ public class RaindropView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-//        ALog.d(TAG, "mIsRemoveLeft =" + mIsRemoveLeft + " mIsRemoveRight=" + mIsRemoveRight);
+//        YxLogger.d(TAG, "mIsRemoveLeft =" + mIsRemoveLeft + " mIsRemoveRight=" + mIsRemoveRight);
         Matrix matrix = new Matrix();
         for (int i = 0; i < SIZE; i++) {
             matrix.reset();
@@ -129,7 +129,7 @@ public class RaindropView extends View {
                 int value = Integer.valueOf(animation.getAnimatedValue().toString());
                 if (mValue != value) {
                     postInvalidate();
-                    ALog.d(TAG, "removeLeft invalide ,mvalue=" + value);
+                    YxLogger.d(TAG, "removeLeft invalide ,mvalue=" + value);
                 }
                 mValue = value;
             }
