@@ -23,7 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.advertising.AdSecondActivity;
+import com.imprexion.adplayer.advertising.AdActivity;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
 import com.imprexion.library.logger.YxLogger;
@@ -171,7 +171,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                 case INJECTED_WATER:
                     mInjectingWaterAnimation.stop();
                     if (getActivity() != null) {
-                        ((AdSecondActivity) getActivity()).startAIScreenApp();
+                        ((AdActivity) getActivity()).startAIScreenApp();
                     }
                     break;
                 case INJECTED_WATER_FADE_OUT:
@@ -258,7 +258,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     mEEnterObjAnimator.cancel();
                     mETipEnterObjAnimator.cancel();
                     mFloorEnterObjAnimator.cancel();
-                    tvGuideTip1.setText(getString(R.string.guide_tips_1));
+                    tvGuideTip1.setText(R.string.guide_tips_1);
                     startElephantStopAnimation();
                 }
             });
@@ -306,7 +306,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
             tvGuideTip1.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    tvGuideTip1.setText(getString(R.string.guide_tips_3));
+                    tvGuideTip1.setText(R.string.guide_tips_3);
                     hideFullFootprint();
                     startWaveHandTipAnimation();
                     if (isResume) {

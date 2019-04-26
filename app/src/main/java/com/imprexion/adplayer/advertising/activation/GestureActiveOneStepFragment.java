@@ -23,7 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.advertising.AdSecondActivity;
+import com.imprexion.adplayer.advertising.AdActivity;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
 import com.imprexion.library.logger.YxLogger;
@@ -99,7 +99,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                 case INJECTED_WATER:
                     mInjectingWaterAnimation.stop();
                     if (getActivity() != null) {
-                        ((AdSecondActivity) getActivity()).startAIScreenApp();
+                        ((AdActivity) getActivity()).startAIScreenApp();
                     }
                     break;
                 case INJECTED_WATER_FADE_OUT:
@@ -281,7 +281,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                     mETipEnterObjAnimator.cancel();
                     ivElephantExit.setVisibility(View.INVISIBLE);
                     tvGuideTip1.setText(R.string.guide_tips_3);
-//                    ((AdSecondActivity) getActivity()).startAIScreenApp();
+//                    ((AdActivity) getActivity()).startAIScreenApp();
                 }
             });
             mAnimatorSet.start();

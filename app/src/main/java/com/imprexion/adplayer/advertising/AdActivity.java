@@ -55,7 +55,7 @@ import java.util.concurrent.Executors;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class AdSecondActivity extends AppCompatActivity {
+public class AdActivity extends AppCompatActivity {
 
     @BindView(R.id.viewPager)
     ViewPager viewPager;
@@ -73,7 +73,7 @@ public class AdSecondActivity extends AppCompatActivity {
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
     private int mPagerPage;
     private ExecutorService mExecutorService;
-    private final static String TAG = "AdSecondActivity";
+    private final static String TAG = "AdActivity";
     private final static int PLAY_NEXT = 1;
     private final static int SHOW_ACTIVE_TIP_FROM_FOOT = 2;
     private final static int SHOW_ACTIVE_TIP_FROM_WAVE_HAND = 3;
@@ -160,13 +160,14 @@ public class AdSecondActivity extends AppCompatActivity {
     };
 
     public void startAIScreenApp() {
-        ComponentName componentName = new ComponentName("com.imprexion.aiscreenold", "com.imprexion.aiscreenold.main.MainActivity");
-        try {
-            startActivity(new Intent().setComponent(componentName));
-        } catch (Exception e) {
-            YxLogger.d(TAG, "start AIScreen fail");
-            e.printStackTrace();
-        }
+//        ComponentName componentName = new ComponentName("com.imprexion.aiscreenold", "com.imprexion.aiscreenold.main.MainActivity");
+//        try {
+//            startActivity(new Intent().setComponent(componentName));
+//        } catch (Exception e) {
+//            YxLogger.d(TAG, "start AIScreen fail");
+//            e.printStackTrace();
+//        }
+        finish();
     }
 
     private TrackingMessage mTrackingMessage;
@@ -425,7 +426,7 @@ public class AdSecondActivity extends AppCompatActivity {
             if (mGestureActiveTwoStepFragment != null) {
                 mTransaction.remove(mGestureActiveTwoStepFragment);
             }
-            mTransaction.commit();
+            mTransaction.commitAllowingStateLoss();
             isShowGestureActive = false;
             mGestureActiveTwoStepFragment = null;
             mGestureActiveOneStepFragment = null;

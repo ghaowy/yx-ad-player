@@ -9,22 +9,31 @@ android {
             keyAlias = 'imprexion'
             keyPassword 'id123456'
         }
+        debug {
+            storeFile file('keystore\\imprexion.jks')
+            storePassword 'id123456'
+            keyPassword 'id123456'
+            keyAlias = 'imprexion'
+        }
     }
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.imprexion.adplayer"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 101
+        versionName "1.0.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        signingConfig signingConfigs.release
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.release
         }
     }
     sourceSets {
@@ -69,8 +78,6 @@ android {
         generatedFilesBaseDir = "$projectDir/src/main"
     }
 }
-
-
 
 
 dependencies {

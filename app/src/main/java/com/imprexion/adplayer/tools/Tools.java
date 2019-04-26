@@ -15,7 +15,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.advertising.AdSecondActivity;
+import com.imprexion.adplayer.advertising.AdActivity;
 
 import android.view.View;
 import android.webkit.WebSettings;
@@ -113,7 +113,7 @@ public class Tools {
 
     public static void showPicWithGlide(ImageView imageView, String url) {
 //        YxLogger.d(TAG, "url=" + url);
-        if (!AdSecondActivity.AD_DEFAULT.equals(url)) {
+        if (!AdActivity.AD_DEFAULT.equals(url)) {
             Glide.with(ADPlayApplication.getInstance().getApplicationContext())
                     .load(url)
                     .into(imageView);
