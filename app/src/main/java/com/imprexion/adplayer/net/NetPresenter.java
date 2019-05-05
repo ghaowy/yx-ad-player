@@ -1,5 +1,7 @@
 package com.imprexion.adplayer.net;
 
+import android.util.Log;
+
 import com.alibaba.fastjson.JSON;
 import com.imprexion.adplayer.bean.ADContentPlay;
 import com.imprexion.adplayer.bean.WeatherInfo;
@@ -50,6 +52,7 @@ public class NetPresenter {
 //        JSONObject jsonObject = new JSONObject();
 //        jsonObject.put("token", "30EFKHab7C5C56K9");
 //        jsonObject.put("adcontent", adContent);
+        Log.d(TAG, "onADCallback");
         RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), JSON.toJSONString(adContent));
 
         RetrofitFactory.getInstanceForAD()
@@ -63,7 +66,7 @@ public class NetPresenter {
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-
+                        YxLogger.d(TAG, "onFailure  " + t.getMessage());
                     }
                 });
     }
