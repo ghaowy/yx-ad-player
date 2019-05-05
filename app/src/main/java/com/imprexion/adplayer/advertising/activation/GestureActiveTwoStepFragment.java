@@ -258,7 +258,9 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     mEEnterObjAnimator.cancel();
                     mETipEnterObjAnimator.cancel();
                     mFloorEnterObjAnimator.cancel();
-                    tvGuideTip1.setText(R.string.guide_tips_1);
+                    if (tvGuideTip1 != null) {
+                        tvGuideTip1.setText(R.string.guide_tips_1);
+                    }
                     startElephantStopAnimation();
                 }
             });
@@ -306,7 +308,9 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
             tvGuideTip1.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    tvGuideTip1.setText(R.string.guide_tips_3);
+                    if (tvGuideTip1 != null) {
+                        tvGuideTip1.setText(R.string.guide_tips_3);
+                    }
                     hideFullFootprint();
                     startWaveHandTipAnimation();
                     if (isResume) {
@@ -384,8 +388,12 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     mElephantExitAnimation.stop();
                     mEExitObjAnimator.cancel();
                     mETipEnterObjAnimator.cancel();
-                    ivElephantExit.setVisibility(View.INVISIBLE);
-                    tvGuideTip1.setText(R.string.guide_tips_1);
+                    if (ivElephantExit != null) {
+                        ivElephantExit.setVisibility(View.INVISIBLE);
+                    }
+                    if (tvGuideTip1 != null) {
+                        tvGuideTip1.setText(R.string.guide_tips_1);
+                    }
                 }
             });
             mAnimatorSet.start();
@@ -420,19 +428,21 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void hideFootprint() {
-        ivLeftprint1.setVisibility(View.GONE);
-        ivLeftprint2.setVisibility(View.GONE);
-        ivLeftprint3.setVisibility(View.GONE);
-        ivLeftprint4.setVisibility(View.GONE);
-        ivLeftprint5.setVisibility(View.GONE);
-        ivLeftprint6.setVisibility(View.GONE);
-        ivRightprint1.setVisibility(View.GONE);
-        ivRightprint2.setVisibility(View.GONE);
-        ivRightprint3.setVisibility(View.GONE);
-        ivRightprint4.setVisibility(View.GONE);
-        ivRightprint5.setVisibility(View.GONE);
-        ivRightprint5.setVisibility(View.GONE);
-        ivRightprint6.setVisibility(View.GONE);
+        if (ivLeftprint != null) {
+            ivLeftprint1.setVisibility(View.GONE);
+            ivLeftprint2.setVisibility(View.GONE);
+            ivLeftprint3.setVisibility(View.GONE);
+            ivLeftprint4.setVisibility(View.GONE);
+            ivLeftprint5.setVisibility(View.GONE);
+            ivLeftprint6.setVisibility(View.GONE);
+            ivRightprint1.setVisibility(View.GONE);
+            ivRightprint2.setVisibility(View.GONE);
+            ivRightprint3.setVisibility(View.GONE);
+            ivRightprint4.setVisibility(View.GONE);
+            ivRightprint5.setVisibility(View.GONE);
+            ivRightprint5.setVisibility(View.GONE);
+            ivRightprint6.setVisibility(View.GONE);
+        }
     }
 
     private void hideFullFootprint() {
