@@ -15,7 +15,7 @@ import android.net.NetworkInfo;
 import android.os.Build;
 
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.advertising.AdActivity;
+import com.imprexion.adplayer.main.AdActivity;
 
 import android.view.View;
 import android.webkit.WebSettings;

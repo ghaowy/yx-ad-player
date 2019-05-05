@@ -1,4 +1,4 @@
-package com.imprexion.adplayer.advertising;
+package com.imprexion.adplayer.main;
 
 import android.Manifest;
 import android.content.ComponentName;
@@ -27,10 +27,10 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.advertising.activation.GestureActiveOneStepFragment;
-import com.imprexion.adplayer.advertising.activation.GestureActiveTwoStepFragment;
-import com.imprexion.adplayer.advertising.content.AdContentImageFragment;
-import com.imprexion.adplayer.advertising.content.CameraRainFragment;
+import com.imprexion.adplayer.main.activation.GestureActiveOneStepFragment;
+import com.imprexion.adplayer.main.activation.GestureActiveTwoStepFragment;
+import com.imprexion.adplayer.main.content.AdContentImageFragment;
+import com.imprexion.adplayer.main.content.CameraRainFragment;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
 import com.imprexion.adplayer.bean.EventBusMessage;

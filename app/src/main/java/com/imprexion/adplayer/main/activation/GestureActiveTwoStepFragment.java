@@ -1,4 +1,4 @@
-package com.imprexion.adplayer.advertising.activation;
+package com.imprexion.adplayer.main.activation;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -23,7 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.advertising.AdActivity;
+import com.imprexion.adplayer.main.AdActivity;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
 import com.imprexion.library.logger.YxLogger;
@@ -37,7 +37,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-public class GestureActiveOneStepFragment extends Fragment implements View.OnClickListener {
+public class GestureActiveTwoStepFragment extends Fragment implements View.OnClickListener {
 
     @BindView(R.id.iv_elephant_enter)
     ImageView ivElephantEnter;
@@ -47,6 +47,30 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     ImageView ivElephantStop;
     @BindView(R.id.tv_guide_tip_1)
     TextView tvGuideTip1;
+    @BindView(R.id.iv_leftprint_1)
+    ImageView ivLeftprint1;
+    @BindView(R.id.iv_leftprint_2)
+    ImageView ivLeftprint2;
+    @BindView(R.id.iv_leftprint_3)
+    ImageView ivLeftprint3;
+    @BindView(R.id.iv_leftprint_4)
+    ImageView ivLeftprint4;
+    @BindView(R.id.iv_leftprint_5)
+    ImageView ivLeftprint5;
+    @BindView(R.id.iv_leftprint_6)
+    ImageView ivLeftprint6;
+    @BindView(R.id.iv_rightprint_1)
+    ImageView ivRightprint1;
+    @BindView(R.id.iv_rightprint_2)
+    ImageView ivRightprint2;
+    @BindView(R.id.iv_rightprint_3)
+    ImageView ivRightprint3;
+    @BindView(R.id.iv_rightprint_4)
+    ImageView ivRightprint4;
+    @BindView(R.id.iv_rightprint_5)
+    ImageView ivRightprint5;
+    @BindView(R.id.iv_rightprint_6)
+    ImageView ivRightprint6;
     @BindView(R.id.rl_footprint)
     RelativeLayout rlFootprint;
     @BindView(R.id.iv_bottom_floor)
@@ -68,6 +92,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     private AnimationDrawable mInjectingWaterAnimation;
     private Message mMessage;
     private AnimationDrawable mWaveHandsAnimation;
+    private ObjectAnimator mFootprintRotateObjAnimator;
     private ObjectAnimator mEEnterObjAnimator;
     private ObjectAnimator mEExitObjAnimator;
     private ObjectAnimator mETipEnterObjAnimator;
@@ -76,23 +101,70 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     private ObjectAnimator mFloorExitObjAnimator;
     private AnimatorSet mAnimatorSet;
     private Unbinder mUnbinder;
+    private final static int FOOTPRINT_1 = 1;
+    private final static int FOOTPRINT_2 = 2;
+    private final static int FOOTPRINT_3 = 3;
+    private final static int FOOTPRINT_4 = 4;
+    private final static int FOOTPRINT_5 = 5;
+    private final static int FOOTPRINT_6 = 6;
+    private final static int FULL_FOOTPRINT = 7;
     private final static int INJECT_WATER = 14;
     private final static int INJECTED_WATER = 15;
     private final static int INJECTED_WATER_FADE_OUT = 16;
     private final static int ELEPHANT_EXIT = 19;
     private final static int ELEPHANT_EXIT_DURATION = 2000;
     private final static int ELEPHANT_ENTER_DURATION = 1500;
+    private boolean isResume;
+    private boolean isStandHere;
     private boolean isWaveForActive;
-    private boolean isCanStartElephantExit;
-    private TrackingMessage mTrackingMessage;
-    private static final String TAG = "GestureActiveOneStepFragment";
+    private boolean isRotateForStandRight;
     private VoicePlay mVoicePlay;
+    private static final String TAG = "GestureActiveTwoStepFragment";
 
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+                case FOOTPRINT_1:
+                    if (ivRightprint1 != null && ivLeftprint1 != null) {
+                        ivLeftprint1.setVisibility(View.VISIBLE);
+                        ivRightprint1.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case FOOTPRINT_2:
+                    if (ivRightprint2 != null && ivLeftprint2 != null) {
+                        ivLeftprint2.setVisibility(View.VISIBLE);
+                        ivRightprint2.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case FOOTPRINT_3:
+                    if (ivRightprint3 != null && ivLeftprint3 != null) {
+                        ivLeftprint3.setVisibility(View.VISIBLE);
+                        ivRightprint3.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case FOOTPRINT_4:
+                    if (ivRightprint4 != null && ivLeftprint4 != null) {
+                        ivLeftprint4.setVisibility(View.VISIBLE);
+                        ivRightprint4.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case FOOTPRINT_5:
+                    if (ivRightprint5 != null && ivLeftprint5 != null) {
+                        ivLeftprint5.setVisibility(View.VISIBLE);
+                        ivRightprint5.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case FOOTPRINT_6:
+                    if (ivRightprint6 != null && ivLeftprint6 != null) {
+                        ivLeftprint6.setVisibility(View.VISIBLE);
+                        ivRightprint6.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case FULL_FOOTPRINT:
+                    startRotateFootprint();
+                    break;
                 case INJECT_WATER:
                     injectingWaterAnimation();
                     break;
@@ -113,8 +185,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
             }
         }
     };
-    private boolean isResume;
-
+    private TrackingMessage mTrackingMessage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -126,6 +197,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
         mVoicePlay = new VoicePlay(getContext());
         mEEnterObjAnimator = ObjectAnimator.ofFloat(ivElephantEnter, "translationX", 400, 0);
         mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, 400);
+        mFootprintRotateObjAnimator = ObjectAnimator.ofFloat(rlFootprint, "rotationX", 0, 30, 0);
         mFloorExitObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 0, 800);
         mFloorEnterObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 800, 0);
         mETipEnterObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", 800, 0);
@@ -167,16 +239,15 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                 public void onAnimationStart(Animator animation) {
                     YxLogger.d(TAG, toString() + "onAnimationStart");
                     super.onAnimationStart(animation);
-                    if (ivElephantEnter!= null) {
+                    if (ivElephantEnter != null) {
                         ivElephantEnter.setVisibility(View.VISIBLE);
                     }
                     if (tvGuideTip1 != null) {
                         tvGuideTip1.setVisibility(View.VISIBLE);
-                        tvGuideTip1.setText(getString(R.string.guide_tips_3));
                     }
-                    startWaveHandTipAnimation();
+                    showFootPrint();
                     if (isResume) {
-                        mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+                        mVoicePlay.playVoice(R.raw.please_stand_footprint);
                     }
                 }
 
@@ -187,13 +258,10 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                     mEEnterObjAnimator.cancel();
                     mETipEnterObjAnimator.cancel();
                     mFloorEnterObjAnimator.cancel();
-
-                    isCanStartElephantExit = true;
-                    if (mTrackingMessage != null && mTrackingMessage.isActived()) {
-                        startElephantExitAnimation();
-                    } else {
-                        startElephantStopAnimation();
+                    if (tvGuideTip1 != null) {
+                        tvGuideTip1.setText(R.string.guide_tips_1);
                     }
+                    startElephantStopAnimation();
                 }
             });
         }
@@ -209,8 +277,53 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
         if (!mElephantStopAnimation.isRunning()) {
             mElephantStopAnimation.start();
         }
+//        nextAfterStandRight();
+
     }
 
+    private void startRotateFootprint() {
+        if (!mFootprintRotateObjAnimator.isRunning()) {
+            mFootprintRotateObjAnimator.setRepeatCount(20);
+            mFootprintRotateObjAnimator.setDuration(1500);
+            mFootprintRotateObjAnimator.start();
+        }
+        isRotateForStandRight = true;
+        if (mTrackingMessage != null && !mTrackingMessage.isStandHere()) {
+            nextAfterStandRight();
+        }
+    }
+
+    private void nextAfterStandRight() {
+        YxLogger.d(TAG, "nextAfterStandRight");
+        if (mFootprintRotateObjAnimator != null) {
+            mFootprintRotateObjAnimator.end();
+            mFootprintRotateObjAnimator.cancel();
+        }
+        if (tvGuideTip1 != null) {
+            tvGuideTip1.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+//                    tvGuideTip1.setText(getString(R.string.guide_tips_2));
+                    showFullFootprint();
+//                    mVoicePlay.playVoice(R.raw.great);
+                }
+            }, 50);
+
+            tvGuideTip1.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (tvGuideTip1 != null) {
+                        tvGuideTip1.setText(R.string.guide_tips_3);
+                    }
+                    hideFullFootprint();
+                    startWaveHandTipAnimation();
+                    if (isResume) {
+                        mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+                    }
+                }
+            }, 500);
+        }
+    }
 
     private void startWaveHandTipAnimation() {
         YxLogger.d(TAG, "startWaveHandTipAnimation");
@@ -227,29 +340,21 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
         //接收信号执行注水ing动画
         mMessage = mHandler.obtainMessage();
         mMessage.what = INJECT_WATER;
-        mHandler.sendMessageDelayed(mMessage, 100);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)
+        mHandler.sendMessageDelayed(mMessage, 200);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)
 
-
-        if (isCanStartElephantExit) {
-            isCanStartElephantExit = false;
-            mMessage = mHandler.obtainMessage();
-            mMessage.what = ELEPHANT_EXIT;
-            mHandler.sendMessageDelayed(mMessage, 0);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)+注水的一半时间1000ms =4000ms，后开始退出动画
-        }
+        mMessage = mHandler.obtainMessage();
+        mMessage.what = ELEPHANT_EXIT;
+        mHandler.sendMessageDelayed(mMessage, 200);//此处提示摇手3000ms(自定义摇多久，是循环的帧动画)+注水的一半时间1000ms =4000ms，后开始退出动画
     }
-
 
     /*
      * 小象退出总时长=ELEPHANT_EXIT_DURATION:2000
      * 地面退出时长300，延时1000执行
-     * 挥手人形退出时长1000，延时800执行
+     * 挥手人形退出时长1000，延时1000执行
      * */
     private void startElephantExitAnimation() {
         if (ivElephantStop != null) {
             ivElephantStop.setVisibility(View.INVISIBLE);
-        }
-        if (ivElephantEnter != null) {
-            ivElephantEnter.setVisibility(View.INVISIBLE);
         }
         if (ivElephantExit != null) {
             ivElephantExit.setVisibility(View.VISIBLE);
@@ -263,9 +368,9 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
         if (!mEExitObjAnimator.isRunning()) {
             mEExitObjAnimator.setInterpolator(new LinearInterpolator());
             mETipExitObjAnimator.setInterpolator(new LinearInterpolator());
-//            mFloorExitObjAnimator.setDuration(300);
-//            mFloorExitObjAnimator.setStartDelay(1000);
-//            mFloorExitObjAnimator.start();
+            mFloorExitObjAnimator.setDuration(300);
+            mFloorExitObjAnimator.setStartDelay(1000);
+            mFloorExitObjAnimator.start();
             mFloorExitObjAnimator.setInterpolator(new AccelerateInterpolator());
             if (mAnimatorSet == null) {
                 mAnimatorSet = new AnimatorSet();
@@ -278,7 +383,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                     super.onAnimationStart(animation);
                     mMessage = mHandler.obtainMessage();
                     mMessage.what = INJECTED_WATER_FADE_OUT;
-//                    mHandler.sendMessageDelayed(mMessage, 800);
+//                    mHandler.sendMessageDelayed(mMessage, 1000);
                 }
 
                 @Override
@@ -291,7 +396,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                         ivElephantExit.setVisibility(View.INVISIBLE);
                     }
                     if (tvGuideTip1 != null) {
-                        tvGuideTip1.setText(R.string.guide_tips_3);
+                        tvGuideTip1.setText(R.string.guide_tips_1);
                     }
                 }
             });
@@ -300,7 +405,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     }
 
     private void stopInjectWaterAnimation() {
-        fadeOut(ivInjectingWaterTip, 800);
+        fadeOut(ivInjectingWaterTip, 1000);
     }
 
     private void injectingWaterAnimation() {
@@ -317,6 +422,69 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
         mHandler.sendMessageDelayed(mMessage, 570);
     }
 
+
+    private void showFootPrint() {
+        for (int i = 0; i < 7; i++) {
+            mMessage = mHandler.obtainMessage();
+            mMessage.what = i + 1;
+            mHandler.sendMessageDelayed(mMessage, i * 200 + 2000);
+        }
+    }
+
+    private void hideFootprint() {
+        if (ivLeftprint1 != null) {
+            ivLeftprint1.setVisibility(View.GONE);
+        }
+        if (ivLeftprint2 != null) {
+            ivLeftprint2.setVisibility(View.GONE);
+        }
+        if (ivLeftprint3 != null) {
+            ivLeftprint3.setVisibility(View.GONE);
+        }
+        if (ivLeftprint4 != null) {
+            ivLeftprint4.setVisibility(View.GONE);
+        }
+        if (ivLeftprint5 != null) {
+            ivLeftprint5.setVisibility(View.GONE);
+        }
+        if (ivLeftprint6 != null) {
+            ivLeftprint6.setVisibility(View.GONE);
+        }
+        if (ivRightprint1 != null) {
+            ivRightprint1.setVisibility(View.GONE);
+        }
+        if (ivRightprint2 != null) {
+            ivRightprint2.setVisibility(View.GONE);
+        }
+        if (ivRightprint3 != null) {
+            ivRightprint3.setVisibility(View.GONE);
+        }
+        if (ivRightprint4 != null) {
+            ivRightprint4.setVisibility(View.GONE);
+        }
+        if (ivRightprint5 != null) {
+            ivRightprint5.setVisibility(View.GONE);
+        }
+        if (ivRightprint6 != null) {
+            ivRightprint6.setVisibility(View.GONE);
+        }
+    }
+
+
+    private void hideFullFootprint() {
+        fadeOut(ivLeftprint, 1000);
+        fadeOut(ivRightprint, 1000);
+    }
+
+    private void showFullFootprint() {
+        if (ivLeftprint != null) {
+            ivLeftprint.setVisibility(View.VISIBLE);
+        }
+        if (ivRightprint != null) {
+            ivRightprint.setVisibility(View.VISIBLE);
+        }
+        hideFootprint();
+    }
 
     private void fadeIn(View view) {
         Animation animation = new AlphaAnimation(0f, 1f);
@@ -345,6 +513,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     public void onPause() {
         super.onPause();
         isResume = false;
+//        onDestroy();
         EventBus.getDefault().unregister(this);
         if (mElephantEnterAnimation.isRunning()) {
             mElephantEnterAnimation.stop();
@@ -360,6 +529,10 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
         }
         if (mWaveHandsAnimation.isRunning()) {
             mWaveHandsAnimation.stop();
+        }
+
+        if (mFootprintRotateObjAnimator.isRunning()) {
+            mFootprintRotateObjAnimator.cancel();
         }
         if (mEEnterObjAnimator.isRunning()) {
             mEEnterObjAnimator.cancel();
@@ -386,12 +559,16 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageShowEvent(EventBusMessage message) {
-        YxLogger.d(TAG, "onMessageShowEvent");
+        YxLogger.d(TAG, toString() + ": onMessageShowEvent");
         if (message.getType() == EventBusMessage.ACTIVE_TIP) {
             mTrackingMessage = (TrackingMessage) message.getObject();
             if (mTrackingMessage.isActived() && isWaveForActive) {
                 waveActiveSucess();
                 isWaveForActive = false;
+            }
+            if (!mTrackingMessage.isStandHere() && isRotateForStandRight && !isWaveForActive) {
+                nextAfterStandRight();
+                isRotateForStandRight = false;
             }
         }
     }
