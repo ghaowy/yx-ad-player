@@ -61,7 +61,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mCamera.setPreviewCallback(null);
         mCamera.stopPreview();
         mCamera.lock();
-        CameraTools.getInstance().releaseCamera();
+//        CameraTools.getInstance().releaseCamera();
     }
 
     @Override

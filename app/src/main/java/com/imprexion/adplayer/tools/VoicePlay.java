@@ -61,10 +61,14 @@ public class VoicePlay {
     public void stop() {
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
+            mMediaPlayer.reset();
             mMediaPlayer.release();
+            mMediaPlayer = null;
         }
         if (mSoundPool != null) {
+            mSoundPool.stop(mSoundId);
             mSoundPool.release();
+            mSoundPool = null;
         }
     }
 
