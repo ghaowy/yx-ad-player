@@ -2,8 +2,8 @@ package com.imprexion.adplayer.bean;
 
 public class EventBusMessage {
     public static final int ACTIVE_TIP = 200;
-    public static final int AD_PLAY_CONTENT = 201;
-    public static final int IS_SHOW_ACTIVE_TIP = 202;
+    public static final int AD_PLAY_CONTENT_UPDATE_BY_BROADCAST = 201;
+    public static final int AD_RECEIVE_CALLBACK = 202;
     public static final int REMOVE_GESTURE_ACTIVE = 203;
 
     private int type;
