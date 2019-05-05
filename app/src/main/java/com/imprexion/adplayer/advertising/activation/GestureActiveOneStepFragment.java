@@ -293,7 +293,6 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                     if (tvGuideTip1 != null) {
                         tvGuideTip1.setText(R.string.guide_tips_3);
                     }
-//                    ((AdActivity) getActivity()).startAIScreenApp();
                 }
             });
             mAnimatorSet.start();

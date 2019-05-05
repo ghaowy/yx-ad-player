@@ -268,8 +268,12 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void startElephantStopAnimation() {
-        ivElephantEnter.setVisibility(View.INVISIBLE);
-        ivElephantStop.setVisibility(View.VISIBLE);
+        if (ivElephantEnter != null) {
+            ivElephantEnter.setVisibility(View.INVISIBLE);
+        }
+        if (ivElephantStop != null) {
+            ivElephantStop.setVisibility(View.VISIBLE);
+        }
         if (!mElephantStopAnimation.isRunning()) {
             mElephantStopAnimation.start();
         }
@@ -428,22 +432,44 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void hideFootprint() {
-        if (ivLeftprint != null) {
+        if (ivLeftprint1 != null) {
             ivLeftprint1.setVisibility(View.GONE);
+        }
+        if (ivLeftprint2 != null) {
             ivLeftprint2.setVisibility(View.GONE);
+        }
+        if (ivLeftprint3 != null) {
             ivLeftprint3.setVisibility(View.GONE);
+        }
+        if (ivLeftprint4 != null) {
             ivLeftprint4.setVisibility(View.GONE);
+        }
+        if (ivLeftprint5 != null) {
             ivLeftprint5.setVisibility(View.GONE);
+        }
+        if (ivLeftprint6 != null) {
             ivLeftprint6.setVisibility(View.GONE);
+        }
+        if (ivRightprint1 != null) {
             ivRightprint1.setVisibility(View.GONE);
+        }
+        if (ivRightprint2 != null) {
             ivRightprint2.setVisibility(View.GONE);
+        }
+        if (ivRightprint3 != null) {
             ivRightprint3.setVisibility(View.GONE);
+        }
+        if (ivRightprint4 != null) {
             ivRightprint4.setVisibility(View.GONE);
+        }
+        if (ivRightprint5 != null) {
             ivRightprint5.setVisibility(View.GONE);
-            ivRightprint5.setVisibility(View.GONE);
+        }
+        if (ivRightprint6 != null) {
             ivRightprint6.setVisibility(View.GONE);
         }
     }
+
 
     private void hideFullFootprint() {
         fadeOut(ivLeftprint, 1000);
