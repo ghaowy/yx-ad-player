@@ -578,6 +578,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
     @Override
     public void onDestroy() {
+        YxLogger.d(TAG,"onDestroy");
         super.onDestroy();
         mUnbinder.unbind();
         if (mVoicePlay != null) {

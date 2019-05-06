@@ -20,6 +20,7 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.base.ADPlayApplication;
@@ -115,6 +116,7 @@ public class Tools {
         if (!AdActivity.AD_DEFAULT.equals(url)) {
             RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.ad_default_2)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .error(R.drawable.ad_default_2);
             Glide.with(ADPlayApplication.getInstance().getApplicationContext())
                     .load(url)

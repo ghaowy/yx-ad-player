@@ -59,16 +59,19 @@ public class VoicePlay {
     }
 
     public void stop() {
+        YxLogger.d(TAG,"voicePlay stop and release");
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             mMediaPlayer.reset();
             mMediaPlayer.release();
             mMediaPlayer = null;
+            YxLogger.d(TAG,"mMediaPlayer release");
         }
         if (mSoundPool != null) {
             mSoundPool.stop(mSoundId);
             mSoundPool.release();
             mSoundPool = null;
+            YxLogger.d(TAG,"mSoundPool release");
         }
     }
 
