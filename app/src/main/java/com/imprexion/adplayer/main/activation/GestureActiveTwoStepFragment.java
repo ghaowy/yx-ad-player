@@ -327,6 +327,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
     private void startWaveHandTipAnimation() {
         YxLogger.d(TAG, "startWaveHandTipAnimation");
+        YxLogger.i(TAG,"show wave hand hint");
         fadeIn(ivWaveHandsTip);
         mWaveHandsAnimation.start();
         //test,isActived=true接收信号执行注水ing动画
@@ -337,6 +338,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void waveActiveSucess() {
+        YxLogger.i(TAG,"show wave hand animation success");
         //接收信号执行注水ing动画
         mMessage = mHandler.obtainMessage();
         mMessage.what = INJECT_WATER;
@@ -424,6 +426,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
 
     private void showFootPrint() {
+        YxLogger.i(TAG,"show stand here hint");
         for (int i = 0; i < 7; i++) {
             mMessage = mHandler.obtainMessage();
             mMessage.what = i + 1;

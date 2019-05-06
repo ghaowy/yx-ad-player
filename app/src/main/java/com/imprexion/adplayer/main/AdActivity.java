@@ -198,7 +198,7 @@ public class AdActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        YxLogger.d(TAG, "onCreate");
+        YxLogger.i(TAG, "MainActivity onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ad_second);
         ButterKnife.bind(this);
@@ -406,7 +406,7 @@ public class AdActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int i) {
-//                YxLogger.d(TAG, "onPageSelected=" + i);
+                YxLogger.i(TAG, "MainActivity ViewPager onPageSelected: " + i);
                 mCurrentPosition = i;
             }
 
@@ -431,6 +431,7 @@ public class AdActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        YxLogger.i(TAG,"MainActivity onPause");
         super.onPause();
         isPlay = false;
         currentPage = OTHER_PAGE;
@@ -453,6 +454,7 @@ public class AdActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        YxLogger.i(TAG,"MainActivity onDestroy");
         super.onDestroy();
 //        unbindService(mConnection);
         EventBus.getDefault().unregister(this);
@@ -523,6 +525,7 @@ public class AdActivity extends AppCompatActivity {
 //                YxLogger.d(TAG, "sex=" + messageForAIScreen.getUsrsex());
 //                YxLogger.d(TAG, "HavePerson=" + messageForAIScreen.getStandHere());
 //                YxLogger.d(TAG, "IsActived=" + messageForAIScreen.getIsActived());
+                YxLogger.i(TAG,"receive tracking info");
                 dispatchMessage(messageForAIScreen);
             }
         });

@@ -28,7 +28,7 @@ public class ADBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        YxLogger.i(TAG,"receive advertisement data");
         String content = intent.getExtras().getString("data");
 //        YxLogger.d(TAG, "ContentInfo=" + content);
         Log.d(TAG, "ContentInfo=" + content);
