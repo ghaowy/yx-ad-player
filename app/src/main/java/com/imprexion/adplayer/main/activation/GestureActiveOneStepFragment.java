@@ -1,4 +1,4 @@
-package com.imprexion.adplayer.advertising.activation;
+package com.imprexion.adplayer.main.activation;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -23,7 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.advertising.AdSecondActivity;
+import com.imprexion.adplayer.main.AdActivity;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
 import com.imprexion.library.logger.YxLogger;
@@ -99,7 +99,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                 case INJECTED_WATER:
                     mInjectingWaterAnimation.stop();
                     if (getActivity() != null) {
-                        ((AdSecondActivity) getActivity()).startAIScreenApp();
+                        ((AdActivity) getActivity()).startAIScreenApp();
                     }
                     break;
                 case INJECTED_WATER_FADE_OUT:
@@ -167,9 +167,13 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                 public void onAnimationStart(Animator animation) {
                     YxLogger.d(TAG, toString() + "onAnimationStart");
                     super.onAnimationStart(animation);
-                    ivElephantEnter.setVisibility(View.VISIBLE);
-                    tvGuideTip1.setVisibility(View.VISIBLE);
-                    tvGuideTip1.setText(getString(R.string.guide_tips_3));
+                    if (ivElephantEnter!= null) {
+                        ivElephantEnter.setVisibility(View.VISIBLE);
+                    }
+                    if (tvGuideTip1 != null) {
+                        tvGuideTip1.setVisibility(View.VISIBLE);
+                        tvGuideTip1.setText(getString(R.string.guide_tips_3));
+                    }
                     startWaveHandTipAnimation();
                     if (isResume) {
                         mVoicePlay.playVoice(R.raw.wave_your_right_hands);
@@ -196,8 +200,12 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     }
 
     private void startElephantStopAnimation() {
-        ivElephantEnter.setVisibility(View.INVISIBLE);
-        ivElephantStop.setVisibility(View.VISIBLE);
+        if (ivElephantEnter != null) {
+            ivElephantEnter.setVisibility(View.INVISIBLE);
+        }
+        if (ivElephantStop != null) {
+            ivElephantStop.setVisibility(View.VISIBLE);
+        }
         if (!mElephantStopAnimation.isRunning()) {
             mElephantStopAnimation.start();
         }
@@ -279,9 +287,12 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                     mElephantExitAnimation.stop();
                     mEExitObjAnimator.cancel();
                     mETipEnterObjAnimator.cancel();
-                    ivElephantExit.setVisibility(View.INVISIBLE);
-                    tvGuideTip1.setText(R.string.guide_tips_3);
-//                    ((AdSecondActivity) getActivity()).startAIScreenApp();
+                    if (ivElephantExit != null) {
+                        ivElephantExit.setVisibility(View.INVISIBLE);
+                    }
+                    if (tvGuideTip1 != null) {
+                        tvGuideTip1.setText(R.string.guide_tips_3);
+                    }
                 }
             });
             mAnimatorSet.start();
@@ -387,11 +398,11 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
     @Override
     public void onDestroy() {
+        YxLogger.d(TAG,"onDestroy");
         super.onDestroy();
         mUnbinder.unbind();
         if (mVoicePlay != null) {
             mVoicePlay.stop();
         }
-//        EventBus.getDefault().unregister(this);
     }
 }

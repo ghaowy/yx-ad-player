@@ -1,4 +1,4 @@
-package com.imprexion.adplayer.advertising.content;
+package com.imprexion.adplayer.main.content;
 
 
 import android.os.Bundle;

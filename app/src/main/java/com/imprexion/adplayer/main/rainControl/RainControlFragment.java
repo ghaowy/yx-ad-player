@@ -8,6 +8,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.imprexion.library.logger.YxLogger;
@@ -54,14 +57,29 @@ public class RainControlFragment extends Fragment {
     private int lastX;
     private int lastY;
     private final static String TAG = "RainControlFragment";
+    private final static int PLAY_VOICE = 1;
     private boolean isStop;
     private VoicePlay mRainVoice;
+    private boolean isResume;
     private ObjectAnimator mObjectAnimator1;
     private ObjectAnimator mObjectAnimator2;
     private ObjectAnimator mObjectAnimator3;
     private ObjectAnimator mObjectAnimator4;
     private ObjectAnimator mObjectAnimator5;
     private ObjectAnimator mObjectAnimator6;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case PLAY_VOICE:
+                    mRainVoice.playVoiceBySoundpool();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
 
     public RainControlFragment() {
@@ -80,11 +98,22 @@ public class RainControlFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         startRain();
+    }
+
+    @Override
+    public void onResume() {
+        YxLogger.d(TAG, "onResume");
+        super.onResume();
+//        startRain();
+        isResume = true;
         setControl();
-        mRainVoice.playVoiceBySoundpool();
+        Message message = mHandler.obtainMessage();
+        message.what = PLAY_VOICE;
+        mHandler.sendMessageDelayed(message, 10000);
+//        mRainVoice.playVoiceBySoundpool();
         if (mObjectAnimator1 != null) {
             mObjectAnimator1.resume();
             mObjectAnimator2.resume();
@@ -346,7 +375,10 @@ public class RainControlFragment extends Fragment {
 
     @Override
     public void onPause() {
+        YxLogger.d(TAG, "onPause");
         super.onPause();
+        isResume = false;
+        mRainVoice.pause();
         if (mObjectAnimator1 != null) {
             mObjectAnimator1.cancel();
         }
@@ -365,7 +397,7 @@ public class RainControlFragment extends Fragment {
         if (mObjectAnimator6 != null) {
             mObjectAnimator6.cancel();
         }
-        mRainVoice.pause();
+
     }
 
     @Override

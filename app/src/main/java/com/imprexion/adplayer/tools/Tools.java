@@ -13,10 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-
-import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.advertising.AdSecondActivity;
-
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -24,7 +20,11 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.base.ADPlayApplication;
+import com.imprexion.adplayer.main.AdActivity;
 import com.imprexion.library.logger.YxLogger;
 
 import java.io.File;
@@ -113,13 +113,18 @@ public class Tools {
 
     public static void showPicWithGlide(ImageView imageView, String url) {
 //        YxLogger.d(TAG, "url=" + url);
-        if (!AdSecondActivity.AD_DEFAULT.equals(url)) {
+        if (!AdActivity.AD_DEFAULT.equals(url)) {
+            RequestOptions requestOptions = new RequestOptions()
+                    .placeholder(R.drawable.ad_default_2)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .error(R.drawable.ad_default_2);
             Glide.with(ADPlayApplication.getInstance().getApplicationContext())
                     .load(url)
+                    .apply(requestOptions)
                     .into(imageView);
         } else {
             Glide.with(ADPlayApplication.getInstance().getApplicationContext())
-                    .load(R.drawable.ad_default)
+                    .load(R.drawable.ad_default_2)
                     .into(imageView);
         }
     }
@@ -139,7 +144,7 @@ public class Tools {
             PackageManager packageManager = context.getPackageManager();
             PackageInfo packageInfo = packageManager.getPackageInfo(
                     context.getPackageName(), 0);
-            YxLogger.d(TAG, "versionName=" + packageInfo.versionName);
+//            YxLogger.d(TAG, "versionName=" + packageInfo.versionName);
             return packageInfo.versionName;
         } catch (Exception e) {
             e.printStackTrace();

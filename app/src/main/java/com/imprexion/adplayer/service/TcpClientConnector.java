@@ -80,11 +80,13 @@ public class TcpClientConnector {
                         mHandler.sendMessage(message);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
+                    YxLogger.e(TAG,"connect soket fail");
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e1) {
-                        e1.printStackTrace();
+//                        e1.printStackTrace();
+                        YxLogger.e(TAG,"connect thread InterruptedException");
                     }
 
                 }

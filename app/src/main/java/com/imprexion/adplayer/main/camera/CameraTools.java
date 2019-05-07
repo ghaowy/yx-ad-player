@@ -56,7 +56,7 @@ public class CameraTools {
         wm.getDefaultDisplay().getSize(p);
         mScreenWidth = p.x;
         mScreenHeight = p.y;
-        YxLogger.d(TAG, "mScreenWidth=" + mScreenWidth + " mScreenHeight=" + mScreenHeight);
+//        YxLogger.d(TAG, "mScreenWidth=" + mScreenWidth + " mScreenHeight=" + mScreenHeight);
     }
 
     public Camera getCameraInstance() {
@@ -131,11 +131,11 @@ public class CameraTools {
     }
 
     private Camera.Size getProperSize(List<Camera.Size> pictureSizeList, float screenRatio) {
-        YxLogger.i(TAG, "screenRatio=" + screenRatio);
+//        YxLogger.i(TAG, "screenRatio=" + screenRatio);
         Camera.Size result = null;
         for (Camera.Size size : pictureSizeList) {
             float currentRatio = ((float) size.width) / size.height;//0.5625
-            YxLogger.d(TAG, "currentRatio = " + currentRatio);
+//            YxLogger.d(TAG, "currentRatio = " + currentRatio);
             if (currentRatio - screenRatio == 0) {
                 result = size;
                 break;
@@ -146,7 +146,7 @@ public class CameraTools {
             for (Camera.Size size : pictureSizeList) {
                 float curRatio = ((float) size.width) / size.height;
                 if (curRatio == 4f / 3) {// 默认w:h = 4:3
-                    YxLogger.d(TAG, "currentRatio = 4f / 3");
+//                    YxLogger.d(TAG, "currentRatio = 4f / 3");
                     result = size;
                     break;
                 }

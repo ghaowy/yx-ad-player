@@ -17,7 +17,8 @@ public interface NetService {
     Observable<WeatherInfo> updateWeather(@Query("key") String key, @Query(encoded = true, value = "location") String location);
 
     @POST("adCarouselCallback")
-    @Headers({"Content-Type:application/json", "token:30EFKHab7C5C56K9"})
-    Call<String> onAdcontentCallback(@Body() RequestBody requestBody);
+//    @Headers({"Content-Type:application/json", "token:30EFKHab7C5C56K9"})//dev
+    @Headers({"Content-Type:application/json", "token:30EFKHab7C5C56K8"})//official
+    Call<String> onAdcontentCallback(@Body RequestBody requestBody);
 
 }
