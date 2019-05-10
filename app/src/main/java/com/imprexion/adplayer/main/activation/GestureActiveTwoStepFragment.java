@@ -194,7 +194,8 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
         View view = inflater.inflate(R.layout.fragment_gesture_activation, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
-        mVoicePlay = new VoicePlay(getContext());
+//        mVoicePlay = new VoicePlay(getContext(), VoicePlay.MEDIAPLAYER);
+        mVoicePlay = new VoicePlay(getContext(), VoicePlay.SOUNDPOOL);
         mEEnterObjAnimator = ObjectAnimator.ofFloat(ivElephantEnter, "translationX", 400, 0);
         mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, 400);
         mFootprintRotateObjAnimator = ObjectAnimator.ofFloat(rlFootprint, "rotationX", 0, 30, 0);
@@ -247,7 +248,8 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     }
                     showFootPrint();
                     if (isResume) {
-                        mVoicePlay.playVoice(R.raw.please_stand_footprint);
+//                        mVoicePlay.playVoice(R.raw.please_stand_footprint);
+                        mVoicePlay.playVoiceBySoundpoolOnce(R.raw.please_stand_footprint);
                     }
                 }
 
@@ -318,7 +320,8 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     hideFullFootprint();
                     startWaveHandTipAnimation();
                     if (isResume) {
-                        mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+//                        mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+                        mVoicePlay.playVoiceBySoundpoolOnce(R.raw.wave_your_right_hands);
                     }
                 }
             }, 500);
@@ -327,7 +330,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
     private void startWaveHandTipAnimation() {
         YxLogger.d(TAG, "startWaveHandTipAnimation");
-        YxLogger.i(TAG,"show wave hand hint");
+        YxLogger.i(TAG, "show wave hand hint");
         fadeIn(ivWaveHandsTip);
         mWaveHandsAnimation.start();
         //test,isActived=true接收信号执行注水ing动画
@@ -338,7 +341,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void waveActiveSucess() {
-        YxLogger.i(TAG,"show wave hand animation success");
+        YxLogger.i(TAG, "show wave hand animation success");
         //接收信号执行注水ing动画
         mMessage = mHandler.obtainMessage();
         mMessage.what = INJECT_WATER;
@@ -426,7 +429,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
 
     private void showFootPrint() {
-        YxLogger.i(TAG,"show stand here hint");
+        YxLogger.i(TAG, "show stand here hint");
         for (int i = 0; i < 7; i++) {
             mMessage = mHandler.obtainMessage();
             mMessage.what = i + 1;
@@ -578,7 +581,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
     @Override
     public void onDestroy() {
-        YxLogger.d(TAG,"onDestroy");
+        YxLogger.d(TAG, "onDestroy");
         super.onDestroy();
         mUnbinder.unbind();
         if (mVoicePlay != null) {

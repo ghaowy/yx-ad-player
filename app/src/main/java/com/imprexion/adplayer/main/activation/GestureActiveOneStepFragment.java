@@ -123,7 +123,8 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
         View view = inflater.inflate(R.layout.fragment_gesture_activation, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
-        mVoicePlay = new VoicePlay(getContext());
+//        mVoicePlay = new VoicePlay(getContext(), VoicePlay.MEDIAPLAYER);
+        mVoicePlay = new VoicePlay(getContext(), VoicePlay.SOUNDPOOL);
         mEEnterObjAnimator = ObjectAnimator.ofFloat(ivElephantEnter, "translationX", 400, 0);
         mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, 400);
         mFloorExitObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 0, 800);
@@ -167,7 +168,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                 public void onAnimationStart(Animator animation) {
                     YxLogger.d(TAG, toString() + "onAnimationStart");
                     super.onAnimationStart(animation);
-                    if (ivElephantEnter!= null) {
+                    if (ivElephantEnter != null) {
                         ivElephantEnter.setVisibility(View.VISIBLE);
                     }
                     if (tvGuideTip1 != null) {
@@ -176,7 +177,8 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                     }
                     startWaveHandTipAnimation();
                     if (isResume) {
-                        mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+//                        mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+                        mVoicePlay.playVoiceBySoundpoolOnce(R.raw.wave_your_right_hands);
                     }
                 }
 
@@ -398,7 +400,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
     @Override
     public void onDestroy() {
-        YxLogger.d(TAG,"onDestroy");
+        YxLogger.d(TAG, "onDestroy");
         super.onDestroy();
         mUnbinder.unbind();
         if (mVoicePlay != null) {

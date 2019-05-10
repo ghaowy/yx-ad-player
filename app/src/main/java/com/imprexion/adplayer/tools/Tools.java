@@ -116,7 +116,7 @@ public class Tools {
         if (!AdActivity.AD_DEFAULT.equals(url)) {
             RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.ad_default_2)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .error(R.drawable.ad_default_2);
             Glide.with(ADPlayApplication.getInstance().getApplicationContext())
                     .load(url)

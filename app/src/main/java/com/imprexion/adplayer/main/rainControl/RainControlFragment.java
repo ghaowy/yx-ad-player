@@ -93,7 +93,7 @@ public class RainControlFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_rain_control, container, false);
         unbinder = ButterKnife.bind(this, view);
-        mRainVoice = new VoicePlay(getContext());
+        mRainVoice = new VoicePlay(getContext(), VoicePlay.SOUNDPOOL);
         return view;
     }
 
