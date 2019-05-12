@@ -91,10 +91,6 @@ public class VoicePlay {
     }
 
     public void playVoiceBySoundpoolOnce(int soundId) {//播放声音一次  不循环
-        if (mSoundPool != null && mSoundId != 0) {
-            mSoundPool.resume(soundId);
-            return;
-        }
         mSoundId = mSoundPool.load(mContext, soundId, 1);
         if (mSoundId == 0) {
             YxLogger.d(TAG, "soundpool 加载失败");
