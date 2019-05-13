@@ -26,6 +26,7 @@ import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.main.AdActivity;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
+import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.library.logger.YxLogger;
 import com.imprexion.adplayer.tools.VoicePlay;
 
@@ -125,12 +126,12 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
         EventBus.getDefault().register(this);
 //        mVoicePlay = new VoicePlay(getContext(), VoicePlay.MEDIAPLAYER);
         mVoicePlay = new VoicePlay(getContext(), VoicePlay.SOUNDPOOL);
-        mEEnterObjAnimator = ObjectAnimator.ofFloat(ivElephantEnter, "translationX", 400, 0);
-        mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, 400);
-        mFloorExitObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 0, 800);
-        mFloorEnterObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 800, 0);
-        mETipEnterObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", 800, 0);
-        mETipExitObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", 0, 800);
+        mEEnterObjAnimator = ObjectAnimator.ofFloat(ivElephantEnter, "translationX", Tools.dpToPx(400, getContext()), 0);
+        mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, Tools.dpToPx(400, getContext()));
+        mFloorExitObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 0, Tools.dpToPx(800, getContext()));
+        mFloorEnterObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", Tools.dpToPx(800, getContext()), 0);
+        mETipEnterObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", Tools.dpToPx(800, getContext()), 0);
+        mETipExitObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", 0, Tools.dpToPx(800, getContext()));
         mElephantExitAnimation = (AnimationDrawable) ivElephantExit.getDrawable();
         mElephantEnterAnimation = (AnimationDrawable) ivElephantEnter.getDrawable();
         mElephantStopAnimation = (AnimationDrawable) ivElephantStop.getDrawable();

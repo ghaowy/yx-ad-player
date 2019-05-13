@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.util.TypedValue;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -150,5 +151,9 @@ public class Tools {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static int dpToPx(int dp, Context context) {
+        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, dp, context.getResources().getDisplayMetrics());
     }
 }
