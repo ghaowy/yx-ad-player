@@ -366,15 +366,16 @@ public class AdActivity extends AppCompatActivity {
                     if (mJsonObject == null) {
                         mJsonObject = new JSONObject();
                     }
+                    long appPlanId;
                     if (mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getContentType() == 2) {
-//                        YxLog.d(TAG, "AppPlanId = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAppPlanId());
-                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAppPlanId());
+//                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAppPlanId());
+                        appPlanId = mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAppPlanId();
                     } else {
-//                        YxLog.d(TAG, "AppPlanId = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAdPlanId());
-                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAdPlanId());
+//                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAdPlanId());
+                        appPlanId = mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAdPlanId();
                     }
                     mJsonObject.put("type", "1");
-                    YxStatistics.report(mJsonObject.toJSONString());
+                    YxStatistics.version(1).param("adplanId", appPlanId).report("aiscreen_ad_play");
                     try {
                         Thread.sleep(mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime() * 1000);
                     } catch (InterruptedException e) {
