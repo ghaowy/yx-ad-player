@@ -27,8 +27,9 @@ import com.imprexion.adplayer.main.AdActivity;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
 import com.imprexion.adplayer.tools.Tools;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.library.YxLog;
 import com.imprexion.adplayer.tools.VoicePlay;
+import com.imprexion.library.YxStatistics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -220,7 +221,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void startElephantEnterAnimation() {
-        YxLogger.d(TAG, "startElephantEnterAnimation");
+        YxLog.d(TAG, "startElephantEnterAnimation");
         if (!mElephantEnterAnimation.isRunning()) {
             mElephantEnterAnimation.start();
         }
@@ -239,7 +240,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    YxLogger.d(TAG, toString() + "onAnimationStart");
+                    YxLog.d(TAG, toString() + "onAnimationStart");
                     super.onAnimationStart(animation);
                     if (ivElephantEnter != null) {
                         ivElephantEnter.setVisibility(View.VISIBLE);
@@ -286,7 +287,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
     private void startRotateFootprint() {
         if (!mFootprintRotateObjAnimator.isRunning()) {
-            mFootprintRotateObjAnimator.setRepeatCount(20);
+            mFootprintRotateObjAnimator.setRepeatCount(2000);//不站对脚印，旋转到地老天荒
             mFootprintRotateObjAnimator.setDuration(1500);
             mFootprintRotateObjAnimator.start();
         }
@@ -297,7 +298,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void nextAfterStandRight() {
-        YxLogger.d(TAG, "nextAfterStandRight");
+        YxLog.d(TAG, "nextAfterStandRight");
         if (mFootprintRotateObjAnimator != null) {
             mFootprintRotateObjAnimator.end();
             mFootprintRotateObjAnimator.cancel();
@@ -330,8 +331,9 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void startWaveHandTipAnimation() {
-        YxLogger.d(TAG, "startWaveHandTipAnimation");
-        YxLogger.i(TAG, "show wave hand hint");
+        YxLog.d(TAG, "startWaveHandTipAnimation");
+        YxLog.i(TAG, "show wave hand hint");
+        YxStatistics.version(1).report("prompt_wave_hand");
         fadeIn(ivWaveHandsTip);
         mWaveHandsAnimation.start();
         //test,isActived=true接收信号执行注水ing动画
@@ -342,7 +344,9 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void waveActiveSucess() {
-        YxLogger.i(TAG, "show wave hand animation success");
+        YxLog.i(TAG, "show wave hand animation success");
+        YxLog.i(TAG, "user wave hand");
+        YxStatistics.version(1).report("user wave hand");
         //接收信号执行注水ing动画
         mMessage = mHandler.obtainMessage();
         mMessage.what = INJECT_WATER;
@@ -430,7 +434,8 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
 
     private void showFootPrint() {
-        YxLogger.i(TAG, "show stand here hint");
+        YxLog.i(TAG, "show stand here hint");
+        YxStatistics.version(1).report("prompt_stand_here");
         for (int i = 0; i < 7; i++) {
             mMessage = mHandler.obtainMessage();
             mMessage.what = i + 1;
@@ -566,7 +571,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageShowEvent(EventBusMessage message) {
-        YxLogger.d(TAG, toString() + ": onMessageShowEvent");
+        YxLog.d(TAG, toString() + ": onMessageShowEvent");
         if (message.getType() == EventBusMessage.ACTIVE_TIP) {
             mTrackingMessage = (TrackingMessage) message.getObject();
             if (mTrackingMessage.isActived() && isWaveForActive) {
@@ -582,7 +587,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
     @Override
     public void onDestroy() {
-        YxLogger.d(TAG, "onDestroy");
+        YxLog.d(TAG, "onDestroy");
         super.onDestroy();
         mUnbinder.unbind();
         if (mVoicePlay != null) {

@@ -8,7 +8,7 @@ import android.os.Binder;
 import android.os.IBinder;
 
 import com.imprexion.adplayer.base.ADPlayApplication;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.library.YxLog;
 
 public class AdPlayService extends Service {
 
@@ -33,7 +33,7 @@ public class AdPlayService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        YxLogger.d(TAG, "onStartCommand");
+        YxLog.d(TAG, "onStartCommand");
         if (mNotification == null) {
             Notification.Builder builder = new Notification.Builder(ADPlayApplication.getInstance().getApplicationContext());
             Intent nIntent = new Intent(this, AdPlayService.class);
@@ -46,11 +46,11 @@ public class AdPlayService extends Service {
         if (intent != null && "com.imprexion.push.MESSAGE".equals(intent.getAction())) {
             String data = intent.getExtras().getString("data");
 //            Toast.makeText(this, "MyService received Msg: " + data, Toast.LENGTH_LONG).show();
-//            YxLogger.d(TAG, "content=" + data);
+//            YxLog.d(TAG, "content=" + data);
             if (mIContentInfoCallBack != null) {
                 mIContentInfoCallBack.setContentInfo(data);
             } else {
-                YxLogger.d(TAG, "mIContentInfoCallBack is null");
+                YxLog.d(TAG, "mIContentInfoCallBack is null");
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -73,13 +73,13 @@ public class AdPlayService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        YxLogger.d(TAG, "onUnbind");
+        YxLog.d(TAG, "onUnbind");
         return super.onUnbind(intent);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        YxLogger.d(TAG, "onDestroy()");
+        YxLog.d(TAG, "onDestroy()");
     }
 }

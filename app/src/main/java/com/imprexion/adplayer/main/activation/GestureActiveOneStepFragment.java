@@ -27,7 +27,7 @@ import com.imprexion.adplayer.main.AdActivity;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
 import com.imprexion.adplayer.tools.Tools;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.library.YxLog;
 import com.imprexion.adplayer.tools.VoicePlay;
 
 import org.greenrobot.eventbus.EventBus;
@@ -148,7 +148,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     }
 
     private void startElephantEnterAnimation() {
-        YxLogger.d(TAG, "startElephantEnterAnimation");
+        YxLog.d(TAG, "startElephantEnterAnimation");
         if (!mElephantEnterAnimation.isRunning()) {
             mElephantEnterAnimation.start();
         }
@@ -167,7 +167,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    YxLogger.d(TAG, toString() + "onAnimationStart");
+                    YxLog.d(TAG, toString() + "onAnimationStart");
                     super.onAnimationStart(animation);
                     if (ivElephantEnter != null) {
                         ivElephantEnter.setVisibility(View.VISIBLE);
@@ -216,7 +216,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
 
     private void startWaveHandTipAnimation() {
-        YxLogger.d(TAG, "startWaveHandTipAnimation");
+        YxLog.d(TAG, "startWaveHandTipAnimation");
         fadeIn(ivWaveHandsTip);
         mWaveHandsAnimation.start();
         //test,isActived=true接收信号执行注水ing动画
@@ -389,7 +389,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageShowEvent(EventBusMessage message) {
-        YxLogger.d(TAG, "onMessageShowEvent");
+        YxLog.d(TAG, "onMessageShowEvent");
         if (message.getType() == EventBusMessage.ACTIVE_TIP) {
             mTrackingMessage = (TrackingMessage) message.getObject();
             if (mTrackingMessage.isActived() && isWaveForActive) {
@@ -401,7 +401,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
     @Override
     public void onDestroy() {
-        YxLogger.d(TAG, "onDestroy");
+        YxLog.d(TAG, "onDestroy");
         super.onDestroy();
         mUnbinder.unbind();
         if (mVoicePlay != null) {

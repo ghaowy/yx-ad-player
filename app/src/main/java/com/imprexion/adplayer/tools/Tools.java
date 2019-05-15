@@ -26,7 +26,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.base.ADPlayApplication;
 import com.imprexion.adplayer.main.AdActivity;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.library.YxLog;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -88,14 +88,14 @@ public class Tools {
         File file = new File(path);
         File[] files = file.listFiles();
         if (files == null) {
-            YxLogger.e(TAG, "空目录");
+            YxLog.e(TAG, "空目录");
             return null;
         }
         List<String> s = new ArrayList<>();
         for (int i = 0; i < files.length; i++) {
             String[] splits = files[i].getAbsolutePath().split("/");
             s.add(splits[splits.length - 1]);
-            YxLogger.d(TAG, "filename = " + s.get(i));
+            YxLog.d(TAG, "filename = " + s.get(i));
         }
         return s;
     }
@@ -113,7 +113,7 @@ public class Tools {
     }
 
     public static void showPicWithGlide(ImageView imageView, String url) {
-//        YxLogger.d(TAG, "url=" + url);
+//        YxLog.d(TAG, "url=" + url);
         if (!AdActivity.AD_DEFAULT.equals(url)) {
             RequestOptions requestOptions = new RequestOptions()
                     .placeholder(R.drawable.ad_default_2)
@@ -136,7 +136,7 @@ public class Tools {
         Date date = new Date(time);
 //        String pattern = "yyyy-MM-dd";//格式yy-MM-dd(年份取末两位) ;yyyy-MM-dd HH:mm:ss(格式可以自行取舍)
         String currentDate = new SimpleDateFormat(pattern, Locale.getDefault()).format(date);
-        YxLogger.d(TAG, "currentDate=" + currentDate);
+        YxLog.d(TAG, "currentDate=" + currentDate);
         return currentDate;
     }
 
@@ -145,7 +145,7 @@ public class Tools {
             PackageManager packageManager = context.getPackageManager();
             PackageInfo packageInfo = packageManager.getPackageInfo(
                     context.getPackageName(), 0);
-//            YxLogger.d(TAG, "versionName=" + packageInfo.versionName);
+//            YxLog.d(TAG, "versionName=" + packageInfo.versionName);
             return packageInfo.versionName;
         } catch (Exception e) {
             e.printStackTrace();

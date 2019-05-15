@@ -2,7 +2,7 @@ package com.imprexion.adplayer.main.camera;
 
 import android.content.Context;
 import android.hardware.Camera;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.library.YxLog;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 
@@ -32,7 +32,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.startPreview();
         } catch (IOException e) {
             e.printStackTrace();
-            YxLogger.d(TAG, "Error setting camera view: surfaceCreated");
+            YxLog.d(TAG, "Error setting camera view: surfaceCreated");
         }
     }
 
@@ -50,13 +50,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.startPreview();
         } catch (IOException e) {
             e.printStackTrace();
-            YxLogger.d(TAG, "Error setting camera view: surfaceChanged");
+            YxLog.d(TAG, "Error setting camera view: surfaceChanged");
         }
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        YxLogger.d(TAG, "surfaceDestroyed");
+        YxLog.d(TAG, "surfaceDestroyed");
         holder.removeCallback(this);
         mCamera.setPreviewCallback(null);
         mCamera.stopPreview();

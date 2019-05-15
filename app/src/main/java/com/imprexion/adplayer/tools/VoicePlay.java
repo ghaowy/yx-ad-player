@@ -6,7 +6,7 @@ import android.media.MediaPlayer;
 import android.media.SoundPool;
 
 import com.imprexion.adplayer.R;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.library.YxLog;
 
 import java.io.IOException;
 
@@ -29,7 +29,7 @@ public class VoicePlay {
     }
 
     public void playVoice(int voiceSrcId) {//播放一次声音
-        YxLogger.d(TAG, "playVoice");
+        YxLog.d(TAG, "playVoice");
         if (mSoundPool != null) {
             mSoundPool.pause(mSoundId);
         }
@@ -54,18 +54,18 @@ public class VoicePlay {
     }
 
     public void stop() {
-        YxLogger.d(TAG, "voicePlay stop and release");
+        YxLog.d(TAG, "voicePlay stop and release");
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             mMediaPlayer.release();
 //            mMediaPlayer = null;
-            YxLogger.d(TAG, "mMediaPlayer release");
+            YxLog.d(TAG, "mMediaPlayer release");
         }
         if (mSoundPool != null) {
             mSoundPool.stop(mSoundId);
             mSoundPool.release();
 //            mSoundPool = null;
-            YxLogger.d(TAG, "mSoundPool release");
+            YxLog.d(TAG, "mSoundPool release");
         }
     }
 
@@ -76,15 +76,15 @@ public class VoicePlay {
         }
         mSoundId = mSoundPool.load(mContext, mRainVoiceId, 1);
         if (mSoundId == 0) {
-            YxLogger.d(TAG, "soundpool 加载失败");
+            YxLog.d(TAG, "soundpool 加载失败");
             return;
         } else {
-            YxLogger.d(TAG, "soundId =" + mSoundId);
+            YxLog.d(TAG, "soundId =" + mSoundId);
         }
         mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-                YxLogger.d(TAG, "soundPool load complete");
+                YxLog.d(TAG, "soundPool load complete");
                 mSoundPool.play(mSoundId, 0.5f, 0.5f, 0, -1, 0.8f);
             }
         });
@@ -93,15 +93,15 @@ public class VoicePlay {
     public void playVoiceBySoundpoolOnce(int soundId) {//播放声音一次  不循环
         mSoundId = mSoundPool.load(mContext, soundId, 1);
         if (mSoundId == 0) {
-            YxLogger.d(TAG, "soundpool 加载失败");
+            YxLog.d(TAG, "soundpool 加载失败");
             return;
         } else {
-            YxLogger.d(TAG, "soundId =" + mSoundId);
+            YxLog.d(TAG, "soundId =" + mSoundId);
         }
         mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
             public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-                YxLogger.d(TAG, "soundPool load complete");
+                YxLog.d(TAG, "soundPool load complete");
                 mSoundPool.play(mSoundId, 1f, 1f, 0, 0, 1);
             }
         });

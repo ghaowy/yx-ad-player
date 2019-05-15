@@ -3,7 +3,7 @@ package com.imprexion.adplayer.service;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Base64;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.library.YxLog;
 import com.imprexion.service.tracking.bean.aiscreen;
 
 import java.io.BufferedReader;
@@ -46,9 +46,9 @@ public class TcpClientConnector {
     }
 
     public void createConnect(final String ip, final int port) {
-        YxLogger.d(TAG, "createConnect");
+        YxLog.d(TAG, "createConnect");
         if (mConnectThread == null) {
-            YxLogger.d(TAG, "new mConnectThread");
+            YxLog.d(TAG, "new mConnectThread");
             mConnectThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -81,12 +81,12 @@ public class TcpClientConnector {
                     }
                 } catch (IOException e) {
 //                    e.printStackTrace();
-                    YxLogger.e(TAG,"connect soket fail");
+                    YxLog.e(TAG,"connect soket fail");
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException e1) {
 //                        e1.printStackTrace();
-                        YxLogger.e(TAG,"connect thread InterruptedException");
+                        YxLog.e(TAG,"connect thread InterruptedException");
                     }
 
                 }
@@ -104,7 +104,7 @@ public class TcpClientConnector {
     }
 
     public void disconnect() {
-        YxLogger.d(TAG, "disconnect()");
+        YxLog.d(TAG, "disconnect()");
         if (mSocket != null) {
             try {
                 mSocket.close();

@@ -12,7 +12,7 @@ import com.imprexion.adplayer.bean.ADContentPlay;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.net.NetPresenter;
 import com.imprexion.adplayer.tools.Tools;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.library.YxLog;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -28,9 +28,9 @@ public class ADBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        YxLogger.i(TAG,"receive advertisement data");
+        YxLog.i(TAG,"receive advertisement data");
         String content = intent.getExtras().getString("data");
-//        YxLogger.d(TAG, "ContentInfo=" + content);
+//        YxLog.d(TAG, "ContentInfo=" + content);
         Log.d(TAG, "ContentInfo=" + content);
 //        Toast.makeText(context, "MyService received Msg: " + content, Toast.LENGTH_LONG).show();
         ADContentPlay adContentPlay = JSON.parseObject(content, ADContentPlay.class);
