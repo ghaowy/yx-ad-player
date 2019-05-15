@@ -26,8 +26,10 @@ import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.main.AdActivity;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.adplayer.tools.Tools;
+import com.imprexion.library.YxLog;
 import com.imprexion.adplayer.tools.VoicePlay;
+import com.imprexion.library.YxStatistics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -194,14 +196,15 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
         View view = inflater.inflate(R.layout.fragment_gesture_activation, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
-        mVoicePlay = new VoicePlay(getContext());
-        mEEnterObjAnimator = ObjectAnimator.ofFloat(ivElephantEnter, "translationX", 400, 0);
-        mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, 400);
-        mFootprintRotateObjAnimator = ObjectAnimator.ofFloat(rlFootprint, "rotationX", 0, 30, 0);
-        mFloorExitObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 0, 800);
-        mFloorEnterObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 800, 0);
-        mETipEnterObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", 800, 0);
-        mETipExitObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", 0, 800);
+//        mVoicePlay = new VoicePlay(getContext(), VoicePlay.MEDIAPLAYER);
+        mVoicePlay = new VoicePlay(getContext(), VoicePlay.SOUNDPOOL);
+        mEEnterObjAnimator = ObjectAnimator.ofFloat(ivElephantEnter, "translationX", Tools.dpToPx(400, getContext()), 0);
+        mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, Tools.dpToPx(400, getContext()));
+        mFootprintRotateObjAnimator = ObjectAnimator.ofFloat(rlFootprint, "rotationX", 0, Tools.dpToPx(30, getContext()), 0);
+        mFloorExitObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 0, Tools.dpToPx(800, getContext()));
+        mFloorEnterObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", Tools.dpToPx(800, getContext()), 0);
+        mETipEnterObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", Tools.dpToPx(800, getContext()), 0);
+        mETipExitObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", 0, Tools.dpToPx(800, getContext()));
         mElephantExitAnimation = (AnimationDrawable) ivElephantExit.getDrawable();
         mElephantEnterAnimation = (AnimationDrawable) ivElephantEnter.getDrawable();
         mElephantStopAnimation = (AnimationDrawable) ivElephantStop.getDrawable();
@@ -218,7 +221,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void startElephantEnterAnimation() {
-        YxLogger.d(TAG, "startElephantEnterAnimation");
+        YxLog.d(TAG, "startElephantEnterAnimation");
         if (!mElephantEnterAnimation.isRunning()) {
             mElephantEnterAnimation.start();
         }
@@ -237,7 +240,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    YxLogger.d(TAG, toString() + "onAnimationStart");
+                    YxLog.d(TAG, toString() + "onAnimationStart");
                     super.onAnimationStart(animation);
                     if (ivElephantEnter != null) {
                         ivElephantEnter.setVisibility(View.VISIBLE);
@@ -247,7 +250,8 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     }
                     showFootPrint();
                     if (isResume) {
-                        mVoicePlay.playVoice(R.raw.please_stand_footprint);
+//                        mVoicePlay.playVoice(R.raw.please_stand_footprint);
+                        mVoicePlay.playVoiceBySoundpoolOnce(R.raw.please_stand_footprint);
                     }
                 }
 
@@ -283,7 +287,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
     private void startRotateFootprint() {
         if (!mFootprintRotateObjAnimator.isRunning()) {
-            mFootprintRotateObjAnimator.setRepeatCount(20);
+            mFootprintRotateObjAnimator.setRepeatCount(2000);//不站对脚印，旋转到地老天荒
             mFootprintRotateObjAnimator.setDuration(1500);
             mFootprintRotateObjAnimator.start();
         }
@@ -294,7 +298,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void nextAfterStandRight() {
-        YxLogger.d(TAG, "nextAfterStandRight");
+        YxLog.d(TAG, "nextAfterStandRight");
         if (mFootprintRotateObjAnimator != null) {
             mFootprintRotateObjAnimator.end();
             mFootprintRotateObjAnimator.cancel();
@@ -318,7 +322,8 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
                     hideFullFootprint();
                     startWaveHandTipAnimation();
                     if (isResume) {
-                        mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+//                        mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+                        mVoicePlay.playVoiceBySoundpoolOnce(R.raw.wave_your_right_hands);
                     }
                 }
             }, 500);
@@ -326,8 +331,9 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void startWaveHandTipAnimation() {
-        YxLogger.d(TAG, "startWaveHandTipAnimation");
-        YxLogger.i(TAG,"show wave hand hint");
+        YxLog.d(TAG, "startWaveHandTipAnimation");
+        YxLog.i(TAG, "show wave hand hint");
+        YxStatistics.version(1).report("prompt_wave_hand");
         fadeIn(ivWaveHandsTip);
         mWaveHandsAnimation.start();
         //test,isActived=true接收信号执行注水ing动画
@@ -338,7 +344,9 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
     }
 
     private void waveActiveSucess() {
-        YxLogger.i(TAG,"show wave hand animation success");
+        YxLog.i(TAG, "show wave hand animation success");
+        YxLog.i(TAG, "user wave hand");
+        YxStatistics.version(1).report("user wave hand");
         //接收信号执行注水ing动画
         mMessage = mHandler.obtainMessage();
         mMessage.what = INJECT_WATER;
@@ -426,7 +434,8 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
 
     private void showFootPrint() {
-        YxLogger.i(TAG,"show stand here hint");
+        YxLog.i(TAG, "show stand here hint");
+        YxStatistics.version(1).report("prompt_stand_here");
         for (int i = 0; i < 7; i++) {
             mMessage = mHandler.obtainMessage();
             mMessage.what = i + 1;
@@ -562,7 +571,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageShowEvent(EventBusMessage message) {
-        YxLogger.d(TAG, toString() + ": onMessageShowEvent");
+        YxLog.d(TAG, toString() + ": onMessageShowEvent");
         if (message.getType() == EventBusMessage.ACTIVE_TIP) {
             mTrackingMessage = (TrackingMessage) message.getObject();
             if (mTrackingMessage.isActived() && isWaveForActive) {
@@ -578,7 +587,7 @@ public class GestureActiveTwoStepFragment extends Fragment implements View.OnCli
 
     @Override
     public void onDestroy() {
-        YxLogger.d(TAG,"onDestroy");
+        YxLog.d(TAG, "onDestroy");
         super.onDestroy();
         mUnbinder.unbind();
         if (mVoicePlay != null) {

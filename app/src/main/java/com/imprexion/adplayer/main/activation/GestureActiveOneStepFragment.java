@@ -26,7 +26,8 @@ import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.main.AdActivity;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.adplayer.tools.Tools;
+import com.imprexion.library.YxLog;
 import com.imprexion.adplayer.tools.VoicePlay;
 
 import org.greenrobot.eventbus.EventBus;
@@ -123,13 +124,14 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
         View view = inflater.inflate(R.layout.fragment_gesture_activation, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
-        mVoicePlay = new VoicePlay(getContext());
-        mEEnterObjAnimator = ObjectAnimator.ofFloat(ivElephantEnter, "translationX", 400, 0);
-        mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, 400);
-        mFloorExitObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 0, 800);
-        mFloorEnterObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 800, 0);
-        mETipEnterObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", 800, 0);
-        mETipExitObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", 0, 800);
+//        mVoicePlay = new VoicePlay(getContext(), VoicePlay.MEDIAPLAYER);
+        mVoicePlay = new VoicePlay(getContext(), VoicePlay.SOUNDPOOL);
+        mEEnterObjAnimator = ObjectAnimator.ofFloat(ivElephantEnter, "translationX", Tools.dpToPx(400, getContext()), 0);
+        mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, Tools.dpToPx(400, getContext()));
+        mFloorExitObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 0, Tools.dpToPx(800, getContext()));
+        mFloorEnterObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", Tools.dpToPx(800, getContext()), 0);
+        mETipEnterObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", Tools.dpToPx(800, getContext()), 0);
+        mETipExitObjAnimator = ObjectAnimator.ofFloat(tvGuideTip1, "translationX", 0, Tools.dpToPx(800, getContext()));
         mElephantExitAnimation = (AnimationDrawable) ivElephantExit.getDrawable();
         mElephantEnterAnimation = (AnimationDrawable) ivElephantEnter.getDrawable();
         mElephantStopAnimation = (AnimationDrawable) ivElephantStop.getDrawable();
@@ -146,7 +148,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
     }
 
     private void startElephantEnterAnimation() {
-        YxLogger.d(TAG, "startElephantEnterAnimation");
+        YxLog.d(TAG, "startElephantEnterAnimation");
         if (!mElephantEnterAnimation.isRunning()) {
             mElephantEnterAnimation.start();
         }
@@ -165,9 +167,9 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    YxLogger.d(TAG, toString() + "onAnimationStart");
+                    YxLog.d(TAG, toString() + "onAnimationStart");
                     super.onAnimationStart(animation);
-                    if (ivElephantEnter!= null) {
+                    if (ivElephantEnter != null) {
                         ivElephantEnter.setVisibility(View.VISIBLE);
                     }
                     if (tvGuideTip1 != null) {
@@ -176,7 +178,8 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
                     }
                     startWaveHandTipAnimation();
                     if (isResume) {
-                        mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+//                        mVoicePlay.playVoice(R.raw.wave_your_right_hands);
+                        mVoicePlay.playVoiceBySoundpoolOnce(R.raw.wave_your_right_hands);
                     }
                 }
 
@@ -213,7 +216,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
 
     private void startWaveHandTipAnimation() {
-        YxLogger.d(TAG, "startWaveHandTipAnimation");
+        YxLog.d(TAG, "startWaveHandTipAnimation");
         fadeIn(ivWaveHandsTip);
         mWaveHandsAnimation.start();
         //test,isActived=true接收信号执行注水ing动画
@@ -386,7 +389,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageShowEvent(EventBusMessage message) {
-        YxLogger.d(TAG, "onMessageShowEvent");
+        YxLog.d(TAG, "onMessageShowEvent");
         if (message.getType() == EventBusMessage.ACTIVE_TIP) {
             mTrackingMessage = (TrackingMessage) message.getObject();
             if (mTrackingMessage.isActived() && isWaveForActive) {
@@ -398,7 +401,7 @@ public class GestureActiveOneStepFragment extends Fragment implements View.OnCli
 
     @Override
     public void onDestroy() {
-        YxLogger.d(TAG,"onDestroy");
+        YxLog.d(TAG, "onDestroy");
         super.onDestroy();
         mUnbinder.unbind();
         if (mVoicePlay != null) {

@@ -39,7 +39,8 @@ import com.imprexion.adplayer.net.NetPresenter;
 import com.imprexion.adplayer.service.AdPlayService;
 import com.imprexion.adplayer.service.TcpClientConnector;
 import com.imprexion.adplayer.tools.Tools;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.library.YxLog;
+import com.imprexion.library.YxStatistics;
 import com.imprexion.service.tracking.bean.aiscreen;
 
 import org.greenrobot.eventbus.EventBus;
@@ -106,7 +107,7 @@ public class AdActivity extends AppCompatActivity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case PLAY_NEXT:
-                    YxLogger.d(TAG, "main mCurrentPage=" + mCurrentPage);
+                    YxLog.d(TAG, "main mCurrentPage=" + mCurrentPage);
                     viewPager.setCurrentItem(mCurrentPage);
                     break;
                 case SHOW_ACTIVE_TIP_FROM_FOOT:
@@ -132,7 +133,7 @@ public class AdActivity extends AppCompatActivity {
                         currentPage = OTHER_PAGE;
                         startAIScreenApp();
                     } else {
-                        YxLogger.d(TAG, "have no person in 2s");
+                        YxLog.d(TAG, "have no person in 2s");
                     }
                     break;
                 case REMOVE_GESTURE_ACTIVE:
@@ -166,27 +167,29 @@ public class AdActivity extends AppCompatActivity {
 //        try {
 //            startActivity(new Intent().setComponent(componentName));
 //        } catch (Exception e) {
-//            YxLogger.d(TAG, "start AIScreen fail");
+//            YxLog.d(TAG, "start AIScreen fail");
 //            e.printStackTrace();
 //        }
+        YxLog.i(TAG, "goto main page");
+        YxStatistics.version(1).param("way", "wave hand").report("goto_main_page");
         finish();
     }
 
     private TrackingMessage mTrackingMessage;
 
     private void showGestureActiveTowStepView() {
-        YxLogger.d(TAG, "showGestureActiveTowStepView");
+        YxLog.d(TAG, "showGestureActiveTowStepView");
         if (mGestureActiveTwoStepFragment == null && flGestureActive.getChildCount() == 0) {
-            YxLogger.d(TAG, "add two gestureFragment");
+            YxLog.d(TAG, "add two gestureFragment");
             mGestureActiveTwoStepFragment = new GestureActiveTwoStepFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveTwoStepFragment).commitAllowingStateLoss();
         }
     }
 
     private void showGestureActiveOneStepView() {
-        YxLogger.d(TAG, "showGestureActiveOneStepView");
+        YxLog.d(TAG, "showGestureActiveOneStepView");
         if (mGestureActiveOneStepFragment == null && flGestureActive.getChildCount() == 0) {
-            YxLogger.d(TAG, "add  one gestureFragment");
+            YxLog.d(TAG, "add  one gestureFragment");
             mGestureActiveOneStepFragment = new GestureActiveOneStepFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveOneStepFragment).commitAllowingStateLoss();
         }
@@ -198,7 +201,7 @@ public class AdActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        YxLogger.i(TAG, "MainActivity onCreate");
+        YxLog.i(TAG, "MainActivity onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ad_second);
         ButterKnife.bind(this);
@@ -206,9 +209,9 @@ public class AdActivity extends AppCompatActivity {
         EventBus.getDefault().register(this);
 //        bindAISService();
         setSocketListener();
-        YxLogger.init(this, true, false);
-        YxLogger.setVersion(Tools.getVersionName(this));
-        YxLogger.setPrettyFormatEnable(false);
+//        YxLog.init(this, true, false);
+//        YxLog.setVersion(Tools.getVersionName(this));
+//        YxLog.setPrettyFormatEnable(false);
         if (getIntent() != null && getIntent().getExtras() != null && "userDetect".equals(getIntent().getExtras().getString("launchType"))) {
             isLaunchFromUserDetect = true;
         }
@@ -267,24 +270,24 @@ public class AdActivity extends AppCompatActivity {
                 if (adContentPlayString != null) {
                     adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
                     if (!adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
-                        YxLogger.d(TAG, "there is not today adContent");
+                        YxLog.d(TAG, "there is not today adContent");
                         adContentPlay = getDefaultADContentPlay();
                     } else {
                         mEditor.putString(AD_CURRENT, adContentPlayString);
                         mEditor.commit();
                     }
                 } else {
-                    YxLogger.d(TAG, "adContentPlayString next is null");
+                    YxLog.d(TAG, "adContentPlayString next is null");
                     adContentPlay = getDefaultADContentPlay();
                 }
 
             }
         } else {
-            YxLogger.d(TAG, "adContentPlayString current is null");
+            YxLog.d(TAG, "adContentPlayString current is null");
             adContentPlay = getDefaultADContentPlay();
         }
 
-        YxLogger.d(TAG, "adContentPlayString=" + adContentPlayString);
+        YxLog.d(TAG, "adContentPlayString=" + adContentPlayString);
         mAdContentInfoList = adContentPlay.getContentPlayVOList();
         int size = mAdContentInfoList.size();
         for (int i = 0; i < size; i++) {
@@ -341,7 +344,7 @@ public class AdActivity extends AppCompatActivity {
         Tools.hideNavigationBarStatusBar(this, true);
 //        initViewPager();
         mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
-//        YxLogger.d(TAG, "mCurrentPage=" + mPagerPage);
+//        YxLog.d(TAG, "mCurrentPage=" + mPagerPage);
         isPlay = true;
         Runnable runnable = new Runnable() {
 
@@ -354,24 +357,25 @@ public class AdActivity extends AppCompatActivity {
                     message.what = PLAY_NEXT;
                     mHandler.sendMessage(message);
                     mCurrentPage = mPagerPage++ % mSize;
-//                    YxLogger.d(TAG, "mAdContentInfoList size = " + mAdContentInfoList.size());
-//                    YxLogger.d(TAG, "mSize = " + mSize);
-//                    YxLogger.d(TAG, "mCurrentPage = " + mCurrentPage);
+//                    YxLog.d(TAG, "mAdContentInfoList size = " + mAdContentInfoList.size());
+//                    YxLog.d(TAG, "mSize = " + mSize);
+//                    YxLog.d(TAG, "mCurrentPage = " + mCurrentPage);
                     if (mCurrentPage >= mSize) {
                         mCurrentPage = 0;
                     }
                     if (mJsonObject == null) {
                         mJsonObject = new JSONObject();
                     }
+                    long appPlanId;
                     if (mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getContentType() == 2) {
-//                        YxLogger.d(TAG, "AppPlanId = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAppPlanId());
-                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAppPlanId());
+//                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAppPlanId());
+                        appPlanId = mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAppPlanId();
                     } else {
-//                        YxLogger.d(TAG, "AppPlanId = " + mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAdPlanId());
-                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAdPlanId());
+//                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAdPlanId());
+                        appPlanId = mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAdPlanId();
                     }
                     mJsonObject.put("type", "1");
-                    YxLogger.report("aiscreen_ad_play", mJsonObject);
+                    YxStatistics.version(1).param("adplanId", appPlanId).report("aiscreen_ad_play");
                     try {
                         Thread.sleep(mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime() * 1000);
                     } catch (InterruptedException e) {
@@ -406,7 +410,8 @@ public class AdActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int i) {
-                YxLogger.i(TAG, "MainActivity ViewPager onPageSelected: " + i);
+                YxLog.i(TAG, "slide ad content: " + i + "/" + (mSize - 1));
+                YxStatistics.version(1).param("cur", i).param("total", mSize - 1).report("slide_ad_content");
                 mCurrentPosition = i;
             }
 
@@ -416,7 +421,7 @@ public class AdActivity extends AppCompatActivity {
                     return;
                 }
                 if (mCurrentPosition == mSize - 1) {
-//                    YxLogger.d(TAG, "last->first");
+//                    YxLog.d(TAG, "last->first");
                     viewPager.setCurrentItem(0, false);
                     mPagerPage++;
                 }
@@ -431,7 +436,7 @@ public class AdActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        YxLogger.i(TAG,"MainActivity onPause");
+        YxLog.i(TAG, "MainActivity onPause");
         super.onPause();
         isPlay = false;
         currentPage = OTHER_PAGE;
@@ -454,7 +459,7 @@ public class AdActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        YxLogger.i(TAG,"MainActivity onDestroy");
+        YxLog.i(TAG, "MainActivity onDestroy");
         super.onDestroy();
 //        unbindService(mConnection);
         EventBus.getDefault().unregister(this);
@@ -464,7 +469,7 @@ public class AdActivity extends AppCompatActivity {
         mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
-                YxLogger.d(TAG, "onServiceConnected");
+                YxLog.d(TAG, "onServiceConnected");
                 AdPlayService.AISBinder aisBinder = (AdPlayService.AISBinder) service;
                 aisBinder.getService().setContentInfoToActivity(new AdPlayService.IContentInfoCallBack() {
                     @Override
@@ -487,7 +492,7 @@ public class AdActivity extends AppCompatActivity {
     }
 
     private void pushMessage(String content) {
-        YxLogger.d(TAG, "ContentInfo=" + content);
+        YxLog.d(TAG, "ContentInfo=" + content);
         ADContentPlay adContentPlay = JSON.parseObject(content, ADContentPlay.class);
         if (mNetPresenter == null) {
             mNetPresenter = new NetPresenter();
@@ -498,9 +503,9 @@ public class AdActivity extends AppCompatActivity {
             mEditor = mSharedPreferences.edit();
         }
 
-//        YxLogger.d(TAG, "adContentPlay.getPlayDate()=" + adContentPlay.getPlayDate());
-//        YxLogger.d(TAG, "getCurrentDate()=" + Tools.getCurrentDate("yyyy-MM-dd"));
-//        YxLogger.d(TAG, "adContentPlay=" + JSON.toJSONString(adContentPlay));
+//        YxLog.d(TAG, "adContentPlay.getPlayDate()=" + adContentPlay.getPlayDate());
+//        YxLog.d(TAG, "getCurrentDate()=" + Tools.getCurrentDate("yyyy-MM-dd"));
+//        YxLog.d(TAG, "adContentPlay=" + JSON.toJSONString(adContentPlay));
         if (adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
             mEditor.putString(AD_CURRENT, content);
             mEditor.commit();
@@ -522,10 +527,10 @@ public class AdActivity extends AppCompatActivity {
             @Override
             public void onReceiveData(aiscreen messageForAIScreen) {
                 String mData = "sex=" + messageForAIScreen.getUsrSex() + " ;HavePerson=" + messageForAIScreen.getStandHere() + " ;IsActived=" + messageForAIScreen.getIsActived();
-//                YxLogger.d(TAG, "sex=" + messageForAIScreen.getUsrsex());
-//                YxLogger.d(TAG, "HavePerson=" + messageForAIScreen.getStandHere());
-//                YxLogger.d(TAG, "IsActived=" + messageForAIScreen.getIsActived());
-                YxLogger.i(TAG,"receive tracking info");
+//                YxLog.d(TAG, "sex=" + messageForAIScreen.getUsrsex());
+//                YxLog.d(TAG, "HavePerson=" + messageForAIScreen.getStandHere());
+//                YxLog.d(TAG, "IsActived=" + messageForAIScreen.getIsActived());
+                YxLog.i(TAG, "receive tracking info");
                 dispatchMessage(messageForAIScreen);
             }
         });
@@ -546,9 +551,9 @@ public class AdActivity extends AppCompatActivity {
         tvUsersex.setText("" + mTrackingMessage.getUsrsex());
         tvStandhere.setText(mTrackingMessage.isStandHere() == true ? "true" : "false");
         tvIsactived.setText(mTrackingMessage.isActived() == true ? "true" : "false");
-        YxLogger.d(TAG, "usrsex=" + mTrackingMessage.getUsrsex() + " ;standHere=" + mTrackingMessage.isStandHere()
+        YxLog.d(TAG, "usrsex=" + mTrackingMessage.getUsrsex() + " ;standHere=" + mTrackingMessage.isStandHere()
                 + " ;isActived=" + mTrackingMessage.isActived());
-        YxLogger.d(TAG, "isShowActiveTip=" + isShowGestureActive);
+        YxLog.d(TAG, "isShowActiveTip=" + isShowGestureActive);
 
         //激活屏幕进入主界面
         if (mTrackingMessage.getUsrsex() != 0 && currentPage == AD_PAGE && mTrackingMessage.isActived() &&
@@ -588,9 +593,9 @@ public class AdActivity extends AppCompatActivity {
 
     @Subscribe
     public void onEventBusMessageShow(EventBusMessage eventBusMessage) {
-        YxLogger.d(TAG, "onEventBusMessageShow");
+        YxLog.d(TAG, "onEventBusMessageShow");
         if (eventBusMessage.getType() == EventBusMessage.AD_PLAY_CONTENT_UPDATE_BY_BROADCAST) {
-            YxLogger.d(TAG, "update() mADBroadcastReceiver");
+            YxLog.d(TAG, "update() mADBroadcastReceiver");
             initData();
             mFragmentStatePagerAdapter.notifyDataSetChanged();
         }

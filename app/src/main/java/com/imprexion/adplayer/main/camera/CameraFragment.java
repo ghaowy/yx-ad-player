@@ -3,7 +3,7 @@ package com.imprexion.adplayer.main.camera;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.library.YxLog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +51,7 @@ public class CameraFragment extends Fragment {
             return;
         }
         if (mCamera == null) {
-            YxLogger.d(TAG, "camera is null");
+            YxLog.d(TAG, "camera is null");
             return;
         }
         mCameraPreview = new CameraPreview(getActivity());

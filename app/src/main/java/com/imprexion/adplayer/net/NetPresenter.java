@@ -5,7 +5,7 @@ import android.util.Log;
 import com.alibaba.fastjson.JSON;
 import com.imprexion.adplayer.bean.ADContentPlay;
 import com.imprexion.adplayer.bean.WeatherInfo;
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.library.YxLog;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -61,12 +61,12 @@ public class NetPresenter {
                 .enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Call<String> call, Response<String> response) {
-                        YxLogger.d(TAG, "adcallback=" + response.body());
+                        YxLog.d(TAG, "adcallback=" + response.body());
                     }
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
-                        YxLogger.d(TAG, "onFailure  " + t.getMessage());
+                        YxLog.d(TAG, "onFailure  " + t.getMessage());
                     }
                 });
     }

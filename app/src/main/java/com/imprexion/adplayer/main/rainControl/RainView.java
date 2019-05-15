@@ -56,7 +56,7 @@ public class RainView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        YxLogger.d(TAG, "onMeasure");
+//        YxLog.d(TAG, "onMeasure");
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         mScreenWidth = getMeasuredWidth();
         mScreenHeight = getMeasuredHeight();
@@ -64,7 +64,7 @@ public class RainView extends View {
     }
 
     public void initData() {
-//        YxLogger.d(TAG, "initData");
+//        YxLog.d(TAG, "initData");
         Random random = new Random();
         mMatrix = new Matrix();
         mPaint = new Paint();
@@ -87,7 +87,7 @@ public class RainView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-//        YxLogger.d(TAG, "size=" + mRainSize + " isScale=" + isScale + " mBitmap=" + mBitmap.getGenerationId());
+//        YxLog.d(TAG, "size=" + mRainSize + " isScale=" + isScale + " mBitmap=" + mBitmap.getGenerationId());
         if (mRainList.size() == 0) {
             return;
         }

@@ -13,7 +13,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import com.imprexion.library.logger.YxLogger;
+import com.imprexion.library.YxLog;
 
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -93,7 +93,7 @@ public class RainControlFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_rain_control, container, false);
         unbinder = ButterKnife.bind(this, view);
-        mRainVoice = new VoicePlay(getContext());
+        mRainVoice = new VoicePlay(getContext(), VoicePlay.SOUNDPOOL);
         return view;
     }
 
@@ -105,7 +105,7 @@ public class RainControlFragment extends Fragment {
 
     @Override
     public void onResume() {
-        YxLogger.d(TAG, "onResume");
+        YxLog.d(TAG, "onResume");
         super.onResume();
 //        startRain();
         isResume = true;
@@ -138,13 +138,13 @@ public class RainControlFragment extends Fragment {
                     case MotionEvent.ACTION_UP:
                         if (x - lastX > 120) {
                             //右移
-                            YxLogger.d(TAG, "右移");
+                            YxLog.d(TAG, "右移");
                             if (isStop) {
                                 rainDropView.remove(false, true, false, false);
                             }
                         } else if (lastX - x > 120) {
                             //左移
-                            YxLogger.d(TAG, "左移");
+                            YxLog.d(TAG, "左移");
                             if (isStop) {
                                 rainDropView.remove(true, false, false, false);
                             }
@@ -162,7 +162,7 @@ public class RainControlFragment extends Fragment {
                             }
                         } else {
                             //点击
-                            YxLogger.d(TAG, "点击");
+                            YxLog.d(TAG, "点击");
                             if (!isStop) {
                                 mRainVoice.playVoice(R.raw.raindrop_move_voice);
                                 rainView1.setVisibility(View.INVISIBLE);
@@ -375,7 +375,7 @@ public class RainControlFragment extends Fragment {
 
     @Override
     public void onPause() {
-        YxLogger.d(TAG, "onPause");
+        YxLog.d(TAG, "onPause");
         super.onPause();
         isResume = false;
         mRainVoice.pause();

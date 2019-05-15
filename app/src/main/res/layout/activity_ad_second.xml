@@ -14,8 +14,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50px"
-        android:layout_marginTop="100px"
+        android:layout_height="50dp"
+        android:layout_marginTop="100dp"
         android:background="@color/spreadColor"
         android:visibility="gone">
 
@@ -58,9 +58,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <!--<fragment-->
-        <!--android:id="@+id/ad2_status_frgament"-->
-        <!--android:name="com.imprexion.adplay.status.StatusFragment"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="50px" />-->
 </RelativeLayout>

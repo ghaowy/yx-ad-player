@@ -9,9 +9,8 @@ public class RetrofitFactory {
     private static Retrofit mRetrofit;
     private static Retrofit mRetrofitAD;
     private static final String baseurl = "https://free-api.heweather.com/s6/weather/";
-//    private static final String baseurlAdCallback = "http:/10.2.26.163:9010/android/gateway/adcarousel/";//local
-//    private static final String baseurlAdCallback = "http://120.77.177.30/android/gateway/adcarousel/";//dev
     private static final String baseurlAdCallback = "http://pro.imprexion.cn/android/gateway/adcarousel/";//official
+//    private static final String baseurlAdCallback = "http://test.imprexion.cn/android/gateway/adcarousel/";//test
 
     public RetrofitFactory() {
         mRetrofit = new Retrofit.Builder()
