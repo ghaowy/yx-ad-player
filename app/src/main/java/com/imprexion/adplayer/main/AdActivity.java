@@ -2,12 +2,14 @@ package com.imprexion.adplayer.main;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -18,7 +20,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.Switch;
 import android.widget.TextView;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.imprexion.adplayer.R;
@@ -31,17 +35,22 @@ import com.imprexion.adplayer.main.activation.GestureActiveOneStepFragment;
 import com.imprexion.adplayer.main.activation.GestureActiveTwoStepFragment;
 import com.imprexion.adplayer.main.content.AdContentImageFragment;
 import com.imprexion.adplayer.main.content.CameraRainFragment;
+import com.imprexion.adplayer.service.AdPlayService;
 import com.imprexion.adplayer.service.TcpClientConnector;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.YxStatistics;
+import com.imprexion.library.util.ContextUtils;
 import com.imprexion.service.tracking.bean.aiscreen;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -82,10 +91,19 @@ public class AdActivity extends AppCompatActivity {
     public final static String AD_DEFAULT = "adDefalt";
     private boolean isPlay = true;
     private int mCurrentPosition;
-    private int mSize;
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
+    // 广告总数（包括应用和图片）
+    private int mADContentSize;
+    // 图片广告fragment数
+    private int mFragmentSize;
+    // 当前广告页码（包括应用和图片）
     private int mCurrentPage;
+    // 当前viewPage页码
+    private int mCurrentViewPageIndex;
+    // 当前广告数据
+    private ADContentInfo mCurrentADContentInfo;
+
     private boolean isShowGestureActive;
     private boolean isSendShowGestureActive;
     private boolean isLaunchFromUserDetect;////backPressed,userDetect.
@@ -99,8 +117,35 @@ public class AdActivity extends AppCompatActivity {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case PLAY_NEXT:
-                    YxLog.d(TAG, "main mCurrentPage=" + mCurrentPage);
-                    viewPager.setCurrentItem(mCurrentPage);
+                    YxLog.d(TAG, "handleMessage --- mCurrentPage = " + mCurrentPage);
+
+                    ADContentInfo adContentInfo = mAdContentInfoList.get(mCurrentPage);
+                    // 图片广告
+                    if (adContentInfo.getContentType() == 1) {
+                        YxLog.d(TAG, "handleMessage --- mCurrentViewPageIndex = " + mCurrentViewPageIndex);
+
+                        // 图片循环播放， 第0个不播，否则会反向跳转
+                        if (mCurrentViewPageIndex >= mFragmentSize - 1) {
+                            mCurrentViewPageIndex = 0;
+                        }
+                        mCurrentViewPageIndex++;
+                        viewPager.setCurrentItem(mCurrentViewPageIndex);
+
+                        // 从其他应用切换回图片轮播
+                        if ((mCurrentADContentInfo != null) && (mCurrentADContentInfo.getContentType() == 2)) {
+                            Intent serviceIntent = new Intent(AdActivity.this, AdPlayService.class);
+                            serviceIntent.putExtra("start_app", ContextUtils.get().getPackageName());
+                            startService(serviceIntent);
+                        }
+
+                        // APP广告
+                    } else if (adContentInfo.getContentType() == 2) {
+                        Intent serviceIntent = new Intent(AdActivity.this, AdPlayService.class);
+                        serviceIntent.putExtra("start_app", adContentInfo.getAppCode());
+                        startService(serviceIntent);
+                    }
+                    mCurrentADContentInfo = adContentInfo;
+
                     break;
                 case SHOW_ACTIVE_TIP_FROM_FOOT:
                     if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived()) {
@@ -281,8 +326,9 @@ public class AdActivity extends AppCompatActivity {
 
         YxLog.d(TAG, "adContentPlayString=" + adContentPlayString);
         mAdContentInfoList = adContentPlay.getContentPlayVOList();
-        int size = mAdContentInfoList.size();
-        for (int i = 0; i < size; i++) {
+        mADContentSize = mAdContentInfoList.size();
+        YxLog.d(TAG, "mADContentSize = " + mADContentSize);
+        for (int i = 0; i < mADContentSize; i++) {
             ADContentInfo adContentInfo = mAdContentInfoList.get(i);
             if (adContentInfo.getContentType() == 1) {//ContentType==1表示广告图片
                 Fragment fragment = new AdContentImageFragment();
@@ -306,12 +352,17 @@ public class AdActivity extends AppCompatActivity {
                 mFragmentList.add(fragment);
             }
         }
-        mSize = mFragmentList.size();
+        mFragmentSize = mFragmentList.size();
         if (mExecutorService == null) {
             mExecutorService = Executors.newSingleThreadExecutor();
         }
         initViewPager();
 
+// 初始化移到这里
+        currentPage = AD_PAGE;
+//        mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
+//        mCurrentViewPageIndex = mSharedPreferences.getInt("mCurrentViewPageIndex", 0);
+        isPlay = true;
     }
 
     private ADContentPlay getDefaultADContentPlay() {
@@ -320,52 +371,103 @@ public class AdActivity extends AppCompatActivity {
         ADContentInfo adContentInfo = new ADContentInfo();
         adContentInfo.setFileUrl(AD_DEFAULT);
         adContentInfo.setContentType(1);
-        adContentInfo.setPlayTime(10);
+        adContentInfo.setPlayTime(5);
         List<ADContentInfo> adContentInfoList = new ArrayList<>();
         adContentInfoList.add(adContentInfo);
+
+//  test data
+//        ADContentInfo adContentInfo2 = new ADContentInfo();
+//        adContentInfo2.setFileUrl("https://img.zcool.cn/community/013c81583fa08ea8012060c864c3b7.jpg");
+//        adContentInfo2.setContentType(1);
+//        adContentInfo2.setPlayTime(5);
+//        adContentInfoList.add(adContentInfo2);
+//        ADContentInfo adContentInfo3 = new ADContentInfo();
+//        adContentInfo3.setFileUrl("https://cdn.duitang.com/uploads/item/201501/31/20150131083747_aUhkG.thumb.700_0.jpeg");
+//        adContentInfo3.setContentType(1);
+//        adContentInfo3.setPlayTime(5);
+//        adContentInfoList.add(adContentInfo3);
+//
+//
+//        ADContentInfo adContentInfoApp = new ADContentInfo();
+//        adContentInfoApp.setContentType(2);
+//        adContentInfoApp.setPlayTime(5);
+//        adContentInfoApp.setAppCode("com.ss.android.article.lite");
+//        adContentInfoList.add(adContentInfoApp);
+//        ADContentInfo adContentInfoApp2 = new ADContentInfo();
+//        adContentInfoApp2.setContentType(2);
+//        adContentInfoApp2.setPlayTime(5);
+//        adContentInfoApp2.setAppCode("imprexion.com.filetest");
+//        adContentInfoList.add(adContentInfoApp2);
+//
+//        ADContentInfo adContentInfo4 = new ADContentInfo();
+//        adContentInfo4.setFileUrl("https://img5.duitang.com/uploads/item/201603/31/20160331191943_vfFRT.jpeg");
+//        adContentInfo4.setContentType(1);
+//        adContentInfo4.setPlayTime(5);
+//        adContentInfoList.add(adContentInfo4);
+//
+//
+//        ADContentInfo adContentInfoApp3 = new ADContentInfo();
+//        adContentInfoApp3.setContentType(2);
+//        adContentInfoApp3.setPlayTime(5);
+//        adContentInfoApp3.setAppCode("com.faceunity.p2aart");
+//        adContentInfoList.add(adContentInfoApp3);
+
         adContentPlay.setContentPlayVOList(adContentInfoList);
         return adContentPlay;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);//must store the new intent unless getIntent() will return the old one
+        YxLog.d(TAG, "--- onNewIntent ---");
+
+        isPlay = true;
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         isShowGestureActive = false;
-        currentPage = AD_PAGE;
+//        currentPage = AD_PAGE;
         Tools.hideNavigationBarStatusBar(this, true);
-        mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
+//        mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
+//        mCurrentViewPageIndex = mSharedPreferences.getInt("mCurrentViewPageIndex", 0);
 //        YxLog.d(TAG, "mCurrentPage=" + mPagerPage);
-        isPlay = true;
+//        isPlay = true;
         Runnable runnable = new Runnable() {
             private JSONObject mJsonObject;
+
             @Override
             public void run() {
                 do {
                     Message message = mHandler.obtainMessage();
                     message.what = PLAY_NEXT;
                     mHandler.sendMessage(message);
-                    mCurrentPage = mPagerPage++ % mSize;
+                    mCurrentPage = mPagerPage++ % mADContentSize;
+                    YxLog.d(TAG, "Runnable --- mPagerPage = " + mPagerPage + ", mCurrentPage = " + mCurrentPage);
 //                    YxLog.d(TAG, "mAdContentInfoList size = " + mAdContentInfoList.size());
-//                    YxLog.d(TAG, "mSize = " + mSize);
+//                    YxLog.d(TAG, "mFragmentSize = " + mFragmentSize);
 //                    YxLog.d(TAG, "mCurrentPage = " + mCurrentPage);
-                    if (mCurrentPage >= mSize) {
+                    if (mCurrentPage >= mADContentSize) {
                         mCurrentPage = 0;
                     }
                     if (mJsonObject == null) {
                         mJsonObject = new JSONObject();
                     }
                     long appPlanId;
-                    if (mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getContentType() == 2) {
-//                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAppPlanId());
-                        appPlanId = mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAppPlanId();
+                    if (mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getContentType() == 2) {
+//                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mFragmentSize - 1 ? 0 : mCurrentPage).getAppPlanId());
+                        appPlanId = mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getAppPlanId();
                     } else {
-//                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAdPlanId());
-                        appPlanId = mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getAdPlanId();
+//                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mFragmentSize - 1 ? 0 : mCurrentPage).getAdPlanId());
+                        appPlanId = mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getAdPlanId();
                     }
                     mJsonObject.put("type", "1");
                     YxStatistics.version(1).param("adplanId", appPlanId).report("aiscreen_ad_play");
                     try {
-                        Thread.sleep(mAdContentInfoList.get(mCurrentPage == mSize - 1 ? 0 : mCurrentPage).getPlayTime() * 1000);
+                        Thread.sleep(mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getPlayTime() * 1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -398,8 +500,8 @@ public class AdActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int i) {
-                YxLog.i(TAG, "slide ad content: " + i + "/" + (mSize - 1));
-                YxStatistics.version(1).param("cur", i).param("total", mSize - 1).report("slide_ad_content");
+                YxLog.i(TAG, "slide ad content: " + i + "/" + (mFragmentSize - 1));
+                YxStatistics.version(1).param("cur", i).param("total", mFragmentSize - 1).report("slide_ad_content");
                 mCurrentPosition = i;
             }
 
@@ -408,10 +510,11 @@ public class AdActivity extends AppCompatActivity {
                 if (i != ViewPager.SCROLL_STATE_IDLE) {
                     return;
                 }
-                if (mCurrentPosition == mSize - 1) {
+                if (mCurrentPosition == mFragmentSize - 1) {
 //                    YxLog.d(TAG, "last->first");
                     viewPager.setCurrentItem(0, false);
-                    mPagerPage++;
+//                    mPagerPage++;
+                    mCurrentViewPageIndex++;
                 }
 
             }
@@ -425,12 +528,14 @@ public class AdActivity extends AppCompatActivity {
     protected void onPause() {
         YxLog.i(TAG, "MainActivity onPause");
         super.onPause();
-        isPlay = false;
-        currentPage = OTHER_PAGE;
-        mEditor.putInt("mCurrentPage", mCurrentPage);
-        mEditor.commit();
-        removeActivationFragment();
+//        isPlay = false;
+//        currentPage = OTHER_PAGE;
+//        mEditor.putInt("mCurrentPage", mCurrentPage);
+//        mEditor.putInt("mCurrentViewPageIndex", mCurrentViewPageIndex);
+//        mEditor.commit();
+//        removeActivationFragment();
     }
+
 
     private void removeActivationFragment() {
         if (flGestureActive.getChildCount() != 0) {
@@ -455,6 +560,14 @@ public class AdActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         YxLog.i(TAG, "MainActivity onDestroy");
+
+        isPlay = false;
+        currentPage = OTHER_PAGE;
+        mEditor.putInt("mCurrentPage", mCurrentPage);
+        mEditor.putInt("mCurrentViewPageIndex", mCurrentViewPageIndex);
+        mEditor.commit();
+        removeActivationFragment();
+
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
@@ -561,4 +674,6 @@ public class AdActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.CAMERA}, 1);
         }
     }
+
+
 }
