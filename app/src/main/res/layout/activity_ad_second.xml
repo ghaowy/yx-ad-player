@@ -22,34 +22,40 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:textSize="40sp"
             android:text="性别=" />
 
         <TextView
             android:id="@+id/tv_usersex"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:textSize="40sp"
             android:text="null" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:textSize="40sp"
             android:text="     standhere=" />
 
         <TextView
             android:id="@+id/tv_standhere"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:textSize="40sp"
             android:text="null" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:textSize="40sp"
             android:text="     isActived=" />
 
         <TextView
             android:id="@+id/tv_isactived"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:textSize="40sp"
             android:text="null" />
     </LinearLayout>
 
@@ -57,5 +63,17 @@
         android:id="@+id/fl_gestureActive"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    
+    <Button
+        android:id="@+id/bt_enter"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/button_bg"
+        android:text="保持静止进入"
+        android:textSize="24sp"
+        android:textColor="@color/white"/>
 
 </RelativeLayout>

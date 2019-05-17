@@ -1,17 +1,12 @@
 package com.imprexion.adplayer.main;
 
 import android.Manifest;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,36 +16,32 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.main.activation.GestureActiveOneStepFragment;
-import com.imprexion.adplayer.main.activation.GestureActiveTwoStepFragment;
-import com.imprexion.adplayer.main.content.AdContentImageFragment;
-import com.imprexion.adplayer.main.content.CameraRainFragment;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
-import com.imprexion.adplayer.net.NetPresenter;
-import com.imprexion.adplayer.service.AdPlayService;
+import com.imprexion.adplayer.main.activation.GestureActiveFootPrintFragment;
+import com.imprexion.adplayer.main.activation.GestureActiveOneStepFragment;
+import com.imprexion.adplayer.main.activation.GestureActiveTwoStepFragment;
+import com.imprexion.adplayer.main.content.AdContentImageFragment;
+import com.imprexion.adplayer.main.content.CameraRainFragment;
 import com.imprexion.adplayer.service.TcpClientConnector;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.YxStatistics;
 import com.imprexion.service.tracking.bean.aiscreen;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -66,6 +57,8 @@ public class AdActivity extends AppCompatActivity {
     TextView tvIsactived;
     @BindView(R.id.fl_gestureActive)
     FrameLayout flGestureActive;
+    @BindView(R.id.bt_enter)
+    Button btEnter;
 
     private List<Fragment> mFragmentList;
     private FragmentPagerAdapter mFragmentPagerAdapter;
@@ -76,7 +69,8 @@ public class AdActivity extends AppCompatActivity {
     private final static int PLAY_NEXT = 1;
     private final static int SHOW_ACTIVE_TIP_FROM_FOOT = 2;
     private final static int SHOW_ACTIVE_TIP_FROM_WAVE_HAND = 3;
-    private final static int SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY = 300;
+    private final static int SHOW_ACTIVE_TIP_FOOTPRINT = 4;//提示站对脚印
+    private final static int SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY = 50;
     private static final int ACTIVED = 5;
     private static final int REMOVE_GESTURE_ACTIVE = 6;
     private static final int START_AD_FROM_USER_DETECT = 7;
@@ -94,17 +88,15 @@ public class AdActivity extends AppCompatActivity {
     private int mCurrentPage;
     private boolean isShowGestureActive;
     private boolean isSendShowGestureActive;
-    private ServiceConnection mConnection;
-    private NetPresenter mNetPresenter;
     private boolean isLaunchFromUserDetect;////backPressed,userDetect.
     private TcpClientConnector mTcpClientConnector = TcpClientConnector.getInstance();
 
     private GestureActiveTwoStepFragment mGestureActiveTwoStepFragment;
     private GestureActiveOneStepFragment mGestureActiveOneStepFragment;
-    private Handler mHandler = new Handler() {
+    private GestureActiveFootPrintFragment mGestureActiveFootPrintFragment;
+    private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+        public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case PLAY_NEXT:
                     YxLog.d(TAG, "main mCurrentPage=" + mCurrentPage);
@@ -121,10 +113,10 @@ public class AdActivity extends AppCompatActivity {
                     }
                     isSendShowGestureActive = false;
                     break;
-                case SHOW_ACTIVE_TIP_FROM_WAVE_HAND:
-                    if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived()) {
+                case SHOW_ACTIVE_TIP_FOOTPRINT:
+                    if (mTrackingMessage.getUsrsex() != 0 && mTrackingMessage.isStandHere()) {
                         isShowGestureActive = true;
-                        showGestureActiveOneStepView();
+                        showGestureActiveFootPrintView();
                     }
                     isSendShowGestureActive = false;
                     break;
@@ -138,19 +130,9 @@ public class AdActivity extends AppCompatActivity {
                     break;
                 case REMOVE_GESTURE_ACTIVE:
                     if (mTrackingMessage.getUsrsex() == 0) {
-                        if (flGestureActive.getChildCount() != 0) {
-                            FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
-                            if (mGestureActiveOneStepFragment != null) {
-                                mTransaction.remove(mGestureActiveOneStepFragment);
-                            }
-                            if (mGestureActiveTwoStepFragment != null) {
-                                mTransaction.remove(mGestureActiveTwoStepFragment);
-                            }
-                            mTransaction.commitAllowingStateLoss();
-                            isShowGestureActive = false;
-                            mGestureActiveTwoStepFragment = null;
-                            mGestureActiveOneStepFragment = null;
-                        }
+                        removeActivationFragment();
+                    } else if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isStandHere()) {
+                        removeActivationFragment();
                     }
                     break;
                 case START_AD_FROM_USER_DETECT:
@@ -158,18 +140,13 @@ public class AdActivity extends AppCompatActivity {
                     break;
                 default:
                     break;
+
             }
+            return false;
         }
-    };
+    });
 
     public void startAIScreenApp() {
-//        ComponentName componentName = new ComponentName("com.imprexion.aiscreenold", "com.imprexion.aiscreenold.main.MainActivity");
-//        try {
-//            startActivity(new Intent().setComponent(componentName));
-//        } catch (Exception e) {
-//            YxLog.d(TAG, "start AIScreen fail");
-//            e.printStackTrace();
-//        }
         YxLog.i(TAG, "goto main page");
         YxStatistics.version(1).param("way", "wave hand").report("goto_main_page");
         finish();
@@ -183,6 +160,15 @@ public class AdActivity extends AppCompatActivity {
             YxLog.d(TAG, "add two gestureFragment");
             mGestureActiveTwoStepFragment = new GestureActiveTwoStepFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveTwoStepFragment).commitAllowingStateLoss();
+        }
+    }
+
+    private void showGestureActiveFootPrintView() {
+        YxLog.d(TAG, "showGestureActiveFootPrintView");
+        if (mGestureActiveFootPrintFragment == null && flGestureActive.getChildCount() == 0) {
+            YxLog.d(TAG, "add footprint gestureFragment");
+            mGestureActiveFootPrintFragment = new GestureActiveFootPrintFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveFootPrintFragment).commitAllowingStateLoss();
         }
     }
 
@@ -207,7 +193,6 @@ public class AdActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         getPermission();
         EventBus.getDefault().register(this);
-//        bindAISService();
         setSocketListener();
 //        YxLog.init(this, true, false);
 //        YxLog.setVersion(Tools.getVersionName(this));
@@ -216,7 +201,16 @@ public class AdActivity extends AppCompatActivity {
             isLaunchFromUserDetect = true;
         }
         initData();
+        setOnClickListener();
+    }
 
+    private void setOnClickListener() {
+        btEnter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startAIScreenApp();
+            }
+        });
         //test
         tvUsersex.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,7 +224,6 @@ public class AdActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (mTrackingMessage == null) {
                     mTrackingMessage = new TrackingMessage();
-
                 }
                 mTrackingMessage.setActived(false);
                 mTrackingMessage.setUsrsex(1);
@@ -280,7 +273,6 @@ public class AdActivity extends AppCompatActivity {
                     YxLog.d(TAG, "adContentPlayString next is null");
                     adContentPlay = getDefaultADContentPlay();
                 }
-
             }
         } else {
             YxLog.d(TAG, "adContentPlayString current is null");
@@ -322,7 +314,6 @@ public class AdActivity extends AppCompatActivity {
 
     }
 
-    @NonNull
     private ADContentPlay getDefaultADContentPlay() {
         ADContentPlay adContentPlay;
         adContentPlay = new ADContentPlay();
@@ -342,14 +333,11 @@ public class AdActivity extends AppCompatActivity {
         isShowGestureActive = false;
         currentPage = AD_PAGE;
         Tools.hideNavigationBarStatusBar(this, true);
-//        initViewPager();
         mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
 //        YxLog.d(TAG, "mCurrentPage=" + mPagerPage);
         isPlay = true;
         Runnable runnable = new Runnable() {
-
             private JSONObject mJsonObject;
-
             @Override
             public void run() {
                 do {
@@ -431,7 +419,6 @@ public class AdActivity extends AppCompatActivity {
         viewPager.setAdapter(mFragmentStatePagerAdapter);
         viewPager.setOnPageChangeListener(mOnPageChangeListener);
         viewPager.setOffscreenPageLimit(2);
-
     }
 
     @Override
@@ -442,6 +429,10 @@ public class AdActivity extends AppCompatActivity {
         currentPage = OTHER_PAGE;
         mEditor.putInt("mCurrentPage", mCurrentPage);
         mEditor.commit();
+        removeActivationFragment();
+    }
+
+    private void removeActivationFragment() {
         if (flGestureActive.getChildCount() != 0) {
             FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
             if (mGestureActiveOneStepFragment != null) {
@@ -450,10 +441,14 @@ public class AdActivity extends AppCompatActivity {
             if (mGestureActiveTwoStepFragment != null) {
                 mTransaction.remove(mGestureActiveTwoStepFragment);
             }
+            if (mGestureActiveFootPrintFragment != null) {
+                mTransaction.remove(mGestureActiveFootPrintFragment);
+            }
             mTransaction.commitAllowingStateLoss();
             isShowGestureActive = false;
             mGestureActiveTwoStepFragment = null;
             mGestureActiveOneStepFragment = null;
+            mGestureActiveFootPrintFragment = null;
         }
     }
 
@@ -461,63 +456,7 @@ public class AdActivity extends AppCompatActivity {
     protected void onDestroy() {
         YxLog.i(TAG, "MainActivity onDestroy");
         super.onDestroy();
-//        unbindService(mConnection);
         EventBus.getDefault().unregister(this);
-    }
-
-    private void bindAISService() {
-        mConnection = new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName name, IBinder service) {
-                YxLog.d(TAG, "onServiceConnected");
-                AdPlayService.AISBinder aisBinder = (AdPlayService.AISBinder) service;
-                aisBinder.getService().setContentInfoToActivity(new AdPlayService.IContentInfoCallBack() {
-                    @Override
-                    public void setContentInfo(String content) {
-                        pushMessage(content);
-                    }
-                });
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName name) {
-
-            }
-        };
-        Intent intent = new Intent(this, AdPlayService.class);
-        intent.putExtra("src", 0);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        startService(intent);
-
-    }
-
-    private void pushMessage(String content) {
-        YxLog.d(TAG, "ContentInfo=" + content);
-        ADContentPlay adContentPlay = JSON.parseObject(content, ADContentPlay.class);
-        if (mNetPresenter == null) {
-            mNetPresenter = new NetPresenter();
-        }
-        mNetPresenter.onADCallback(adContentPlay);
-        if (mSharedPreferences == null) {
-            mSharedPreferences = getSharedPreferences("AIScreenSP", Context.MODE_PRIVATE);
-            mEditor = mSharedPreferences.edit();
-        }
-
-//        YxLog.d(TAG, "adContentPlay.getPlayDate()=" + adContentPlay.getPlayDate());
-//        YxLog.d(TAG, "getCurrentDate()=" + Tools.getCurrentDate("yyyy-MM-dd"));
-//        YxLog.d(TAG, "adContentPlay=" + JSON.toJSONString(adContentPlay));
-        if (adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
-            mEditor.putString(AD_CURRENT, content);
-            mEditor.commit();
-            if (adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
-                initData();
-//                viewPager.notifyAll();
-                mFragmentStatePagerAdapter.notifyDataSetChanged();
-            }
-        } else {
-            mEditor.putString(AD_NEXT, content);
-            mEditor.commit();
-        }
     }
 
     private void setSocketListener() {
@@ -526,19 +465,10 @@ public class AdActivity extends AppCompatActivity {
         mTcpClientConnector.setOnConnectListener(new TcpClientConnector.ConnectListener() {
             @Override
             public void onReceiveData(aiscreen messageForAIScreen) {
-                String mData = "sex=" + messageForAIScreen.getUsrSex() + " ;HavePerson=" + messageForAIScreen.getStandHere() + " ;IsActived=" + messageForAIScreen.getIsActived();
-//                YxLog.d(TAG, "sex=" + messageForAIScreen.getUsrsex());
-//                YxLog.d(TAG, "HavePerson=" + messageForAIScreen.getStandHere());
-//                YxLog.d(TAG, "IsActived=" + messageForAIScreen.getIsActived());
                 YxLog.i(TAG, "receive tracking info");
                 dispatchMessage(messageForAIScreen);
             }
         });
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
     }
 
     private void dispatchMessage(aiscreen messageForAIScreen) {
@@ -563,31 +493,49 @@ public class AdActivity extends AppCompatActivity {
             mHandler.sendMessageDelayed(message, 500);
         }
 
-        //backPress启动，没人三秒后 恢复为，检测到没有人启动
+        //backPress启动，没人2秒后 恢复为检测到没有人启动
         if (mTrackingMessage.getUsrsex() == 0 && !isLaunchFromUserDetect) {
             Message message = mHandler.obtainMessage();
             message.what = START_AD_FROM_USER_DETECT;
-            mHandler.sendMessageDelayed(message, 3000);
+            mHandler.sendMessageDelayed(message, 2000);
         }
 
-        //没人了3s,消除小象动画
+        //没人了2s,消除小象动画
         if (mTrackingMessage.getUsrsex() == 0 && isShowGestureActive) {
             Message message = mHandler.obtainMessage();
             message.what = REMOVE_GESTURE_ACTIVE;
-            mHandler.sendMessageDelayed(message, 3000);
+            mHandler.sendMessageDelayed(message, 2000);
         }
 
-        //识别到有人但没有激活屏幕。(即时)后显示小象动画
-        if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived() && !isShowGestureActive) {
+        //脚印站对位置了，消除脚印动画
+        if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isStandHere() && isShowGestureActive) {
+            Message message = mHandler.obtainMessage();
+            message.what = REMOVE_GESTURE_ACTIVE;
+//            mHandler.sendMessageDelayed(message, 50);
+            mHandler.sendMessage(message);
+        }
+
+//        //识别到有人但没有激活屏幕。(即时)后显示小象动画
+//        if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived() && !isShowGestureActive) {
+//            if (!isSendShowGestureActive) {
+//                isSendShowGestureActive = true;
+//                Message message = mHandler.obtainMessage();
+//                message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
+//                mHandler.sendMessageDelayed(message, SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY);
+//            }
+//        }
+
+        //识别到有人但没有站对位置。(即时)后显示站对位置提示动画
+        if (mTrackingMessage.getUsrsex() != 0 && mTrackingMessage.isStandHere() && !isShowGestureActive) {
             if (!isSendShowGestureActive) {
                 isSendShowGestureActive = true;
                 Message message = mHandler.obtainMessage();
-                message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
+                message.what = SHOW_ACTIVE_TIP_FOOTPRINT;
                 mHandler.sendMessageDelayed(message, SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY);
             }
         }
         //发送tracking消息给小象。小象根据消息刺激执行下一步动画
-        EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
+//        EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
 
     }
 
