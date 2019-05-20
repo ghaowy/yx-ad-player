@@ -194,6 +194,13 @@ public class AdActivity extends AppCompatActivity {
     public void startAIScreenApp() {
         YxLog.i(TAG, "goto main page");
         YxStatistics.version(1).param("way", "wave hand").report("goto_main_page");
+
+        // 添加启动主界面参数，为了配合主界面显示引导动画逻辑 2019-5-20 hardy
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        homeIntent.putExtra("message_from", "Ad_Player");
+        startActivity(homeIntent);
+
         finish();
     }
 
