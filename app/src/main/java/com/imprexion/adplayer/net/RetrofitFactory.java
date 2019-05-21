@@ -10,6 +10,7 @@ public class RetrofitFactory {
     private static Retrofit mRetrofitAD;
     private static final String baseurl = "https://free-api.heweather.com/s6/weather/";
     private static final String baseurlAdCallback = "http://pro.imprexion.cn/android/gateway/adcarousel/";//official
+//    private static final String baseurlAdCallback = "http://debug.imprexion.cn/android/gateway/adcarousel/";//debug
 //    private static final String baseurlAdCallback = "http://test.imprexion.cn/android/gateway/adcarousel/";//test
 
     public RetrofitFactory() {

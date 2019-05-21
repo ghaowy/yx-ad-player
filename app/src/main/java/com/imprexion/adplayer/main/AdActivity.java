@@ -1,26 +1,23 @@
 package com.imprexion.adplayer.main;
 
-import android.Manifest;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -42,9 +39,14 @@ import com.imprexion.library.YxLog;
 import com.imprexion.library.YxStatistics;
 import com.imprexion.library.util.ContextUtils;
 import com.imprexion.service.tracking.bean.aiscreen;
+import com.opensource.svgaplayer.SVGADrawable;
+import com.opensource.svgaplayer.SVGAImageView;
+import com.opensource.svgaplayer.SVGAParser;
+import com.opensource.svgaplayer.SVGAVideoEntity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +69,9 @@ public class AdActivity extends AppCompatActivity {
     @BindView(R.id.fl_gestureActive)
     FrameLayout flGestureActive;
     @BindView(R.id.bt_enter)
-    Button btEnter;
+    SVGAImageView btEnter;
+    @BindView(R.id.tv_hands_active_text)
+    TextView tvHandsActiveText;
 
     private List<Fragment> mFragmentList;
     private FragmentPagerAdapter mFragmentPagerAdapter;
@@ -106,12 +110,13 @@ public class AdActivity extends AppCompatActivity {
 
     private boolean isShowGestureActive;
     private boolean isSendShowGestureActive;
-    private boolean isLaunchFromUserDetect;////backPressed,userDetect.
+    private boolean isLaunchFromUserDetect;//backPressed,userDetect.
     private TcpClientConnector mTcpClientConnector = TcpClientConnector.getInstance();
 
     private GestureActiveTwoStepFragment mGestureActiveTwoStepFragment;
     private GestureActiveOneStepFragment mGestureActiveOneStepFragment;
     private GestureActiveFootPrintFragment mGestureActiveFootPrintFragment;
+    private ObjectAnimator mHandsActiveAnimator;
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -176,8 +181,11 @@ public class AdActivity extends AppCompatActivity {
                 case REMOVE_GESTURE_ACTIVE:
                     if (mTrackingMessage.getUsrsex() == 0) {
                         removeActivationFragment();
+                        Tools.fadeOut(tvHandsActiveText, 500);
                     } else if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isStandHere()) {
                         removeActivationFragment();
+                        Tools.fadeIn(tvHandsActiveText, 500);
+                        startHandsActiveTextAnimation();
                     }
                     break;
                 case START_AD_FROM_USER_DETECT:
@@ -190,6 +198,7 @@ public class AdActivity extends AppCompatActivity {
             return false;
         }
     });
+    private SVGAParser mParser = new SVGAParser(this);
 
     public void startAIScreenApp() {
         YxLog.i(TAG, "goto main page");
@@ -198,8 +207,10 @@ public class AdActivity extends AppCompatActivity {
         // 添加启动主界面参数，为了配合主界面显示引导动画逻辑 2019-5-20 hardy
         Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);
         homeIntent.addCategory(Intent.CATEGORY_HOME);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(ContextUtils.get(),
+                R.anim.right_in, R.anim.left_out);
         homeIntent.putExtra("message_from", "Ad_Player");
-        startActivity(homeIntent);
+        startActivity(homeIntent, options.toBundle());
 
         finish();
     }
@@ -243,12 +254,10 @@ public class AdActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ad_second);
         ButterKnife.bind(this);
-        getPermission();
+        Tools.getPermission(this, this);
         EventBus.getDefault().register(this);
         setSocketListener();
-//        YxLog.init(this, true, false);
-//        YxLog.setVersion(Tools.getVersionName(this));
-//        YxLog.setPrettyFormatEnable(false);
+        mHandsActiveAnimator = ObjectAnimator.ofFloat(tvHandsActiveText, "translationX", 0, -40);
         if (getIntent() != null && getIntent().getExtras() != null && "userDetect".equals(getIntent().getExtras().getString("launchType"))) {
             isLaunchFromUserDetect = true;
         }
@@ -261,6 +270,48 @@ public class AdActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startAIScreenApp();
+            }
+        });
+        btEnter.setOnHoverListener(new View.OnHoverListener() {
+            @Override
+            public boolean onHover(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_HOVER_ENTER:
+                        mParser.parse("hands_active_ing.svga", new SVGAParser.ParseCompletion() {
+                            @Override
+                            public void onComplete(@NotNull SVGAVideoEntity svgaVideoEntity) {
+                                SVGADrawable svgaDrawable = new SVGADrawable(svgaVideoEntity);
+                                btEnter.setImageDrawable(svgaDrawable);
+                                btEnter.startAnimation();
+                            }
+
+                            @Override
+                            public void onError() {
+
+                            }
+                        });
+                        break;
+                    case MotionEvent.ACTION_HOVER_EXIT:
+                        mParser.parse("hands_active_start.svga", new SVGAParser.ParseCompletion() {
+                            @Override
+                            public void onComplete(@NotNull SVGAVideoEntity svgaVideoEntity) {
+                                SVGADrawable svgaDrawable = new SVGADrawable(svgaVideoEntity);
+                                btEnter.setImageDrawable(svgaDrawable);
+                                btEnter.setLoops(-1);
+                                btEnter.startAnimation();
+                            }
+
+                            @Override
+                            public void onError() {
+
+                            }
+                        });
+                        break;
+                    default:
+                        break;
+                }
+
+                return false;
             }
         });
         //test
@@ -605,12 +656,18 @@ public class AdActivity extends AppCompatActivity {
                 + " ;isActived=" + mTrackingMessage.isActived());
         YxLog.d(TAG, "isShowActiveTip=" + isShowGestureActive);
 
-        //激活屏幕进入主界面
-        if (mTrackingMessage.getUsrsex() != 0 && currentPage == AD_PAGE && mTrackingMessage.isActived() &&
-                !isShowGestureActive && isLaunchFromUserDetect) {
-            Message message = mHandler.obtainMessage();
-            message.what = ACTIVED;
-            mHandler.sendMessageDelayed(message, 500);
+//        //激活屏幕进入主界面
+//        if (mTrackingMessage.getUsrsex() != 0 && currentPage == AD_PAGE && mTrackingMessage.isActived() &&
+//                !isShowGestureActive && isLaunchFromUserDetect) {
+//            Message message = mHandler.obtainMessage();
+//            message.what = ACTIVED;
+//            mHandler.sendMessageDelayed(message, 500);
+//        }
+
+        //有人且站对位置,显示“请把手移到这里试试”
+        if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isStandHere()) {
+            Tools.fadeIn(tvHandsActiveText, 500);
+            startHandsActiveTextAnimation();
         }
 
         //backPress启动，没人2秒后 恢复为检测到没有人启动
@@ -631,8 +688,8 @@ public class AdActivity extends AppCompatActivity {
         if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isStandHere() && isShowGestureActive) {
             Message message = mHandler.obtainMessage();
             message.what = REMOVE_GESTURE_ACTIVE;
-//            mHandler.sendMessageDelayed(message, 50);
-            mHandler.sendMessage(message);
+            mHandler.sendMessageDelayed(message, 600);
+//            mHandler.sendMessage(message);
         }
 
 //        //识别到有人但没有激活屏幕。(即时)后显示小象动画
@@ -647,6 +704,7 @@ public class AdActivity extends AppCompatActivity {
 
         //识别到有人但没有站对位置。(即时)后显示站对位置提示动画
         if (mTrackingMessage.getUsrsex() != 0 && mTrackingMessage.isStandHere() && !isShowGestureActive) {
+            Tools.fadeOut(tvHandsActiveText, 500);
             if (!isSendShowGestureActive) {
                 isSendShowGestureActive = true;
                 Message message = mHandler.obtainMessage();
@@ -655,7 +713,7 @@ public class AdActivity extends AppCompatActivity {
             }
         }
         //发送tracking消息给小象。小象根据消息刺激执行下一步动画
-//        EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
+        EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
 
     }
 
@@ -669,18 +727,13 @@ public class AdActivity extends AppCompatActivity {
         }
     }
 
-    private void getPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA}, 1);
+    private void startHandsActiveTextAnimation() {
+        if (!mHandsActiveAnimator.isRunning()) {
+            mHandsActiveAnimator.setDuration(800);
+            mHandsActiveAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            mHandsActiveAnimator.setRepeatMode(ValueAnimator.REVERSE);
+            mHandsActiveAnimator.start();
         }
     }
-
 
 }

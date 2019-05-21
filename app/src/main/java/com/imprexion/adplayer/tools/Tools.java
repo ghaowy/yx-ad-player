@@ -1,5 +1,6 @@
 package com.imprexion.adplayer.tools;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -13,8 +14,12 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -155,5 +160,36 @@ public class Tools {
 
     public static int dpToPx(int dp, Context context) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_PX, dp, context.getResources().getDisplayMetrics());
+    }
+
+    public static void fadeIn(View view, int duration) {
+        Animation animation = new AlphaAnimation(0f, 1f);
+        animation.setDuration(duration);
+        if (view != null) {
+            view.setVisibility(View.VISIBLE);
+            view.startAnimation(animation);
+        }
+    }
+
+    public static void fadeOut(View view, int duration) {
+        Animation animation = new AlphaAnimation(1f, 0f);
+        animation.setDuration(duration);
+        if (view != null) {
+            view.startAnimation(animation);
+            view.setVisibility(View.GONE);
+        }
+    }
+
+    public static void getPermission(Context context, Activity activity) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.CAMERA}, 1);
+        }
     }
 }

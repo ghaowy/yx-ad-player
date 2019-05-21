@@ -5,6 +5,7 @@
     <solid android:color="@color/guide_text_bg_color" />
     <corners
         android:bottomLeftRadius="80dp"
+        android:bottomRightRadius="80dp"
         android:topLeftRadius="80dp"
         android:topRightRadius="80dp" />
 
