@@ -25,6 +25,8 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".service.AdPlayService" />
+
         <receiver android:name=".component.ADBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.imprexion.push.MESSAGE" />

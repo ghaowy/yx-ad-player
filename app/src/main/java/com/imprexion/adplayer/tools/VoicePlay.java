@@ -1,11 +1,11 @@
 package com.imprexion.adplayer.tools;
 
 import android.content.Context;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 
 import com.imprexion.adplayer.R;
+import com.imprexion.adplayer.main.AdActivity;
 import com.imprexion.library.YxLog;
 
 import java.io.IOException;
@@ -20,11 +20,13 @@ public class VoicePlay {
     private int mRainVoiceId = R.raw.rainvoice_backgroud;
     private SoundPool mSoundPool;
     private int mSoundId;
+    private int mSoundIdStandFootprint;
 
     public VoicePlay(Context context, int type) {
         mContext = context;
         if (type == SOUNDPOOL) {
-            mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 5);
+            mSoundPool = ((AdActivity) context).getSoundPool();
+            mSoundIdStandFootprint = ((AdActivity) context).getSoundIdStandFootprint();
         }
     }
 
@@ -91,19 +93,13 @@ public class VoicePlay {
     }
 
     public void playVoiceBySoundpoolOnce(int soundId) {//播放声音一次  不循环
-        mSoundId = mSoundPool.load(mContext, soundId, 1);
-        if (mSoundId == 0) {
-            YxLog.d(TAG, "soundpool 加载失败");
-            return;
-        } else {
-            YxLog.d(TAG, "soundId =" + mSoundId);
-        }
-        mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
-            @Override
-            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
-                YxLog.d(TAG, "soundPool load complete");
-                mSoundPool.play(mSoundId, 1f, 1f, 0, 0, 1);
+        if (soundId == mContext.getResources().getIdentifier("please_stand_footprint", "raw", mContext.getPackageName())) {
+            if (mSoundIdStandFootprint != 0) {
+                YxLog.d(TAG, "soundpool play please_stand_footprint.");
+                mSoundPool.play(mSoundIdStandFootprint, 1, 1, 0, 0, 1);
+            } else {
+                YxLog.d(TAG, "soundpool mSoundIdStandFootprint 加载失败");
             }
-        });
+        }
     }
 }
