@@ -1,10 +1,6 @@
 package com.imprexion.adplayer.main.activation;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,10 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -27,7 +20,6 @@ import com.imprexion.adplayer.bean.TrackingMessage;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.adplayer.tools.VoicePlay;
 import com.imprexion.library.YxLog;
-import com.imprexion.library.YxStatistics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -82,7 +74,7 @@ public class GestureActiveFootPrintFragment extends Fragment {
         mUnbinder = ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
 //        mVoicePlay = new VoicePlay(getContext(), VoicePlay.MEDIAPLAYER);
-        mVoicePlay = new VoicePlay(getContext(), VoicePlay.SOUNDPOOL);
+        mVoicePlay = new VoicePlay(getActivity(), VoicePlay.SOUNDPOOL);
 //        mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, Tools.dpToPx(400, getContext()));
         mFootprintRotateObjAnimator = ObjectAnimator.ofFloat(ivFootprint, "rotationX", 0, Tools.dpToPx(30, getContext()), 0);
         mFloorExitObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 0, Tools.dpToPx(800, getContext()));
@@ -170,9 +162,9 @@ public class GestureActiveFootPrintFragment extends Fragment {
         YxLog.d(TAG, "onDestroy");
         super.onDestroy();
         mUnbinder.unbind();
-        if (mVoicePlay != null) {
-            mVoicePlay.stop();
-        }
+//        if (mVoicePlay != null) {
+//            mVoicePlay.stop();
+//        }
 //        EventBus.getDefault().unregister(this);
     }
 

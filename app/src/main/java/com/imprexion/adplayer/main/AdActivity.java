@@ -5,6 +5,8 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -107,6 +109,17 @@ public class AdActivity extends AppCompatActivity {
     private int mCurrentViewPageIndex;
     // 当前广告数据
     private ADContentInfo mCurrentADContentInfo;
+
+    public SoundPool getSoundPool() {
+        return mSoundPool;
+    }
+
+    public int getSoundIdStandFootprint() {
+        return mSoundIdStandFootprint;
+    }
+
+    private SoundPool mSoundPool;
+    private int mSoundIdStandFootprint;
 
     private boolean isShowGestureActive;
     private boolean isSendShowGestureActive;
@@ -261,6 +274,8 @@ public class AdActivity extends AppCompatActivity {
         if (getIntent() != null && getIntent().getExtras() != null && "userDetect".equals(getIntent().getExtras().getString("launchType"))) {
             isLaunchFromUserDetect = true;
         }
+        mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 5);
+        mSoundIdStandFootprint = mSoundPool.load(this, R.raw.please_stand_footprint, 1);
         initData();
         setOnClickListener();
     }
@@ -277,7 +292,7 @@ public class AdActivity extends AppCompatActivity {
             public boolean onHover(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_HOVER_ENTER:
-                        mParser.parse("hands_active_ing.svga", new SVGAParser.ParseCompletion() {
+                        mParser.parse("hands_active_ing2.svga", new SVGAParser.ParseCompletion() {
                             @Override
                             public void onComplete(@NotNull SVGAVideoEntity svgaVideoEntity) {
                                 SVGADrawable svgaDrawable = new SVGADrawable(svgaVideoEntity);
@@ -319,19 +334,21 @@ public class AdActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                showGestureActiveOneStepView();
-                showGestureActiveTowStepView();
+//                showGestureActiveTowStepView();
+                showGestureActiveFootPrintView();
             }
         });
         tvStandhere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mTrackingMessage == null) {
-                    mTrackingMessage = new TrackingMessage();
-                }
-                mTrackingMessage.setActived(false);
-                mTrackingMessage.setUsrsex(1);
-                mTrackingMessage.setStandHere(false);
-                EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
+//                if (mTrackingMessage == null) {
+//                    mTrackingMessage = new TrackingMessage();
+//                }
+//                mTrackingMessage.setActived(false);
+//                mTrackingMessage.setUsrsex(1);
+//                mTrackingMessage.setStandHere(false);
+//                EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
+                removeActivationFragment();
             }
         });
         tvIsactived.setOnClickListener(new View.OnClickListener() {
@@ -626,6 +643,10 @@ public class AdActivity extends AppCompatActivity {
         mEditor.commit();
         removeActivationFragment();
 
+        if (mSoundPool != null) {
+            mSoundPool.stop(mSoundIdStandFootprint);
+            mSoundPool.release();
+        }
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }

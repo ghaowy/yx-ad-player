@@ -9,33 +9,4 @@
     <string name="guide_tips_3">请挥右手试试~</string>
     <string name="guide_tips_4">抬起手，把手移到这里试试~</string>
 
-
-    <string-array name="tempretures">
-        <item>&#xe646;</item>
-        <item>&#xe638;</item>
-        <item>&#xe63e;</item>
-        <item>&#xe63d;</item>
-        <item>&#xe63a;</item>
-        <item>&#xe641;</item>
-        <item>&#xe63b;</item>
-        <item>&#xe63c;</item>
-        <item>&#xe643;</item>
-        <item>&#xe63f;</item>
-    </string-array>
-
-    <string-array name="weather_icon">
-        <!--晴-->
-        <item>&#xe644;</item>
-        <!--雨-->
-        <item>&#xe651;</item>
-        <!--<item>&#xe63f;</item>-->
-        <!--阴天-->
-        <item>&#xe652;</item>
-        <!--雪-->
-        <item>&#xe653;</item>
-        <!--多云-->
-        <item>&#xe654;</item>
-    </string-array>
-
-    <!-- TODO: Remove or change this placeholder text -->
 </resources>
