@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -29,6 +30,7 @@ import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
+import com.imprexion.adplayer.component.ADBroadcastReceiverForInteraction;
 import com.imprexion.adplayer.main.activation.GestureActiveFootPrintFragment;
 import com.imprexion.adplayer.main.activation.GestureActiveOneStepFragment;
 import com.imprexion.adplayer.main.activation.GestureActiveTwoStepFragment;
@@ -37,7 +39,6 @@ import com.imprexion.adplayer.main.content.CameraRainFragment;
 import com.imprexion.adplayer.service.AdPlayService;
 import com.imprexion.adplayer.service.TcpClientConnector;
 import com.imprexion.adplayer.tools.Tools;
-import com.imprexion.adplayer.tools.VoicePlay;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.YxStatistics;
 import com.imprexion.library.util.ContextUtils;
@@ -97,6 +98,7 @@ public class AdActivity extends AppCompatActivity {
     private static final String AD_NEXT = "ADContentNext";
     public final static String AD_DEFAULT = "adDefalt";
     private boolean isPlay = true;
+    private boolean isInteractionMode = false;
     private int mCurrentPosition;
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor mEditor;
@@ -110,6 +112,10 @@ public class AdActivity extends AppCompatActivity {
     private int mCurrentViewPageIndex;
     // 当前广告数据
     private ADContentInfo mCurrentADContentInfo;
+    private ADBroadcastReceiverForInteraction mADBroadcastReceiverForInteraction;
+    //接收进入交互模式消息
+    private ADBroadcastReceiverForInteraction.IInteractionInfo mIInteractionInfo;
+    private boolean isAppPlay;
 
     public SoundPool getSoundPool() {
         return mSoundPool;
@@ -143,34 +149,26 @@ public class AdActivity extends AppCompatActivity {
             switch (msg.what) {
                 case PLAY_NEXT:
                     YxLog.d(TAG, "handleMessage --- mCurrentPage = " + mCurrentPage);
-
                     ADContentInfo adContentInfo = mAdContentInfoList.get(mCurrentPage);
                     // 图片广告
                     if (adContentInfo.getContentType() == 1) {
+                        isAppPlay = false;
                         YxLog.d(TAG, "handleMessage --- mCurrentViewPageIndex = " + mCurrentViewPageIndex);
-
-//                        // 图片循环播放， 第0个不播，否则会反向跳转
-//                        if (mCurrentViewPageIndex >= mFragmentSize - 1) {
-//                            mCurrentViewPageIndex = 0;
-//                        }
-
                         viewPager.setCurrentItem(mCurrentViewPageIndex++);
-
                         // 从其他应用切换回图片轮播
                         if ((mCurrentADContentInfo != null) && (mCurrentADContentInfo.getContentType() == 2)) {
                             Intent serviceIntent = new Intent(AdActivity.this, AdPlayService.class);
                             serviceIntent.putExtra("start_app", ContextUtils.get().getPackageName());
                             startService(serviceIntent);
                         }
-
                         // APP广告
                     } else if (adContentInfo.getContentType() == 2) {
+                        isAppPlay = true;
                         Intent serviceIntent = new Intent(AdActivity.this, AdPlayService.class);
                         serviceIntent.putExtra("start_app", adContentInfo.getAppCode());
                         startService(serviceIntent);
                     }
                     mCurrentADContentInfo = adContentInfo;
-
                     break;
                 case SHOW_ACTIVE_TIP_FROM_FOOT:
                     if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived()) {
@@ -214,7 +212,6 @@ public class AdActivity extends AppCompatActivity {
                     break;
                 default:
                     break;
-
             }
             return false;
         }
@@ -242,6 +239,28 @@ public class AdActivity extends AppCompatActivity {
 //        mSoundIdPutUpYourHand = mSoundPool.load(this, R.raw.please_put_up_your_hands, 1);
         initData();
         setOnClickListener();
+        registerBroadcastReceiver();
+        mIInteractionInfo = new ADBroadcastReceiverForInteraction.IInteractionInfo() {
+            @Override
+            public void noticeIntoInteractionMode() {
+                YxLog.i(TAG, "noticeIntoInteractionMode");
+                isInteractionMode = true;
+            }
+        };
+        mADBroadcastReceiverForInteraction.setIInteractionInfo(mIInteractionInfo);
+        // 初始化移到这里
+        currentPage = AD_PAGE;
+        mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
+        mCurrentViewPageIndex = mSharedPreferences.getInt("mCurrentViewPageIndex", 0);
+        isPlay = true;
+    }
+
+    private void registerBroadcastReceiver() {
+        mADBroadcastReceiverForInteraction = new ADBroadcastReceiverForInteraction();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ADBroadcastReceiverForInteraction.EVENT_ACTION_GESTURE);
+        intentFilter.addAction(ADBroadcastReceiverForInteraction.EVENT_ACTION_TOUCH);
+        registerReceiver(mADBroadcastReceiverForInteraction, intentFilter);
     }
 
     private void setOnClickListener() {
@@ -289,7 +308,6 @@ public class AdActivity extends AppCompatActivity {
                     default:
                         break;
                 }
-
                 return false;
             }
         });
@@ -297,13 +315,15 @@ public class AdActivity extends AppCompatActivity {
         tvUsersex.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showGestureActiveFootPrintView();
+//                showGestureActiveFootPrintView();
+                isInteractionMode = true;
             }
         });
         tvStandhere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeActivationFragment();
+//                removeActivationFragment();
+                isInteractionMode = false;
             }
         });
         tvIsactived.setOnClickListener(new View.OnClickListener() {
@@ -386,12 +406,6 @@ public class AdActivity extends AppCompatActivity {
             mExecutorService = Executors.newSingleThreadExecutor();
         }
         initViewPager();
-
-// 初始化移到这里
-        currentPage = AD_PAGE;
-//        mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
-//        mCurrentViewPageIndex = mSharedPreferences.getInt("mCurrentViewPageIndex", 0);
-        isPlay = true;
     }
 
     private void initViewPager() {
@@ -478,23 +492,32 @@ public class AdActivity extends AppCompatActivity {
             @Override
             public void run() {
                 do {
-                    Message message = mHandler.obtainMessage();
-                    message.what = PLAY_NEXT;
-                    mHandler.sendMessage(message);
-                    mCurrentPage = mPagerPage++ % mADContentSize;
-                    mCurrentViewPageIndex = mCurrentViewPageIndex % mFragmentSize;
-                    YxLog.d(TAG, "Runnable --- mPagerPage = " + mPagerPage + ", mCurrentPage = " + mCurrentPage);
+                    if (!isInteractionMode || !isAppPlay) {
+                        Message message = mHandler.obtainMessage();
+                        message.what = PLAY_NEXT;
+                        mHandler.sendMessage(message);
+                        mCurrentPage = mPagerPage++ % mADContentSize;
+                        mCurrentViewPageIndex = mCurrentViewPageIndex % mFragmentSize;
+                        YxLog.d(TAG, "Runnable --- mPagerPage = " + mPagerPage + ", mCurrentPage = " + mCurrentPage);
 //                    YxLog.d(TAG, "mAdContentInfoList size = " + mAdContentInfoList.size());
 //                    YxLog.d(TAG, "mFragmentSize = " + mFragmentSize);
 //                    YxLog.d(TAG, "mCurrentPage = " + mCurrentPage);
-                    if (mCurrentPage >= mADContentSize) {
-                        mCurrentPage = 0;
-                    }
-                    reportAdPlayPoint();
-                    try {
-                        Thread.sleep(mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getPlayTime() * 1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        if (mCurrentPage >= mADContentSize) {
+                            mCurrentPage = 0;
+                        }
+                        reportAdPlayPoint();
+                        try {
+                            Thread.sleep(mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getPlayTime() * 1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        isInteractionMode = false;
+                        try {
+                            Thread.sleep(10000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } while (isPlay);
             }
@@ -556,6 +579,7 @@ public class AdActivity extends AppCompatActivity {
     protected void onDestroy() {
         YxLog.i(TAG, "MainActivity onDestroy");
 
+        unregisterReceiver(mADBroadcastReceiverForInteraction);
         isPlay = false;
         currentPage = OTHER_PAGE;
         mEditor.putInt("mCurrentPage", mCurrentPage);
@@ -579,20 +603,20 @@ public class AdActivity extends AppCompatActivity {
         mTcpClientConnector.createConnect("127.0.0.1", 20002);
         mTcpClientConnector.setOnConnectListener(new TcpClientConnector.ConnectListener() {
             @Override
-            public void onReceiveData(aiscreen messageForAIScreen) {
+            public void onReceiveData(aiscreen messageForAdplay) {
                 YxLog.i(TAG, "receive tracking info");
-                dispatchMessage(messageForAIScreen);
+                dispatchMessage(messageForAdplay);
             }
         });
     }
 
-    private void dispatchMessage(aiscreen messageForAIScreen) {
+    private void dispatchMessage(aiscreen messageForAdplay) {
         if (mTrackingMessage == null) {
             mTrackingMessage = new TrackingMessage();
         }
-        mTrackingMessage.setUsrsex(messageForAIScreen.getUsrSex());
-        mTrackingMessage.setActived(messageForAIScreen.getIsActived());
-        mTrackingMessage.setStandHere(messageForAIScreen.getStandHere());
+        mTrackingMessage.setUsrsex(messageForAdplay.getUsrSex());
+        mTrackingMessage.setActived(messageForAdplay.getIsActived());
+        mTrackingMessage.setStandHere(messageForAdplay.getStandHere());
         tvUsersex.setText("" + mTrackingMessage.getUsrsex());
         tvStandhere.setText(mTrackingMessage.isStandHere() == true ? "true" : "false");
         tvIsactived.setText(mTrackingMessage.isActived() == true ? "true" : "false");
