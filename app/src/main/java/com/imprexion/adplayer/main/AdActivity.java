@@ -37,6 +37,7 @@ import com.imprexion.adplayer.main.content.CameraRainFragment;
 import com.imprexion.adplayer.service.AdPlayService;
 import com.imprexion.adplayer.service.TcpClientConnector;
 import com.imprexion.adplayer.tools.Tools;
+import com.imprexion.adplayer.tools.VoicePlay;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.YxStatistics;
 import com.imprexion.library.util.ContextUtils;
@@ -118,8 +119,13 @@ public class AdActivity extends AppCompatActivity {
         return mSoundIdStandFootprint;
     }
 
+//    public int getSoundIdPutUpYourHand() {
+//        return mSoundIdPutUpYourHand;
+//    }
+
     private SoundPool mSoundPool;
     private int mSoundIdStandFootprint;
+//    private int mSoundIdPutUpYourHand;
 
     private boolean isShowGestureActive;
     private boolean isSendShowGestureActive;
@@ -130,6 +136,7 @@ public class AdActivity extends AppCompatActivity {
     private GestureActiveOneStepFragment mGestureActiveOneStepFragment;
     private GestureActiveFootPrintFragment mGestureActiveFootPrintFragment;
     private ObjectAnimator mHandsActiveAnimator;
+    private TrackingMessage mTrackingMessage;
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -142,12 +149,12 @@ public class AdActivity extends AppCompatActivity {
                     if (adContentInfo.getContentType() == 1) {
                         YxLog.d(TAG, "handleMessage --- mCurrentViewPageIndex = " + mCurrentViewPageIndex);
 
-                        // 图片循环播放， 第0个不播，否则会反向跳转
-                        if (mCurrentViewPageIndex >= mFragmentSize - 1) {
-                            mCurrentViewPageIndex = 0;
-                        }
-                        mCurrentViewPageIndex++;
-                        viewPager.setCurrentItem(mCurrentViewPageIndex);
+//                        // 图片循环播放， 第0个不播，否则会反向跳转
+//                        if (mCurrentViewPageIndex >= mFragmentSize - 1) {
+//                            mCurrentViewPageIndex = 0;
+//                        }
+
+                        viewPager.setCurrentItem(mCurrentViewPageIndex++);
 
                         // 从其他应用切换回图片轮播
                         if ((mCurrentADContentInfo != null) && (mCurrentADContentInfo.getContentType() == 2)) {
@@ -177,7 +184,7 @@ public class AdActivity extends AppCompatActivity {
                     isSendShowGestureActive = false;
                     break;
                 case SHOW_ACTIVE_TIP_FOOTPRINT:
-                    if (mTrackingMessage.getUsrsex() != 0 && mTrackingMessage.isStandHere()) {
+                    if (mTrackingMessage.getUsrsex() != 0 && mTrackingMessage.isStandHere() && !isShowGestureActive) {
                         isShowGestureActive = true;
                         showGestureActiveFootPrintView();
                     }
@@ -198,6 +205,7 @@ public class AdActivity extends AppCompatActivity {
                     } else if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isStandHere()) {
                         removeActivationFragment();
                         Tools.fadeIn(tvHandsActiveText, 500);
+//                        VoicePlay.getInstance(AdActivity.this, VoicePlay.SOUNDPOOL).playVoiceBySoundpoolOnce(R.raw.please_put_up_your_hands);
                         startHandsActiveTextAnimation();
                     }
                     break;
@@ -212,51 +220,6 @@ public class AdActivity extends AppCompatActivity {
         }
     });
     private SVGAParser mParser = new SVGAParser(this);
-
-    public void startAIScreenApp() {
-        YxLog.i(TAG, "goto main page");
-        YxStatistics.version(1).param("way", "wave hand").report("goto_main_page");
-
-        // 添加启动主界面参数，为了配合主界面显示引导动画逻辑 2019-5-20 hardy
-        Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);
-        homeIntent.addCategory(Intent.CATEGORY_HOME);
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(ContextUtils.get(),
-                R.anim.right_in, R.anim.left_out);
-        homeIntent.putExtra("message_from", "Ad_Player");
-        startActivity(homeIntent, options.toBundle());
-
-        finish();
-    }
-
-    private TrackingMessage mTrackingMessage;
-
-    private void showGestureActiveTowStepView() {
-        YxLog.d(TAG, "showGestureActiveTowStepView");
-        if (mGestureActiveTwoStepFragment == null && flGestureActive.getChildCount() == 0) {
-            YxLog.d(TAG, "add two gestureFragment");
-            mGestureActiveTwoStepFragment = new GestureActiveTwoStepFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveTwoStepFragment).commitAllowingStateLoss();
-        }
-    }
-
-    private void showGestureActiveFootPrintView() {
-        YxLog.d(TAG, "showGestureActiveFootPrintView");
-        if (mGestureActiveFootPrintFragment == null && flGestureActive.getChildCount() == 0) {
-            YxLog.d(TAG, "add footprint gestureFragment");
-            mGestureActiveFootPrintFragment = new GestureActiveFootPrintFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveFootPrintFragment).commitAllowingStateLoss();
-        }
-    }
-
-    private void showGestureActiveOneStepView() {
-        YxLog.d(TAG, "showGestureActiveOneStepView");
-        if (mGestureActiveOneStepFragment == null && flGestureActive.getChildCount() == 0) {
-            YxLog.d(TAG, "add  one gestureFragment");
-            mGestureActiveOneStepFragment = new GestureActiveOneStepFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveOneStepFragment).commitAllowingStateLoss();
-        }
-    }
-
     private FragmentStatePagerAdapter mFragmentStatePagerAdapter;
     private List<ADContentInfo> mAdContentInfoList;
 
@@ -276,6 +239,7 @@ public class AdActivity extends AppCompatActivity {
         }
         mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 5);
         mSoundIdStandFootprint = mSoundPool.load(this, R.raw.please_stand_footprint, 1);
+//        mSoundIdPutUpYourHand = mSoundPool.load(this, R.raw.please_put_up_your_hands, 1);
         initData();
         setOnClickListener();
     }
@@ -333,34 +297,19 @@ public class AdActivity extends AppCompatActivity {
         tvUsersex.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                showGestureActiveOneStepView();
-//                showGestureActiveTowStepView();
                 showGestureActiveFootPrintView();
             }
         });
         tvStandhere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (mTrackingMessage == null) {
-//                    mTrackingMessage = new TrackingMessage();
-//                }
-//                mTrackingMessage.setActived(false);
-//                mTrackingMessage.setUsrsex(1);
-//                mTrackingMessage.setStandHere(false);
-//                EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
                 removeActivationFragment();
             }
         });
         tvIsactived.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mTrackingMessage == null) {
-                    mTrackingMessage = new TrackingMessage();
-                }
-                mTrackingMessage.setActived(true);
-                mTrackingMessage.setUsrsex(1);
-                mTrackingMessage.setStandHere(false);
-                EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
+
             }
         });
     }
@@ -403,9 +352,13 @@ public class AdActivity extends AppCompatActivity {
         mAdContentInfoList = adContentPlay.getContentPlayVOList();
         mADContentSize = mAdContentInfoList.size();
         YxLog.d(TAG, "mADContentSize = " + mADContentSize);
+        int firstPicIndex = 0;
         for (int i = 0; i < mADContentSize; i++) {
             ADContentInfo adContentInfo = mAdContentInfoList.get(i);
             if (adContentInfo.getContentType() == 1) {//ContentType==1表示广告图片
+                if (mFragmentList.isEmpty()) {
+                    firstPicIndex = i;
+                }
                 Fragment fragment = new AdContentImageFragment();
                 ((AdContentImageFragment) fragment).setUrl(adContentInfo.getFileUrl());
                 mFragmentList.add(fragment);
@@ -416,7 +369,8 @@ public class AdActivity extends AppCompatActivity {
                 }
             }
         }
-        ADContentInfo adContentInfo = mAdContentInfoList.get(0);
+
+        ADContentInfo adContentInfo = mAdContentInfoList.get(firstPicIndex);
         if (adContentInfo.getContentType() == 1) {
             Fragment fragment = new AdContentImageFragment();
             ((AdContentImageFragment) fragment).setUrl(adContentInfo.getFileUrl());
@@ -438,120 +392,6 @@ public class AdActivity extends AppCompatActivity {
 //        mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
 //        mCurrentViewPageIndex = mSharedPreferences.getInt("mCurrentViewPageIndex", 0);
         isPlay = true;
-    }
-
-    private ADContentPlay getDefaultADContentPlay() {
-        ADContentPlay adContentPlay;
-        adContentPlay = new ADContentPlay();
-        ADContentInfo adContentInfo = new ADContentInfo();
-        adContentInfo.setFileUrl(AD_DEFAULT);
-        adContentInfo.setContentType(1);
-        adContentInfo.setPlayTime(5);
-        List<ADContentInfo> adContentInfoList = new ArrayList<>();
-        adContentInfoList.add(adContentInfo);
-
-//  test data
-//        ADContentInfo adContentInfo2 = new ADContentInfo();
-//        adContentInfo2.setFileUrl("https://img.zcool.cn/community/013c81583fa08ea8012060c864c3b7.jpg");
-//        adContentInfo2.setContentType(1);
-//        adContentInfo2.setPlayTime(5);
-//        adContentInfoList.add(adContentInfo2);
-//        ADContentInfo adContentInfo3 = new ADContentInfo();
-//        adContentInfo3.setFileUrl("https://cdn.duitang.com/uploads/item/201501/31/20150131083747_aUhkG.thumb.700_0.jpeg");
-//        adContentInfo3.setContentType(1);
-//        adContentInfo3.setPlayTime(5);
-//        adContentInfoList.add(adContentInfo3);
-//
-//
-//        ADContentInfo adContentInfoApp = new ADContentInfo();
-//        adContentInfoApp.setContentType(2);
-//        adContentInfoApp.setPlayTime(5);
-//        adContentInfoApp.setAppCode("com.ss.android.article.lite");
-//        adContentInfoList.add(adContentInfoApp);
-//        ADContentInfo adContentInfoApp2 = new ADContentInfo();
-//        adContentInfoApp2.setContentType(2);
-//        adContentInfoApp2.setPlayTime(5);
-//        adContentInfoApp2.setAppCode("imprexion.com.filetest");
-//        adContentInfoList.add(adContentInfoApp2);
-//
-//        ADContentInfo adContentInfo4 = new ADContentInfo();
-//        adContentInfo4.setFileUrl("https://img5.duitang.com/uploads/item/201603/31/20160331191943_vfFRT.jpeg");
-//        adContentInfo4.setContentType(1);
-//        adContentInfo4.setPlayTime(5);
-//        adContentInfoList.add(adContentInfo4);
-//
-//
-//        ADContentInfo adContentInfoApp3 = new ADContentInfo();
-//        adContentInfoApp3.setContentType(2);
-//        adContentInfoApp3.setPlayTime(5);
-//        adContentInfoApp3.setAppCode("com.faceunity.p2aart");
-//        adContentInfoList.add(adContentInfoApp3);
-
-        adContentPlay.setContentPlayVOList(adContentInfoList);
-        return adContentPlay;
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);//must store the new intent unless getIntent() will return the old one
-        YxLog.d(TAG, "--- onNewIntent ---");
-
-        isPlay = true;
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        isShowGestureActive = false;
-//        currentPage = AD_PAGE;
-        Tools.hideNavigationBarStatusBar(this, true);
-//        mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
-//        mCurrentViewPageIndex = mSharedPreferences.getInt("mCurrentViewPageIndex", 0);
-//        YxLog.d(TAG, "mCurrentPage=" + mPagerPage);
-//        isPlay = true;
-        Runnable runnable = new Runnable() {
-            private JSONObject mJsonObject;
-
-            @Override
-            public void run() {
-                do {
-                    Message message = mHandler.obtainMessage();
-                    message.what = PLAY_NEXT;
-                    mHandler.sendMessage(message);
-                    mCurrentPage = mPagerPage++ % mADContentSize;
-                    YxLog.d(TAG, "Runnable --- mPagerPage = " + mPagerPage + ", mCurrentPage = " + mCurrentPage);
-//                    YxLog.d(TAG, "mAdContentInfoList size = " + mAdContentInfoList.size());
-//                    YxLog.d(TAG, "mFragmentSize = " + mFragmentSize);
-//                    YxLog.d(TAG, "mCurrentPage = " + mCurrentPage);
-                    if (mCurrentPage >= mADContentSize) {
-                        mCurrentPage = 0;
-                    }
-                    if (mJsonObject == null) {
-                        mJsonObject = new JSONObject();
-                    }
-                    long appPlanId;
-                    if (mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getContentType() == 2) {
-//                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mFragmentSize - 1 ? 0 : mCurrentPage).getAppPlanId());
-                        appPlanId = mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getAppPlanId();
-                    } else {
-//                        mJsonObject.put("ad_plan_id", mAdContentInfoList.get(mCurrentPage == mFragmentSize - 1 ? 0 : mCurrentPage).getAdPlanId());
-                        appPlanId = mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getAdPlanId();
-                    }
-                    mJsonObject.put("type", "1");
-                    YxStatistics.version(1).param("adplanId", appPlanId).report("aiscreen_ad_play");
-                    try {
-                        Thread.sleep(mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getPlayTime() * 1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                } while (isPlay);
-            }
-        };
-        if (mExecutorService != null) {
-            mExecutorService.execute(runnable);
-        }
     }
 
     private void initViewPager() {
@@ -598,6 +438,86 @@ public class AdActivity extends AppCompatActivity {
         viewPager.setOnPageChangeListener(mOnPageChangeListener);
         viewPager.setOffscreenPageLimit(2);
     }
+
+    private ADContentPlay getDefaultADContentPlay() {
+        ADContentPlay adContentPlay;
+        adContentPlay = new ADContentPlay();
+        ADContentInfo adContentInfo = new ADContentInfo();
+        adContentInfo.setFileUrl(AD_DEFAULT);
+        adContentInfo.setContentType(1);
+        adContentInfo.setPlayTime(5);
+        List<ADContentInfo> adContentInfoList = new ArrayList<>();
+        adContentInfoList.add(adContentInfo);
+        adContentPlay.setContentPlayVOList(adContentInfoList);
+        return adContentPlay;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);//must store the new intent unless getIntent() will return the old one
+        YxLog.d(TAG, "--- onNewIntent ---");
+
+        isPlay = true;
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isShowGestureActive = false;
+//        currentPage = AD_PAGE;
+        Tools.hideNavigationBarStatusBar(this, true);
+//        mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
+//        mCurrentViewPageIndex = mSharedPreferences.getInt("mCurrentViewPageIndex", 0);
+//        YxLog.d(TAG, "mCurrentPage=" + mPagerPage);
+//        isPlay = true;
+        Runnable runnable = new Runnable() {
+            private JSONObject mJsonObject;
+
+            @Override
+            public void run() {
+                do {
+                    Message message = mHandler.obtainMessage();
+                    message.what = PLAY_NEXT;
+                    mHandler.sendMessage(message);
+                    mCurrentPage = mPagerPage++ % mADContentSize;
+                    mCurrentViewPageIndex = mCurrentViewPageIndex % mFragmentSize;
+                    YxLog.d(TAG, "Runnable --- mPagerPage = " + mPagerPage + ", mCurrentPage = " + mCurrentPage);
+//                    YxLog.d(TAG, "mAdContentInfoList size = " + mAdContentInfoList.size());
+//                    YxLog.d(TAG, "mFragmentSize = " + mFragmentSize);
+//                    YxLog.d(TAG, "mCurrentPage = " + mCurrentPage);
+                    if (mCurrentPage >= mADContentSize) {
+                        mCurrentPage = 0;
+                    }
+                    reportAdPlayPoint();
+                    try {
+                        Thread.sleep(mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getPlayTime() * 1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } while (isPlay);
+            }
+
+            private void reportAdPlayPoint() {
+                if (mJsonObject == null) {
+                    mJsonObject = new JSONObject();
+                }
+                long appPlanId;
+                if (mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getContentType() == 2) {
+                    appPlanId = mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getAppPlanId();
+                } else {
+                    appPlanId = mAdContentInfoList.get(mCurrentPage == mADContentSize ? 0 : mCurrentPage).getAdPlanId();
+                }
+                mJsonObject.put("type", "1");
+                YxStatistics.version(1).param("adplanId", appPlanId).report("aiscreen_ad_play");
+            }
+        };
+        if (mExecutorService != null) {
+            mExecutorService.execute(runnable);
+        }
+    }
+
 
     @Override
     protected void onPause() {
@@ -647,6 +567,9 @@ public class AdActivity extends AppCompatActivity {
             mSoundPool.stop(mSoundIdStandFootprint);
             mSoundPool.release();
         }
+        if (mExecutorService != null) {
+            mExecutorService.shutdown();
+        }
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
@@ -686,8 +609,9 @@ public class AdActivity extends AppCompatActivity {
 //        }
 
         //有人且站对位置,显示“请把手移到这里试试”
-        if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isStandHere()) {
+        if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isStandHere() && !isShowGestureActive) {
             Tools.fadeIn(tvHandsActiveText, 500);
+//            VoicePlay.getInstance(AdActivity.this, VoicePlay.SOUNDPOOL).playVoiceBySoundpoolOnce(R.raw.please_put_up_your_hands);
             startHandsActiveTextAnimation();
         }
 
@@ -736,6 +660,49 @@ public class AdActivity extends AppCompatActivity {
         //发送tracking消息给小象。小象根据消息刺激执行下一步动画
         EventBus.getDefault().post(new EventBusMessage(EventBusMessage.ACTIVE_TIP, mTrackingMessage));
 
+    }
+
+    public void startAIScreenApp() {
+        YxLog.i(TAG, "goto main page");
+        YxStatistics.version(1).param("way", "wave hand").report("goto_main_page");
+
+        // 添加启动主界面参数，为了配合主界面显示引导动画逻辑 2019-5-20 hardy
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN, null);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(ContextUtils.get(),
+                R.anim.right_in, R.anim.left_out);
+        homeIntent.putExtra("message_from", "Ad_Player");
+        startActivity(homeIntent, options.toBundle());
+
+        finish();
+    }
+
+
+    private void showGestureActiveTowStepView() {
+        YxLog.d(TAG, "showGestureActiveTowStepView");
+        if (mGestureActiveTwoStepFragment == null && flGestureActive.getChildCount() == 0) {
+            YxLog.d(TAG, "add two gestureFragment");
+            mGestureActiveTwoStepFragment = new GestureActiveTwoStepFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveTwoStepFragment).commitAllowingStateLoss();
+        }
+    }
+
+    private void showGestureActiveFootPrintView() {
+        YxLog.d(TAG, "showGestureActiveFootPrintView");
+        if (mGestureActiveFootPrintFragment == null && flGestureActive.getChildCount() == 0) {
+            YxLog.d(TAG, "add footprint gestureFragment");
+            mGestureActiveFootPrintFragment = new GestureActiveFootPrintFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveFootPrintFragment).commitAllowingStateLoss();
+        }
+    }
+
+    private void showGestureActiveOneStepView() {
+        YxLog.d(TAG, "showGestureActiveOneStepView");
+        if (mGestureActiveOneStepFragment == null && flGestureActive.getChildCount() == 0) {
+            YxLog.d(TAG, "add  one gestureFragment");
+            mGestureActiveOneStepFragment = new GestureActiveOneStepFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveOneStepFragment).commitAllowingStateLoss();
+        }
     }
 
     @Subscribe

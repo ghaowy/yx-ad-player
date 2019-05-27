@@ -2,7 +2,6 @@ package com.imprexion.adplayer.main.activation;
 
 import android.animation.ObjectAnimator;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -53,29 +52,16 @@ public class GestureActiveFootPrintFragment extends Fragment {
     private boolean isRotateForStandRight;
     private VoicePlay mVoicePlay;
     private static final String TAG = "GestureActiveFootPrintFragment";
-
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                default:
-                    break;
-            }
-        }
-    };
     private TrackingMessage mTrackingMessage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_gesture_footprint_activation, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
-//        mVoicePlay = new VoicePlay(getContext(), VoicePlay.MEDIAPLAYER);
         mVoicePlay = new VoicePlay(getActivity(), VoicePlay.SOUNDPOOL);
-//        mEExitObjAnimator = ObjectAnimator.ofFloat(ivElephantExit, "translationX", 0, Tools.dpToPx(400, getContext()));
         mFootprintRotateObjAnimator = ObjectAnimator.ofFloat(ivFootprint, "rotationX", 0, Tools.dpToPx(30, getContext()), 0);
         mFloorExitObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", 0, Tools.dpToPx(800, getContext()));
         mFloorEnterObjAnimator = ObjectAnimator.ofFloat(ivBottomFloor, "translationY", Tools.dpToPx(800, getContext()), 0);
