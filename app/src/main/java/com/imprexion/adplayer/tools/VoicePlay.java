@@ -21,13 +21,25 @@ public class VoicePlay {
     private SoundPool mSoundPool;
     private int mSoundId;
     private int mSoundIdStandFootprint;
+//    private int mSoundIdPutUpYourHand;
+    private static VoicePlay mVoicePlay;
 
     public VoicePlay(Context context, int type) {
         mContext = context;
         if (type == SOUNDPOOL) {
-            mSoundPool = ((AdActivity) context).getSoundPool();
+            if (mSoundPool == null) {
+                mSoundPool = ((AdActivity) context).getSoundPool();
+            }
             mSoundIdStandFootprint = ((AdActivity) context).getSoundIdStandFootprint();
+//            mSoundIdPutUpYourHand = ((AdActivity) context).getSoundIdPutUpYourHand();
         }
+    }
+
+    public static VoicePlay getInstance(Context context, int type) {
+        if (mVoicePlay==null) {
+            mVoicePlay = new VoicePlay(context,type);
+        }
+        return mVoicePlay;
     }
 
     public void playVoice(int voiceSrcId) {//播放一次声音
@@ -101,5 +113,13 @@ public class VoicePlay {
                 YxLog.d(TAG, "soundpool mSoundIdStandFootprint 加载失败");
             }
         }
+//        if (soundId == mContext.getResources().getIdentifier("please_put_up_your_hands", "raw", mContext.getPackageName())) {
+//            if (mSoundIdStandFootprint != 0) {
+//                YxLog.d(TAG, "soundpool play please_put_up_your_hands.");
+//                mSoundPool.play(mSoundIdPutUpYourHand, 1, 1, 0, 0, 1);
+//            } else {
+//                YxLog.d(TAG, "soundpool mSoundIdPutUpYourHand 加载失败");
+//            }
+//        }
     }
 }

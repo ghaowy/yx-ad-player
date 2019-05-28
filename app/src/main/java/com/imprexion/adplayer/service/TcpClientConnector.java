@@ -95,7 +95,7 @@ public class TcpClientConnector {
     }
 
     public interface ConnectListener {
-        void onReceiveData(aiscreen messageForAIScreen);
+        void onReceiveData(aiscreen messageForAdplay);
 
     }
 
