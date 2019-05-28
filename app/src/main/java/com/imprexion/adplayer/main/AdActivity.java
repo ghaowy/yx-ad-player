@@ -267,6 +267,20 @@ public class AdActivity extends AppCompatActivity {
         btEnter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                YxLog.d(TAG,"btEnter onClick");
+                mParser.parse("hands_active_ing2.svga", new SVGAParser.ParseCompletion() {
+                    @Override
+                    public void onComplete(@NotNull SVGAVideoEntity svgaVideoEntity) {
+                        SVGADrawable svgaDrawable = new SVGADrawable(svgaVideoEntity);
+                        btEnter.setImageDrawable(svgaDrawable);
+                        btEnter.startAnimation();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
                 startAIScreenApp();
             }
         });
@@ -275,6 +289,7 @@ public class AdActivity extends AppCompatActivity {
             public boolean onHover(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_HOVER_ENTER:
+                        YxLog.d(TAG,"btEnter ACTION_HOVER_ENTER");
                         mParser.parse("hands_active_ing2.svga", new SVGAParser.ParseCompletion() {
                             @Override
                             public void onComplete(@NotNull SVGAVideoEntity svgaVideoEntity) {
@@ -290,6 +305,7 @@ public class AdActivity extends AppCompatActivity {
                         });
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT:
+                        YxLog.d(TAG,"btEnter ACTION_HOVER_EXIT");
                         mParser.parse("hands_active_start.svga", new SVGAParser.ParseCompletion() {
                             @Override
                             public void onComplete(@NotNull SVGAVideoEntity svgaVideoEntity) {
