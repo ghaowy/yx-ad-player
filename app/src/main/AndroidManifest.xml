@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
 
     <application
         android:name="com.imprexion.adplayer.base.ADPlayApplication"
@@ -30,6 +32,8 @@
         <receiver android:name=".component.ADBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.imprexion.push.MESSAGE" />
+                <action android:name="com.imprexion.action.EVENT_TOUCH" />
+                <action android:name="com.imprexion.action.EVENT_GESTURE" />
             </intent-filter>
         </receiver>
 

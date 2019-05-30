@@ -15,7 +15,6 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -30,7 +29,8 @@ import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
 import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
-import com.imprexion.adplayer.component.ADBroadcastReceiverForInteraction;
+import com.imprexion.adplayer.main.activation.ActiveFootPrintView;
+import com.imprexion.adplayer.main.activation.ActiveTipView;
 import com.imprexion.adplayer.main.activation.GestureActiveFootPrintFragment;
 import com.imprexion.adplayer.main.activation.GestureActiveOneStepFragment;
 import com.imprexion.adplayer.main.activation.GestureActiveTwoStepFragment;
@@ -91,6 +91,7 @@ public class AdActivity extends AppCompatActivity {
     private static final int ACTIVED = 5;
     private static final int REMOVE_GESTURE_ACTIVE = 6;
     private static final int START_AD_FROM_USER_DETECT = 7;
+    private static final int FADEOUT_APP_ACTIVE_TIP = 8;
     private static final int OTHER_PAGE = 100;
     private static final int AD_PAGE = 101;
     private int currentPage = 100;//100:MainActivity;101:Ad;
@@ -112,10 +113,9 @@ public class AdActivity extends AppCompatActivity {
     private int mCurrentViewPageIndex;
     // 当前广告数据
     private ADContentInfo mCurrentADContentInfo;
-    private ADBroadcastReceiverForInteraction mADBroadcastReceiverForInteraction;
-    //接收进入交互模式消息
-    private ADBroadcastReceiverForInteraction.IInteractionInfo mIInteractionInfo;
     private boolean isAppPlay;
+    private ActiveFootPrintView mActiveFootPrintView;
+    private ActiveTipView mActiveTipView;
 
     public SoundPool getSoundPool() {
         return mSoundPool;
@@ -199,16 +199,20 @@ public class AdActivity extends AppCompatActivity {
                 case REMOVE_GESTURE_ACTIVE:
                     if (mTrackingMessage.getUsrsex() == 0) {
                         removeActivationFragment();
-                        Tools.fadeOut(tvHandsActiveText, 500);
                     } else if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isStandHere()) {
                         removeActivationFragment();
-                        Tools.fadeIn(tvHandsActiveText, 500);
+
 //                        VoicePlay.getInstance(AdActivity.this, VoicePlay.SOUNDPOOL).playVoiceBySoundpoolOnce(R.raw.please_put_up_your_hands);
-                        startHandsActiveTextAnimation();
+                        startFloatHandsActiveTipAnimation();
                     }
                     break;
                 case START_AD_FROM_USER_DETECT:
                     isLaunchFromUserDetect = true;
+                    break;
+                case FADEOUT_APP_ACTIVE_TIP:
+                    if (mActiveTipView != null) {
+                        mActiveTipView.dismissActiveTip();
+                    }
                     break;
                 default:
                     break;
@@ -239,15 +243,6 @@ public class AdActivity extends AppCompatActivity {
 //        mSoundIdPutUpYourHand = mSoundPool.load(this, R.raw.please_put_up_your_hands, 1);
         initData();
         setOnClickListener();
-        registerBroadcastReceiver();
-        mIInteractionInfo = new ADBroadcastReceiverForInteraction.IInteractionInfo() {
-            @Override
-            public void noticeIntoInteractionMode() {
-                YxLog.i(TAG, "noticeIntoInteractionMode");
-                isInteractionMode = true;
-            }
-        };
-        mADBroadcastReceiverForInteraction.setIInteractionInfo(mIInteractionInfo);
         // 初始化移到这里
         currentPage = AD_PAGE;
         mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
@@ -255,19 +250,11 @@ public class AdActivity extends AppCompatActivity {
         isPlay = true;
     }
 
-    private void registerBroadcastReceiver() {
-        mADBroadcastReceiverForInteraction = new ADBroadcastReceiverForInteraction();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ADBroadcastReceiverForInteraction.EVENT_ACTION_GESTURE);
-        intentFilter.addAction(ADBroadcastReceiverForInteraction.EVENT_ACTION_TOUCH);
-        registerReceiver(mADBroadcastReceiverForInteraction, intentFilter);
-    }
-
     private void setOnClickListener() {
         btEnter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                YxLog.d(TAG,"btEnter onClick");
+                YxLog.d(TAG, "btEnter onClick");
                 mParser.parse("hands_active_ing2.svga", new SVGAParser.ParseCompletion() {
                     @Override
                     public void onComplete(@NotNull SVGAVideoEntity svgaVideoEntity) {
@@ -289,7 +276,7 @@ public class AdActivity extends AppCompatActivity {
             public boolean onHover(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_HOVER_ENTER:
-                        YxLog.d(TAG,"btEnter ACTION_HOVER_ENTER");
+                        YxLog.d(TAG, "btEnter ACTION_HOVER_ENTER");
                         mParser.parse("hands_active_ing2.svga", new SVGAParser.ParseCompletion() {
                             @Override
                             public void onComplete(@NotNull SVGAVideoEntity svgaVideoEntity) {
@@ -305,7 +292,7 @@ public class AdActivity extends AppCompatActivity {
                         });
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT:
-                        YxLog.d(TAG,"btEnter ACTION_HOVER_EXIT");
+                        YxLog.d(TAG, "btEnter ACTION_HOVER_EXIT");
                         mParser.parse("hands_active_start.svga", new SVGAParser.ParseCompletion() {
                             @Override
                             public void onComplete(@NotNull SVGAVideoEntity svgaVideoEntity) {
@@ -328,18 +315,25 @@ public class AdActivity extends AppCompatActivity {
             }
         });
         //test
+//        final ActiveFootPrintView activeTipView = new ActiveFootPrintView(AdActivity.this);
+        if (mActiveTipView == null) {
+            mActiveTipView = new ActiveTipView(AdActivity.this);
+        }
         tvUsersex.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                showGestureActiveFootPrintView();
-                isInteractionMode = true;
+//                isInteractionMode = true;
+                mActiveTipView.showActiveTip();
+
             }
         });
         tvStandhere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                removeActivationFragment();
-                isInteractionMode = false;
+//                isInteractionMode = false;
+                mActiveTipView.dismissActiveTip();
             }
         });
         tvIsactived.setOnClickListener(new View.OnClickListener() {
@@ -530,7 +524,7 @@ public class AdActivity extends AppCompatActivity {
                     } else {
                         isInteractionMode = false;
                         try {
-                            Thread.sleep(10000);
+                            Thread.sleep(20000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -572,30 +566,32 @@ public class AdActivity extends AppCompatActivity {
 
 
     private void removeActivationFragment() {
-        if (flGestureActive.getChildCount() != 0) {
-            FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
-            if (mGestureActiveOneStepFragment != null) {
-                mTransaction.remove(mGestureActiveOneStepFragment);
-            }
-            if (mGestureActiveTwoStepFragment != null) {
-                mTransaction.remove(mGestureActiveTwoStepFragment);
-            }
-            if (mGestureActiveFootPrintFragment != null) {
-                mTransaction.remove(mGestureActiveFootPrintFragment);
-            }
-            mTransaction.commitAllowingStateLoss();
-            isShowGestureActive = false;
-            mGestureActiveTwoStepFragment = null;
-            mGestureActiveOneStepFragment = null;
-            mGestureActiveFootPrintFragment = null;
+//        if (flGestureActive.getChildCount() != 0) {
+//            FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
+//            if (mGestureActiveOneStepFragment != null) {
+//                mTransaction.remove(mGestureActiveOneStepFragment);
+//            }
+//            if (mGestureActiveTwoStepFragment != null) {
+//                mTransaction.remove(mGestureActiveTwoStepFragment);
+//            }
+//            if (mGestureActiveFootPrintFragment != null) {
+//                mTransaction.remove(mGestureActiveFootPrintFragment);
+//            }
+//            mTransaction.commitAllowingStateLoss();
+//            isShowGestureActive = false;
+//            mGestureActiveTwoStepFragment = null;
+//            mGestureActiveOneStepFragment = null;
+//            mGestureActiveFootPrintFragment = null;
+//        }
+        if (mActiveFootPrintView != null) {
+            mActiveFootPrintView.dismissActiveTip();
         }
+        isShowGestureActive = false;
     }
 
     @Override
     protected void onDestroy() {
         YxLog.i(TAG, "MainActivity onDestroy");
-
-        unregisterReceiver(mADBroadcastReceiverForInteraction);
         isPlay = false;
         currentPage = OTHER_PAGE;
         mEditor.putInt("mCurrentPage", mCurrentPage);
@@ -650,9 +646,10 @@ public class AdActivity extends AppCompatActivity {
 
         //有人且站对位置,显示“请把手移到这里试试”
         if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isStandHere() && !isShowGestureActive) {
-            Tools.fadeIn(tvHandsActiveText, 500);
+
 //            VoicePlay.getInstance(AdActivity.this, VoicePlay.SOUNDPOOL).playVoiceBySoundpoolOnce(R.raw.please_put_up_your_hands);
-            startHandsActiveTextAnimation();
+            startFloatHandsActiveTipAnimation();
+
         }
 
         //backPress启动，没人2秒后 恢复为检测到没有人启动
@@ -689,7 +686,7 @@ public class AdActivity extends AppCompatActivity {
 
         //识别到有人但没有站对位置。(即时)后显示站对位置提示动画
         if (mTrackingMessage.getUsrsex() != 0 && mTrackingMessage.isStandHere() && !isShowGestureActive) {
-            Tools.fadeOut(tvHandsActiveText, 500);
+//            Tools.fadeOut(tvHandsActiveText, 500);
             if (!isSendShowGestureActive) {
                 isSendShowGestureActive = true;
                 Message message = mHandler.obtainMessage();
@@ -728,12 +725,17 @@ public class AdActivity extends AppCompatActivity {
     }
 
     private void showGestureActiveFootPrintView() {
-        YxLog.d(TAG, "showGestureActiveFootPrintView");
-        if (mGestureActiveFootPrintFragment == null && flGestureActive.getChildCount() == 0) {
-            YxLog.d(TAG, "add footprint gestureFragment");
-            mGestureActiveFootPrintFragment = new GestureActiveFootPrintFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveFootPrintFragment).commitAllowingStateLoss();
+//        YxLog.d(TAG, "showGestureActiveFootPrintView");
+//        if (mGestureActiveFootPrintFragment == null && flGestureActive.getChildCount() == 0) {
+//            YxLog.d(TAG, "add footprint gestureFragment");
+//            mGestureActiveFootPrintFragment = new GestureActiveFootPrintFragment();
+//            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveFootPrintFragment).commitAllowingStateLoss();
+//        }
+        if (mActiveFootPrintView == null) {
+            mActiveFootPrintView = new ActiveFootPrintView(this);
         }
+        mActiveFootPrintView.showActiveTip();
+
     }
 
     private void showGestureActiveOneStepView() {
@@ -753,6 +755,11 @@ public class AdActivity extends AppCompatActivity {
             initData();
             mFragmentStatePagerAdapter.notifyDataSetChanged();
         }
+
+        if (eventBusMessage.getType() == EventBusMessage.RECEIVE_INTERACTION_EVENT) {
+            isInteractionMode = true;
+            YxLog.i(TAG, "isInteractionMode=" + isInteractionMode + " ;isAppPlay=" + isAppPlay);
+        }
     }
 
     private void startHandsActiveTextAnimation() {
@@ -762,6 +769,16 @@ public class AdActivity extends AppCompatActivity {
             mHandsActiveAnimator.setRepeatMode(ValueAnimator.REVERSE);
             mHandsActiveAnimator.start();
         }
+    }
+
+    private void startFloatHandsActiveTipAnimation() {
+        if (mActiveTipView == null) {
+            mActiveTipView = new ActiveTipView(this);
+        }
+        mActiveTipView.showActiveTip();
+        Message message = mHandler.obtainMessage();
+        message.what = FADEOUT_APP_ACTIVE_TIP;
+        mHandler.sendMessageDelayed(message, 5000);
     }
 
 }

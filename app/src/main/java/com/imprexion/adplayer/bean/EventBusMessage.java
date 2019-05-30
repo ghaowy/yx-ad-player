@@ -5,6 +5,7 @@ public class EventBusMessage {
     public static final int AD_PLAY_CONTENT_UPDATE_BY_BROADCAST = 201;
     public static final int AD_RECEIVE_CALLBACK = 202;
     public static final int REMOVE_GESTURE_ACTIVE = 203;
+    public static final int RECEIVE_INTERACTION_EVENT = 204;
 
     private int type;
     private Object mObject;

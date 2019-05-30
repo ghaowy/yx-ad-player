@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_hands_active_text_app"
+        android:layout_width="676dp"
+        android:layout_height="84dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginStart="100dp"
+        android:background="@drawable/hands_active_text_bg"
+        android:paddingEnd="40dp"
+        android:text="@string/guide_tips_4"
+        android:textColor="@color/white"
+        android:textSize="34sp"
+        android:visibility="visible"
+        android:gravity="end|center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>
