@@ -4,16 +4,16 @@ apply plugin: 'com.google.protobuf'
 android {
     signingConfigs {
         release {
-            storeFile file('keystore\\imprexion.jks')
+            storeFile file('keystore\\smdt.jks')
             storePassword 'id123456'
-            keyAlias = 'imprexion'
+            keyAlias = 'smdt'
             keyPassword 'id123456'
         }
         debug {
-            storeFile file('keystore\\imprexion.jks')
+            storeFile file('keystore\\smdt.jks')
             storePassword 'id123456'
             keyPassword 'id123456'
-            keyAlias = 'imprexion'
+            keyAlias = 'smdt'
         }
     }
     compileSdkVersion 28
@@ -21,8 +21,8 @@ android {
         applicationId "com.imprexion.adplayer"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 5
-        versionName "1.5"
+        versionCode 6
+        versionName "1.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -104,6 +104,7 @@ dependencies {
     implementation files('libs/bugly_crash_release.jar')
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'com.github.yyued:SVGAPlayer-Android:2.0.0'
+    implementation 'androidx.annotation:annotation:1.0.0'
     implementation project(':library')
 }
 

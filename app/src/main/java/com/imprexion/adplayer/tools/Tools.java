@@ -191,5 +191,10 @@ public class Tools {
             ActivityCompat.requestPermissions(activity,
                     new String[]{Manifest.permission.CAMERA}, 1);
         }
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.SYSTEM_ALERT_WINDOW)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, 1);
+        }
     }
 }
