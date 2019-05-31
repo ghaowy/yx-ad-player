@@ -450,6 +450,9 @@ public class AdActivity extends AppCompatActivity {
             @Override
             public void run() {
                 do {
+                    if(isPlay == false){
+                        return;
+                    }
                     if (!isInteractionMode || !isAppPlay) {
                         Message message = mHandler.obtainMessage();
                         message.what = PLAY_NEXT;
@@ -528,9 +531,12 @@ public class AdActivity extends AppCompatActivity {
         if (mExecutorService != null) {
             mExecutorService.shutdown();
         }
-        super.onDestroy();
+        mTcpClientConnector.disconnect();
+        mTcpClientConnector.setOnConnectListener(null);
+        mTcpClientConnector = null;
         EventBus.getDefault().unregister(this);
         btEnter.stopAnimation(true);
+        super.onDestroy();
     }
 
     private void setSocketListener() {
@@ -611,7 +617,10 @@ public class AdActivity extends AppCompatActivity {
         homeIntent.putExtra("message_from", "Ad_Player");
         startActivity(homeIntent, options.toBundle());
 
+
+        stopService( new Intent(AdActivity.this, AdPlayService.class));
         finish();
+
     }
 
     private void showGestureActiveFootPrintView() {
