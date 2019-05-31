@@ -441,6 +441,7 @@ public class AdActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        btEnter.startAnimation();
         isShowGestureActive = false;
         Tools.hideNavigationBarStatusBar(this, true);
         Runnable runnable = new Runnable() {
@@ -499,6 +500,7 @@ public class AdActivity extends AppCompatActivity {
     protected void onPause() {
         YxLog.i(TAG, "MainActivity onPause");
         super.onPause();
+        btEnter.pauseAnimation();
     }
 
 
@@ -528,6 +530,7 @@ public class AdActivity extends AppCompatActivity {
         }
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        btEnter.stopAnimation(true);
     }
 
     private void setSocketListener() {
