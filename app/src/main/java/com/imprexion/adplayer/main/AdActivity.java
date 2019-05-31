@@ -1,10 +1,8 @@
 package com.imprexion.adplayer.main;
 
 import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -13,7 +11,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -31,9 +28,6 @@ import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
 import com.imprexion.adplayer.main.activation.ActiveFootPrintView;
 import com.imprexion.adplayer.main.activation.ActiveTipView;
-import com.imprexion.adplayer.main.activation.GestureActiveFootPrintFragment;
-import com.imprexion.adplayer.main.activation.GestureActiveOneStepFragment;
-import com.imprexion.adplayer.main.activation.GestureActiveTwoStepFragment;
 import com.imprexion.adplayer.main.content.AdContentImageFragment;
 import com.imprexion.adplayer.main.content.CameraRainFragment;
 import com.imprexion.adplayer.service.AdPlayService;
@@ -78,14 +72,12 @@ public class AdActivity extends AppCompatActivity {
     TextView tvHandsActiveText;
 
     private List<Fragment> mFragmentList;
-    private FragmentPagerAdapter mFragmentPagerAdapter;
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
     private int mPagerPage;
     private ExecutorService mExecutorService;
     private final static String TAG = "AdActivity";
     private final static int PLAY_NEXT = 1;
     private final static int SHOW_ACTIVE_TIP_FROM_FOOT = 2;
-    private final static int SHOW_ACTIVE_TIP_FROM_WAVE_HAND = 3;
     private final static int SHOW_ACTIVE_TIP_FOOTPRINT = 4;//提示站对脚印
     private final static int SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY = 50;
     private static final int ACTIVED = 5;
@@ -116,33 +108,20 @@ public class AdActivity extends AppCompatActivity {
     private boolean isAppPlay;
     private ActiveFootPrintView mActiveFootPrintView;
     private ActiveTipView mActiveTipView;
-
-    public SoundPool getSoundPool() {
-        return mSoundPool;
-    }
-
-    public int getSoundIdStandFootprint() {
-        return mSoundIdStandFootprint;
-    }
-
-//    public int getSoundIdPutUpYourHand() {
-//        return mSoundIdPutUpYourHand;
-//    }
-
     private SoundPool mSoundPool;
     private int mSoundIdStandFootprint;
-//    private int mSoundIdPutUpYourHand;
-
     private boolean isShowGestureActive;
     private boolean isSendShowGestureActive;
     private boolean isLaunchFromUserDetect;//backPressed,userDetect.
     private TcpClientConnector mTcpClientConnector = TcpClientConnector.getInstance();
-
-    private GestureActiveTwoStepFragment mGestureActiveTwoStepFragment;
-    private GestureActiveOneStepFragment mGestureActiveOneStepFragment;
-    private GestureActiveFootPrintFragment mGestureActiveFootPrintFragment;
     private ObjectAnimator mHandsActiveAnimator;
     private TrackingMessage mTrackingMessage;
+    public SoundPool getSoundPool() {
+        return mSoundPool;
+    }
+    public int getSoundIdStandFootprint() {
+        return mSoundIdStandFootprint;
+    }
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -170,17 +149,6 @@ public class AdActivity extends AppCompatActivity {
                     }
                     mCurrentADContentInfo = adContentInfo;
                     break;
-                case SHOW_ACTIVE_TIP_FROM_FOOT:
-                    if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived()) {
-                        isShowGestureActive = true;
-                        if (mTrackingMessage.isStandHere()) {
-                            showGestureActiveTowStepView();
-                        } else {
-                            showGestureActiveOneStepView();
-                        }
-                    }
-                    isSendShowGestureActive = false;
-                    break;
                 case SHOW_ACTIVE_TIP_FOOTPRINT:
                     if (mTrackingMessage.getUsrsex() != 0 && mTrackingMessage.isStandHere() && !isShowGestureActive) {
                         isShowGestureActive = true;
@@ -188,21 +156,11 @@ public class AdActivity extends AppCompatActivity {
                     }
                     isSendShowGestureActive = false;
                     break;
-                case ACTIVED:
-                    if (mTrackingMessage.getUsrsex() != 0) {
-                        currentPage = OTHER_PAGE;
-                        startAIScreenApp();
-                    } else {
-                        YxLog.d(TAG, "have no person in 2s");
-                    }
-                    break;
                 case REMOVE_GESTURE_ACTIVE:
                     if (mTrackingMessage.getUsrsex() == 0) {
-                        removeActivationFragment();
+                        removeActiveFloatView();
                     } else if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isStandHere()) {
-                        removeActivationFragment();
-
-//                        VoicePlay.getInstance(AdActivity.this, VoicePlay.SOUNDPOOL).playVoiceBySoundpoolOnce(R.raw.please_put_up_your_hands);
+                        removeActiveFloatView();
                         startFloatHandsActiveTipAnimation();
                     }
                     break;
@@ -229,7 +187,7 @@ public class AdActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         YxLog.i(TAG, "MainActivity onCreate");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ad_second);
+        setContentView(R.layout.activity_ad_player);
         ButterKnife.bind(this);
         Tools.getPermission(this, this);
         EventBus.getDefault().register(this);
@@ -255,7 +213,7 @@ public class AdActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 YxLog.d(TAG, "btEnter onClick");
-                mParser.parse("hands_active_ing2.svga", new SVGAParser.ParseCompletion() {
+                mParser.parse("hands_active_ing.svga", new SVGAParser.ParseCompletion() {
                     @Override
                     public void onComplete(@NotNull SVGAVideoEntity svgaVideoEntity) {
                         SVGADrawable svgaDrawable = new SVGADrawable(svgaVideoEntity);
@@ -276,8 +234,7 @@ public class AdActivity extends AppCompatActivity {
             public boolean onHover(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_HOVER_ENTER:
-                        YxLog.d(TAG, "btEnter ACTION_HOVER_ENTER");
-                        mParser.parse("hands_active_ing2.svga", new SVGAParser.ParseCompletion() {
+                        mParser.parse("hands_active_ing.svga", new SVGAParser.ParseCompletion() {
                             @Override
                             public void onComplete(@NotNull SVGAVideoEntity svgaVideoEntity) {
                                 SVGADrawable svgaDrawable = new SVGADrawable(svgaVideoEntity);
@@ -292,7 +249,6 @@ public class AdActivity extends AppCompatActivity {
                         });
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT:
-                        YxLog.d(TAG, "btEnter ACTION_HOVER_EXIT");
                         mParser.parse("hands_active_start.svga", new SVGAParser.ParseCompletion() {
                             @Override
                             public void onComplete(@NotNull SVGAVideoEntity svgaVideoEntity) {
@@ -322,8 +278,6 @@ public class AdActivity extends AppCompatActivity {
         tvUsersex.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                showGestureActiveFootPrintView();
-//                isInteractionMode = true;
                 mActiveTipView.showActiveTip();
 
             }
@@ -331,8 +285,6 @@ public class AdActivity extends AppCompatActivity {
         tvStandhere.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                removeActivationFragment();
-//                isInteractionMode = false;
                 mActiveTipView.dismissActiveTip();
             }
         });
@@ -490,12 +442,7 @@ public class AdActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         isShowGestureActive = false;
-//        currentPage = AD_PAGE;
         Tools.hideNavigationBarStatusBar(this, true);
-//        mPagerPage = mSharedPreferences.getInt("mCurrentPage", 0);
-//        mCurrentViewPageIndex = mSharedPreferences.getInt("mCurrentViewPageIndex", 0);
-//        YxLog.d(TAG, "mCurrentPage=" + mPagerPage);
-//        isPlay = true;
         Runnable runnable = new Runnable() {
             private JSONObject mJsonObject;
 
@@ -509,9 +456,6 @@ public class AdActivity extends AppCompatActivity {
                         mCurrentPage = mPagerPage++ % mADContentSize;
                         mCurrentViewPageIndex = mCurrentViewPageIndex % mFragmentSize;
                         YxLog.d(TAG, "Runnable --- mPagerPage = " + mPagerPage + ", mCurrentPage = " + mCurrentPage);
-//                    YxLog.d(TAG, "mAdContentInfoList size = " + mAdContentInfoList.size());
-//                    YxLog.d(TAG, "mFragmentSize = " + mFragmentSize);
-//                    YxLog.d(TAG, "mCurrentPage = " + mCurrentPage);
                         if (mCurrentPage >= mADContentSize) {
                             mCurrentPage = 0;
                         }
@@ -551,38 +495,14 @@ public class AdActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onPause() {
         YxLog.i(TAG, "MainActivity onPause");
         super.onPause();
-//        isPlay = false;
-//        currentPage = OTHER_PAGE;
-//        mEditor.putInt("mCurrentPage", mCurrentPage);
-//        mEditor.putInt("mCurrentViewPageIndex", mCurrentViewPageIndex);
-//        mEditor.commit();
-//        removeActivationFragment();
     }
 
 
-    private void removeActivationFragment() {
-//        if (flGestureActive.getChildCount() != 0) {
-//            FragmentTransaction mTransaction = getSupportFragmentManager().beginTransaction();
-//            if (mGestureActiveOneStepFragment != null) {
-//                mTransaction.remove(mGestureActiveOneStepFragment);
-//            }
-//            if (mGestureActiveTwoStepFragment != null) {
-//                mTransaction.remove(mGestureActiveTwoStepFragment);
-//            }
-//            if (mGestureActiveFootPrintFragment != null) {
-//                mTransaction.remove(mGestureActiveFootPrintFragment);
-//            }
-//            mTransaction.commitAllowingStateLoss();
-//            isShowGestureActive = false;
-//            mGestureActiveTwoStepFragment = null;
-//            mGestureActiveOneStepFragment = null;
-//            mGestureActiveFootPrintFragment = null;
-//        }
+    private void removeActiveFloatView() {
         if (mActiveFootPrintView != null) {
             mActiveFootPrintView.dismissActiveTip();
         }
@@ -597,7 +517,7 @@ public class AdActivity extends AppCompatActivity {
         mEditor.putInt("mCurrentPage", mCurrentPage);
         mEditor.putInt("mCurrentViewPageIndex", mCurrentViewPageIndex);
         mEditor.commit();
-        removeActivationFragment();
+        removeActiveFloatView();
 
         if (mSoundPool != null) {
             mSoundPool.stop(mSoundIdStandFootprint);
@@ -611,7 +531,6 @@ public class AdActivity extends AppCompatActivity {
     }
 
     private void setSocketListener() {
-//        mTcpClientConnector.createConnect("10.2.26.7", 20002);
         mTcpClientConnector.createConnect("127.0.0.1", 20002);
         mTcpClientConnector.setOnConnectListener(new TcpClientConnector.ConnectListener() {
             @Override
@@ -636,20 +555,9 @@ public class AdActivity extends AppCompatActivity {
                 + " ;isActived=" + mTrackingMessage.isActived());
         YxLog.d(TAG, "isShowActiveTip=" + isShowGestureActive);
 
-//        //激活屏幕进入主界面
-//        if (mTrackingMessage.getUsrsex() != 0 && currentPage == AD_PAGE && mTrackingMessage.isActived() &&
-//                !isShowGestureActive && isLaunchFromUserDetect) {
-//            Message message = mHandler.obtainMessage();
-//            message.what = ACTIVED;
-//            mHandler.sendMessageDelayed(message, 500);
-//        }
-
         //有人且站对位置,显示“请把手移到这里试试”
         if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isStandHere() && !isShowGestureActive) {
-
-//            VoicePlay.getInstance(AdActivity.this, VoicePlay.SOUNDPOOL).playVoiceBySoundpoolOnce(R.raw.please_put_up_your_hands);
             startFloatHandsActiveTipAnimation();
-
         }
 
         //backPress启动，没人2秒后 恢复为检测到没有人启动
@@ -674,19 +582,8 @@ public class AdActivity extends AppCompatActivity {
 //            mHandler.sendMessage(message);
         }
 
-//        //识别到有人但没有激活屏幕。(即时)后显示小象动画
-//        if (mTrackingMessage.getUsrsex() != 0 && !mTrackingMessage.isActived() && !isShowGestureActive) {
-//            if (!isSendShowGestureActive) {
-//                isSendShowGestureActive = true;
-//                Message message = mHandler.obtainMessage();
-//                message.what = SHOW_ACTIVE_TIP_FROM_FOOT;
-//                mHandler.sendMessageDelayed(message, SHOW_ELEPHANT_ACTIVE_GESTURE_DELAY);
-//            }
-//        }
-
         //识别到有人但没有站对位置。(即时)后显示站对位置提示动画
         if (mTrackingMessage.getUsrsex() != 0 && mTrackingMessage.isStandHere() && !isShowGestureActive) {
-//            Tools.fadeOut(tvHandsActiveText, 500);
             if (!isSendShowGestureActive) {
                 isSendShowGestureActive = true;
                 Message message = mHandler.obtainMessage();
@@ -714,37 +611,12 @@ public class AdActivity extends AppCompatActivity {
         finish();
     }
 
-
-    private void showGestureActiveTowStepView() {
-        YxLog.d(TAG, "showGestureActiveTowStepView");
-        if (mGestureActiveTwoStepFragment == null && flGestureActive.getChildCount() == 0) {
-            YxLog.d(TAG, "add two gestureFragment");
-            mGestureActiveTwoStepFragment = new GestureActiveTwoStepFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveTwoStepFragment).commitAllowingStateLoss();
-        }
-    }
-
     private void showGestureActiveFootPrintView() {
-//        YxLog.d(TAG, "showGestureActiveFootPrintView");
-//        if (mGestureActiveFootPrintFragment == null && flGestureActive.getChildCount() == 0) {
-//            YxLog.d(TAG, "add footprint gestureFragment");
-//            mGestureActiveFootPrintFragment = new GestureActiveFootPrintFragment();
-//            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveFootPrintFragment).commitAllowingStateLoss();
-//        }
         if (mActiveFootPrintView == null) {
             mActiveFootPrintView = new ActiveFootPrintView(this);
         }
         mActiveFootPrintView.showActiveTip();
 
-    }
-
-    private void showGestureActiveOneStepView() {
-        YxLog.d(TAG, "showGestureActiveOneStepView");
-        if (mGestureActiveOneStepFragment == null && flGestureActive.getChildCount() == 0) {
-            YxLog.d(TAG, "add  one gestureFragment");
-            mGestureActiveOneStepFragment = new GestureActiveOneStepFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.fl_gestureActive, mGestureActiveOneStepFragment).commitAllowingStateLoss();
-        }
     }
 
     @Subscribe
@@ -758,16 +630,7 @@ public class AdActivity extends AppCompatActivity {
 
         if (eventBusMessage.getType() == EventBusMessage.RECEIVE_INTERACTION_EVENT) {
             isInteractionMode = true;
-            YxLog.i(TAG, "isInteractionMode=" + isInteractionMode + " ;isAppPlay=" + isAppPlay);
-        }
-    }
-
-    private void startHandsActiveTextAnimation() {
-        if (!mHandsActiveAnimator.isRunning()) {
-            mHandsActiveAnimator.setDuration(800);
-            mHandsActiveAnimator.setRepeatCount(ValueAnimator.INFINITE);
-            mHandsActiveAnimator.setRepeatMode(ValueAnimator.REVERSE);
-            mHandsActiveAnimator.start();
+//            YxLog.i(TAG, "isInteractionMode=" + isInteractionMode + " ;isAppPlay=" + isAppPlay);
         }
     }
 

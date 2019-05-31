@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="890dp"
         android:layout_alignParentBottom="true"
-        android:src="@drawable/bottom_grid_2" />
+        android:src="@drawable/bottom_grid" />
 
     <TextView
         android:id="@+id/tv_guide_tip_1"
