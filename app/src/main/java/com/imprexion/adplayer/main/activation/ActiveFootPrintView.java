@@ -45,8 +45,6 @@ public class ActiveFootPrintView extends FloatView {
     private ObjectAnimator mFloorExitObjAnimator;
     private Unbinder mUnbinder;
     private boolean isResume;
-    private boolean isStandHere;
-    private boolean isWaveForActive;
     private boolean isRotateForStandRight;
     private VoicePlay mVoicePlay;
     private static final String TAG = "ActiveFootPrintView";
