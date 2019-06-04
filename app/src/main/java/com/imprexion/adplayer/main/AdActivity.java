@@ -130,6 +130,10 @@ public class AdActivity extends AppCompatActivity {
         public boolean handleMessage(Message msg) {
             switch (msg.what) {
                 case PLAY_NEXT:
+                    if (!isPlay) {
+                        YxLog.d(TAG, "isplay is false,break ");
+                        break;
+                    }
                     YxLog.d(TAG, "handleMessage --- mCurrentPage = " + msg.arg1);
                     ADContentInfo adContentInfo = mAdContentInfoList.get(msg.arg1);
                     // 图片广告
