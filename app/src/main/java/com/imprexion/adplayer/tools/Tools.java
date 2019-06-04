@@ -32,6 +32,7 @@ import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.base.ADPlayApplication;
 import com.imprexion.adplayer.main.AdActivity;
 import com.imprexion.library.YxLog;
+import com.imprexion.library.YxPermission;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -180,21 +181,9 @@ public class Tools {
         }
     }
 
-    public static void getPermission(Context context, Activity activity) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.CAMERA}, 1);
-        }
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.SYSTEM_ALERT_WINDOW)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.SYSTEM_ALERT_WINDOW}, 1);
-        }
+    public static void getPermission() {
+        YxPermission.checkAndRequestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        YxPermission.checkAndRequestPermission(Manifest.permission.CAMERA);
+        YxPermission.checkAndRequestPermission(Manifest.permission.SYSTEM_ALERT_WINDOW);
     }
 }
