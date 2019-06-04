@@ -417,9 +417,7 @@ public class AdActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);//must store the new intent unless getIntent() will return the old one
         YxLog.d(TAG, "--- onNewIntent ---");
-
         isPlay = true;
-
     }
 
     @Override
@@ -477,10 +475,12 @@ public class AdActivity extends AppCompatActivity {
                     YxStatistics.version(1).param("adplanId", appPlanId).report("aiscreen_ad_play");
                 }
             };
+
+            if (mExecutorService != null) {
+                mExecutorService.execute(mRunnable);
+            }
         }
-        if (mExecutorService != null) {
-            mExecutorService.execute(mRunnable);
-        }
+
     }
 
     @Override
@@ -607,7 +607,6 @@ public class AdActivity extends AppCompatActivity {
             mActiveFootPrintView = new ActiveFootPrintView(this);
         }
         mActiveFootPrintView.showActiveTip();
-
     }
 
     @Subscribe
