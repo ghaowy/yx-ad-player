@@ -202,8 +202,8 @@ public class AdActivity extends AppCompatActivity {
         if (getIntent() != null && getIntent().getExtras() != null && "userDetect".equals(getIntent().getExtras().getString("launchType"))) {
             isLaunchFromUserDetect = true;
         }
-        mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 5);
-        mSoundIdStandFootprint = mSoundPool.load(this, R.raw.please_stand_footprint, 1);
+//        mSoundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 5);
+//        mSoundIdStandFootprint = mSoundPool.load(this, R.raw.please_stand_footprint, 1);
 //        mSoundIdPutUpYourHand = mSoundPool.load(this, R.raw.please_put_up_your_hands, 1);
         initData();
         initEnterButton();
@@ -528,7 +528,7 @@ public class AdActivity extends AppCompatActivity {
             @Override
             public void onReceiveData(aiscreen messageForAdplay) {
                 YxLog.i(TAG, "receive tracking info");
-                dispatchMessage(messageForAdplay);
+//                dispatchMessage(messageForAdplay);
             }
         });
     }
