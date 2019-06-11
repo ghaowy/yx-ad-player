@@ -30,6 +30,7 @@ import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
 import com.imprexion.adplayer.main.activation.ActiveFootPrintView;
 import com.imprexion.adplayer.main.activation.ActiveTipView;
+import com.imprexion.adplayer.main.activation.BackButton;
 import com.imprexion.adplayer.main.content.AdContentImageFragment;
 import com.imprexion.adplayer.main.content.CameraRainFragment;
 import com.imprexion.adplayer.service.AdPlayService;
@@ -64,8 +65,6 @@ public class AdActivity extends AppCompatActivity {
     TextView tvIsactived;
     @BindView(R.id.fl_gestureActive)
     FrameLayout flGestureActive;
-    @BindView(R.id.bt_enter)
-    ImageView btEnter;
     @BindView(R.id.tv_hands_active_text)
     TextView tvHandsActiveText;
 
@@ -116,6 +115,7 @@ public class AdActivity extends AppCompatActivity {
     private AlphaAnimation mHandsActiveAnimator;
     private TrackingMessage mTrackingMessage;
     private Runnable mRunnable;
+    private BackButton mBackButton;
 
     public SoundPool getSoundPool() {
         return mSoundPool;
@@ -206,7 +206,7 @@ public class AdActivity extends AppCompatActivity {
 //        mSoundIdStandFootprint = mSoundPool.load(this, R.raw.please_stand_footprint, 1);
 //        mSoundIdPutUpYourHand = mSoundPool.load(this, R.raw.please_put_up_your_hands, 1);
         initData();
-        initEnterButton();
+        mBackButton = new BackButton();
         setOnClickListener();
         // 初始化移到这里
         currentPage = AD_PAGE;
@@ -215,43 +215,11 @@ public class AdActivity extends AppCompatActivity {
         isPlay = true;
     }
 
-    private void initEnterButton() {
-        if (mHandsActiveAnimator == null) {
-            mHandsActiveAnimator = new AlphaAnimation(0.5f, 1.0f);
-        }
-        mHandsActiveAnimator.setRepeatMode(AlphaAnimation.REVERSE);
-        mHandsActiveAnimator.setDuration(600);
-        mHandsActiveAnimator.setRepeatCount(AlphaAnimation.INFINITE);
-        if (btEnter != null) {
-            btEnter.startAnimation(mHandsActiveAnimator);
-        }
-    }
-
     private void setOnClickListener() {
-        btEnter.setOnClickListener(new View.OnClickListener() {
+        mBackButton.getRootView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startAIScreenApp();
-            }
-        });
-        btEnter.setOnHoverListener(new View.OnHoverListener() {
-            @Override
-            public boolean onHover(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_HOVER_ENTER:
-                        if (btEnter != null) {
-                            btEnter.setImageResource(R.drawable.hands_hover);
-                        }
-                        break;
-                    case MotionEvent.ACTION_HOVER_EXIT:
-                        if (btEnter != null) {
-                            btEnter.setImageResource(R.drawable.hands_normal);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                return false;
             }
         });
         //test
@@ -423,6 +391,7 @@ public class AdActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mBackButton.showFloatView();
         isShowGestureActive = false;
         Tools.hideNavigationBarStatusBar(this, true);
         if (mRunnable == null) {
@@ -486,6 +455,7 @@ public class AdActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         YxLog.i(TAG, "MainActivity onPause");
+        mBackButton.dismissWindow();
         super.onPause();
     }
 
