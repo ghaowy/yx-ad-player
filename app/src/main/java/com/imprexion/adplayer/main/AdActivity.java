@@ -1,6 +1,7 @@
 package com.imprexion.adplayer.main;
 
 import android.animation.ObjectAnimator;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -87,6 +88,10 @@ public class AdActivity extends AppCompatActivity {
     private static final String AD_CURRENT = "ADContentCurrent";
     private static final String AD_NEXT = "ADContentNext";
     public final static String AD_DEFAULT = "adDefalt";
+    /**
+     * back按钮 显示 Key：  1 显示，2 隐藏
+     */
+    public static final String INTENT_KEY_BACK_BUTTON_SHOW = "back_button_show";
     private volatile boolean isPlay = true;
     private boolean isInteractionMode = false;
     private int mCurrentPosition;
@@ -116,6 +121,7 @@ public class AdActivity extends AppCompatActivity {
     private TrackingMessage mTrackingMessage;
     private Runnable mRunnable;
     private BackButton mBackButton;
+    private Intent mWindowBackIntent;
 
     public SoundPool getSoundPool() {
         return mSoundPool;
@@ -139,6 +145,8 @@ public class AdActivity extends AppCompatActivity {
                     // 图片广告
                     if (adContentInfo.getContentType() == 1) {
                         isAppPlay = false;
+                        mWindowBackIntent.putExtra(INTENT_KEY_BACK_BUTTON_SHOW, 2);
+                        startService(mWindowBackIntent);
                         YxLog.d(TAG, "handleMessage --- mCurrentViewPageIndex = " + mCurrentViewPageIndex);
                         viewPager.setCurrentItem(mCurrentViewPageIndex++);
                         // 从其他应用切换回图片轮播
@@ -153,6 +161,8 @@ public class AdActivity extends AppCompatActivity {
                         Intent serviceIntent = new Intent(AdActivity.this, AdPlayService.class);
                         serviceIntent.putExtra("start_app", adContentInfo.getAppCode());
                         startService(serviceIntent);
+                        mWindowBackIntent.putExtra(INTENT_KEY_BACK_BUTTON_SHOW, 1);
+                        startService(mWindowBackIntent);
                     }
                     mCurrentADContentInfo = adContentInfo;
                     break;
@@ -207,6 +217,8 @@ public class AdActivity extends AppCompatActivity {
 //        mSoundIdPutUpYourHand = mSoundPool.load(this, R.raw.please_put_up_your_hands, 1);
         initData();
         mBackButton = new BackButton();
+        mWindowBackIntent = new Intent();
+        mWindowBackIntent.setComponent(new ComponentName("com.imprexion.service.window","com.imprexion.service.window.WindowService"));
         setOnClickListener();
         // 初始化移到这里
         currentPage = AD_PAGE;

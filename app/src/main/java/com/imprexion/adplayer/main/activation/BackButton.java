@@ -93,14 +93,14 @@ public class BackButton extends FloatView {
                         // 鼠标进入view
                         mIvHandIcon.setVisibility(View.VISIBLE);
                         mMySurfaceView.setVisibility(View.INVISIBLE);
-                        mTvInfo.setText("保持静止");
+                        mTvInfo.setText(R.string.keep_dont_move);
                         break;
                     case MotionEvent.ACTION_HOVER_EXIT:
 //                        YxLog.d(TAG, "onHover --- ACTION_HOVER_EXIT ");
                         // 鼠标离开view
                         mIvHandIcon.setVisibility(View.INVISIBLE);
                         mMySurfaceView.setVisibility(View.VISIBLE);
-                        mTvInfo.setText("进入主应用");
+                        mTvInfo.setText(R.string.enter_launcher);
                         break;
                 }
                 return false;
