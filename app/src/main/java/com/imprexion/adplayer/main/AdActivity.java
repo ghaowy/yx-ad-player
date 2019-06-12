@@ -1,6 +1,7 @@
 package com.imprexion.adplayer.main;
 
 import android.animation.ObjectAnimator;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +31,7 @@ import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.bean.TrackingMessage;
 import com.imprexion.adplayer.main.activation.ActiveFootPrintView;
 import com.imprexion.adplayer.main.activation.ActiveTipView;
+import com.imprexion.adplayer.main.activation.BackButton;
 import com.imprexion.adplayer.main.content.AdContentImageFragment;
 import com.imprexion.adplayer.main.content.CameraRainFragment;
 import com.imprexion.adplayer.service.AdPlayService;
@@ -64,8 +66,6 @@ public class AdActivity extends AppCompatActivity {
     TextView tvIsactived;
     @BindView(R.id.fl_gestureActive)
     FrameLayout flGestureActive;
-    @BindView(R.id.bt_enter)
-    ImageView btEnter;
     @BindView(R.id.tv_hands_active_text)
     TextView tvHandsActiveText;
 
@@ -88,6 +88,10 @@ public class AdActivity extends AppCompatActivity {
     private static final String AD_CURRENT = "ADContentCurrent";
     private static final String AD_NEXT = "ADContentNext";
     public final static String AD_DEFAULT = "adDefalt";
+    /**
+     * back按钮 显示 Key：  1 显示，2 隐藏
+     */
+    public static final String INTENT_KEY_BACK_BUTTON_SHOW = "back_button_show";
     private volatile boolean isPlay = true;
     private boolean isInteractionMode = false;
     private int mCurrentPosition;
@@ -116,6 +120,8 @@ public class AdActivity extends AppCompatActivity {
     private AlphaAnimation mHandsActiveAnimator;
     private TrackingMessage mTrackingMessage;
     private Runnable mRunnable;
+    private BackButton mBackButton;
+    private Intent mWindowBackIntent;
 
     public SoundPool getSoundPool() {
         return mSoundPool;
@@ -139,6 +145,8 @@ public class AdActivity extends AppCompatActivity {
                     // 图片广告
                     if (adContentInfo.getContentType() == 1) {
                         isAppPlay = false;
+                        mWindowBackIntent.putExtra(INTENT_KEY_BACK_BUTTON_SHOW, 2);
+                        startService(mWindowBackIntent);
                         YxLog.d(TAG, "handleMessage --- mCurrentViewPageIndex = " + mCurrentViewPageIndex);
                         viewPager.setCurrentItem(mCurrentViewPageIndex++);
                         // 从其他应用切换回图片轮播
@@ -153,6 +161,8 @@ public class AdActivity extends AppCompatActivity {
                         Intent serviceIntent = new Intent(AdActivity.this, AdPlayService.class);
                         serviceIntent.putExtra("start_app", adContentInfo.getAppCode());
                         startService(serviceIntent);
+                        mWindowBackIntent.putExtra(INTENT_KEY_BACK_BUTTON_SHOW, 1);
+                        startService(mWindowBackIntent);
                     }
                     mCurrentADContentInfo = adContentInfo;
                     break;
@@ -206,7 +216,9 @@ public class AdActivity extends AppCompatActivity {
 //        mSoundIdStandFootprint = mSoundPool.load(this, R.raw.please_stand_footprint, 1);
 //        mSoundIdPutUpYourHand = mSoundPool.load(this, R.raw.please_put_up_your_hands, 1);
         initData();
-        initEnterButton();
+        mBackButton = new BackButton();
+        mWindowBackIntent = new Intent();
+        mWindowBackIntent.setComponent(new ComponentName("com.imprexion.service.window","com.imprexion.service.window.WindowService"));
         setOnClickListener();
         // 初始化移到这里
         currentPage = AD_PAGE;
@@ -215,43 +227,11 @@ public class AdActivity extends AppCompatActivity {
         isPlay = true;
     }
 
-    private void initEnterButton() {
-        if (mHandsActiveAnimator == null) {
-            mHandsActiveAnimator = new AlphaAnimation(0.5f, 1.0f);
-        }
-        mHandsActiveAnimator.setRepeatMode(AlphaAnimation.REVERSE);
-        mHandsActiveAnimator.setDuration(600);
-        mHandsActiveAnimator.setRepeatCount(AlphaAnimation.INFINITE);
-        if (btEnter != null) {
-            btEnter.startAnimation(mHandsActiveAnimator);
-        }
-    }
-
     private void setOnClickListener() {
-        btEnter.setOnClickListener(new View.OnClickListener() {
+        mBackButton.getRootView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startAIScreenApp();
-            }
-        });
-        btEnter.setOnHoverListener(new View.OnHoverListener() {
-            @Override
-            public boolean onHover(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_HOVER_ENTER:
-                        if (btEnter != null) {
-                            btEnter.setImageResource(R.drawable.hands_hover);
-                        }
-                        break;
-                    case MotionEvent.ACTION_HOVER_EXIT:
-                        if (btEnter != null) {
-                            btEnter.setImageResource(R.drawable.hands_normal);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                return false;
             }
         });
         //test
@@ -423,6 +403,7 @@ public class AdActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mBackButton.showFloatView();
         isShowGestureActive = false;
         Tools.hideNavigationBarStatusBar(this, true);
         if (mRunnable == null) {
@@ -486,6 +467,7 @@ public class AdActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         YxLog.i(TAG, "MainActivity onPause");
+        mBackButton.dismissWindow();
         super.onPause();
     }
 
