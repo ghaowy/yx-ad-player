@@ -101,7 +101,6 @@ dependencies {
     implementation 'com.google.protobuf:protobuf-java:3.5.1'
     implementation 'com.google.protobuf:protoc:3.5.1'
     implementation 'com.alibaba:fastjson:1.1.70.android'
-    implementation files('libs/bugly_crash_release.jar')
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     implementation 'com.github.yyued:SVGAPlayer-Android:2.0.0'
     implementation 'androidx.annotation:annotation:1.0.0'
