@@ -6,6 +6,8 @@ public class EventBusMessage {
     public static final int AD_RECEIVE_CALLBACK = 202;
     public static final int REMOVE_GESTURE_ACTIVE = 203;
     public static final int RECEIVE_INTERACTION_EVENT = 204;
+    public static final int PLAY_NEXT = 205;
+    public static final int INDEX_CHANGED = 206;
 
     private int type;
     private Object mObject;
