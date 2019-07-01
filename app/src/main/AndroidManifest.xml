@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
 
     <application
-        android:name="com.imprexion.adplayer.base.ADPlayApplication"
+        android:name=".base.ADPlayApplication"
         android:allowBackup="true"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
@@ -20,24 +20,52 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.imprexion.adplayer.main.AdActivity"
+            android:name=".main.IndexActivity"
             android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".main.MainActivity"
+            android:launchMode="singleTask">
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
+
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+        <activity
+            android:name=".main.AdActivity"
+            android:launchMode="singleTask">
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+        </activity>
+
+        <service android:name=".service.AdPlayService">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <service android:name=".service.AdPlayService" />
+        </service>
 
         <receiver android:name=".component.ADBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.imprexion.push.MESSAGE" />
                 <action android:name="com.imprexion.action.EVENT_TOUCH" />
                 <action android:name="com.imprexion.action.EVENT_GESTURE" />
+                <action android:name="com.imprexion.action.EVENT_NO_OPERATION" />
+                <action android:name="android.intent.action.TIME_TICK" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

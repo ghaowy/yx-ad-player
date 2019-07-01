@@ -69,6 +69,7 @@ public class AdActivity extends AppCompatActivity {
     @BindView(R.id.tv_hands_active_text)
     TextView tvHandsActiveText;
 
+    /*存放图片广告的Fragment*/
     private List<Fragment> mFragmentList;
     private ViewPager.OnPageChangeListener mOnPageChangeListener;
     private int mPagerPage;
@@ -218,7 +219,7 @@ public class AdActivity extends AppCompatActivity {
         initData();
         mBackButton = new BackButton();
         mWindowBackIntent = new Intent();
-        mWindowBackIntent.setComponent(new ComponentName("com.imprexion.service.window","com.imprexion.service.window.WindowService"));
+        mWindowBackIntent.setComponent(new ComponentName("com.imprexion.service.window", "com.imprexion.service.window.WindowService"));
         setOnClickListener();
         // 初始化移到这里
         currentPage = AD_PAGE;
@@ -273,6 +274,7 @@ public class AdActivity extends AppCompatActivity {
         ADContentPlay adContentPlay;
         if (adContentPlayString != null) {
             adContentPlay = JSON.parseObject(adContentPlayString, ADContentPlay.class);
+            //判断是否是今天的播放计划
             if (!adContentPlay.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
                 adContentPlayString = mSharedPreferences.getString(AD_NEXT, null);
                 if (adContentPlayString != null) {
@@ -379,6 +381,10 @@ public class AdActivity extends AppCompatActivity {
         viewPager.setOffscreenPageLimit(2);
     }
 
+    /**
+     * 获取播放的默认图。
+     * @return
+     */
     private ADContentPlay getDefaultADContentPlay() {
         ADContentPlay adContentPlay;
         adContentPlay = new ADContentPlay();

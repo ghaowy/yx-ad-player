@@ -1,18 +1,27 @@
 package com.imprexion.adplayer.service;
 
+import android.annotation.TargetApi;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.ActivityOptionsCompat;
 
 import com.imprexion.adplayer.R;
+import com.imprexion.adplayer.net.http.PublicParams;
+import com.imprexion.adplayer.player.PlayerControlCenter;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.util.ContextUtils;
 
 public class AdPlayService extends Service {
 
     private static final String TAG = "AdPlayService";
+
+    private PlayerControlCenter mControlCenter;
 
     public AdPlayService() {
     }
@@ -29,25 +38,61 @@ public class AdPlayService extends Service {
         return null;
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        YxLog.d(TAG, "onStartCommand");
-        if (intent != null) {
-            //获取包名
-            String packageName = intent.getStringExtra("start_app");
-            if (packageName != null) {
-                YxLog.d(TAG, "onStartCommand --- packageName = " + packageName);
-                switchApp(packageName);
-            }
-        }
-
-        return super.onStartCommand(intent, flags, startId);
-    }
-
     public class AISBinder extends Binder {
         public AdPlayService getService() {
             return AdPlayService.this;
         }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        YxLog.i(TAG, "onCreate()");
+        mControlCenter = new PlayerControlCenter(this);
+        mControlCenter.start();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        YxLog.i(TAG, "onStartCommand()   本机的序列号，deviceId=" + Build.SERIAL
+                + ", 连接Server环境=" + PublicParams.ENV);
+        Notification notification = getStartNotification();
+        startForeground(115, notification);// 开始前台服务
+        /**
+         * 由广播接收者 {@code ADBroadcastReceiver} 回调过来的消息,或者首次启动Service的消息。
+         */
+        if (intent != null) {
+            String messageType = intent.getStringExtra("messageType");
+            String data = intent.getStringExtra("data");
+            YxLog.i(TAG, "onStartCommand() messageType=" + messageType + ",data=" + data);
+            mControlCenter.handleEvent(messageType, data);
+        }
+        return START_STICKY;
+    }
+
+    @TargetApi(16)
+    private Notification getStartNotification() {
+        //获取一个Notification构造器
+        Notification.Builder builder = new Notification.Builder(this.getApplicationContext());
+        Intent nfIntent = new Intent(this, this.getClass());
+        /*设置PendingIntent*/
+        builder.setContentIntent(PendingIntent.getService(this, 0, nfIntent, 0))
+                // 设置下拉列表中的图标(大图标)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), android.R.mipmap.sym_def_app_icon))
+                // 设置下拉列表里的标题
+                .setContentTitle(this.getClass().getSimpleName())
+                // 设置状态栏内的小图标
+                .setSmallIcon(android.R.mipmap.sym_def_app_icon)
+                // 设置上下文内容
+                .setContentText("ENV=" + PublicParams.ENV + " 正在运行。")
+                // 设置该通知发生的时间
+                .setWhen(System.currentTimeMillis());
+
+        // 获取构建好的Notification
+        Notification notification = builder.build();
+        //设置为默认的声音
+//        notification.defaults = Notification.DEFAULT_SOUND;
+        return notification;
     }
 
     @Override
@@ -60,24 +105,6 @@ public class AdPlayService extends Service {
     public void onDestroy() {
         super.onDestroy();
         YxLog.d(TAG, "onDestroy()");
-    }
-
-    /**
-     * 通过包名启动应用
-     *
-     * @param packageName
-     */
-    private void switchApp(String packageName) {
-        YxLog.d(TAG, "switchApp --- packageName = " + packageName);
-        Intent intent = ContextUtils.get().getPackageManager().getLaunchIntentForPackage(packageName);
-        if (intent == null) {
-            YxLog.d(TAG, "switchApp --- getLaunchIntentForPackage, intent is null!");
-            return;
-        }
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(ContextUtils.get(),
-                R.anim.right_in, R.anim.left_out);
-        startActivity(intent, options.toBundle());
+        mControlCenter.release();
     }
 }
