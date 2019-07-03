@@ -10,7 +10,6 @@ public class IndexActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setBackgroundDrawable(getDrawable(R.drawable.ad_default_2));
         setContentView(R.layout.activity_index);
         finish();
     }

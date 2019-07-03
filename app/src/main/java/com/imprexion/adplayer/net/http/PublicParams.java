@@ -30,13 +30,6 @@ public class PublicParams {
     public static String sysVersion = getSysVersion();
     public static String deviceId = Build.SERIAL;
 
-//    //金沙印象城地图的包名
-//    public static String fengMapPackageName = "com.fengmap.yingxiang";
-    //济南印象城地图的包名
-//    public static String fengMapPackageName = "com.fengmap.jinanyinxiang";
-    //印力中心地图包名
-    public static String fengMapPackageName = "com.imprexion.fengmap";
-
     /**
      * 缓存一个当前本地人脸识别的userId.如果重复是同一个人，就不再请求数据，避免过于频繁
      */
