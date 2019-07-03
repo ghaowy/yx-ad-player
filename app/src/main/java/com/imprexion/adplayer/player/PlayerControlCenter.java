@@ -111,6 +111,9 @@ public class PlayerControlCenter {
         }
     }
 
+    /**
+     * 接收主动请求网络广告数据的回调。
+     */
     private PlayerModel.onPlayerDataListener mAdListener = new PlayerModel.onPlayerDataListener() {
         @Override
         public void onGetAdDatas(ADContentPlay data) {
@@ -118,6 +121,8 @@ public class PlayerControlCenter {
             YxLog.i(TAG, "get new data from server success. need to call startScheduler() = " + isNeedPlay);
             if (isNeedPlay) {
                 startScheduler(5);
+            } else {
+                stopScheduler();
             }
         }
 
@@ -128,6 +133,8 @@ public class PlayerControlCenter {
             YxLog.i(TAG, "get old data from local. need to call startScheduler() = " + isValidData);
             if (isValidData) {
                 startScheduler(5);
+            } else {
+                stopScheduler();
             }
         }
     };
@@ -169,11 +176,15 @@ public class PlayerControlCenter {
      */
     public void handleEvent(String messageType, Object data) {
         if ("get_push_data".equals(messageType)) {
-            //收到push消息，更新广告数据
+            //收到push消息，更新广告数据,如果是需要马上播放，则停止当前计时，启动新计时；
             ADContentPlay adContentPlay = PlayerModel.parseObject(data.toString());
-            updateAdDatas(adContentPlay);
+            boolean isNeedPlay = updateAdDatas(adContentPlay);
             NetPresenter netPresenter = new NetPresenter();
             netPresenter.onADCallback(adContentPlay);
+            stopScheduler();
+            if (isNeedPlay) {
+                startScheduler(DEFAULT_PLAY_TIME);
+            }
         } else if ("no_operation".equals(messageType)) {
             //如果收到无人操作的事件，那么将启动计时器，30s后开始轮播。
             startScheduler(30);
@@ -182,7 +193,7 @@ public class PlayerControlCenter {
             //如果有点击屏幕操作时间，当前播放图片的Activity不在前台，则取消定时器，不会再调度playNext()；
             MainActivity mainActivity = (MainActivity) ADPlayApplication.getInstance().pictureActivity;
             if (mainActivity == null || !mainActivity.isResumed) {
-                mHandler.removeMessages(PLAY_NEXT);
+                stopScheduler();
                 YxLog.i(TAG, "handleEvent() receive interaction event, cancelling scheduler,messageType=" + messageType);
             }
         } else {
@@ -280,6 +291,10 @@ public class PlayerControlCenter {
         Message msg = Message.obtain(mHandler, PLAY_NEXT);
         mHandler.sendMessageDelayed(msg, delayed * 1000);
         YxLog.i(TAG, "startScheduler() may cause play ads, delayed time =" + delayed + "s");
+    }
+
+    private void stopScheduler() {
+        mHandler.removeMessages(PLAY_NEXT);
     }
 
     /**
