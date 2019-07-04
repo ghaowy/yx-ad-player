@@ -120,7 +120,7 @@ public class PlayerControlCenter {
             boolean isNeedPlay = updateAdDatas(data);
             YxLog.i(TAG, "get new data from server success. need to call startScheduler() = " + isNeedPlay);
             if (isNeedPlay) {
-                startScheduler(5);
+                playNext();
             } else {
                 stopScheduler();
             }
@@ -132,7 +132,7 @@ public class PlayerControlCenter {
             boolean isValidData = initLocalData();
             YxLog.i(TAG, "get old data from local. need to call startScheduler() = " + isValidData);
             if (isValidData) {
-                startScheduler(5);
+                playNext();
             } else {
                 stopScheduler();
             }
@@ -233,7 +233,7 @@ public class PlayerControlCenter {
     }
 
     /**
-     * 轮播下一个图片类型广告。通过EventBus发送消息给Activity去播放。
+     * 轮播下一个图片类型广告。
      */
     private void playNextPicture(ADContentInfo adContentInfo) {
         Intent intent = new Intent(mContext, MainActivity.class);
@@ -250,6 +250,8 @@ public class PlayerControlCenter {
         ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(mContext,
                 R.anim.right_in, R.anim.left_out);
         mContext.startActivity(intent, options.toBundle());
+        //发送广播出来，
+        sendBroadcast(adContentInfo);
     }
 
     /**
@@ -265,14 +267,27 @@ public class PlayerControlCenter {
             boolean isSuccess = Util.startApp(mContext, packageName);
             //如果成功需要发出一个广播；提供给导航栏高亮选中当前应用。
             if (isSuccess) {
-                Intent it = new Intent();
-                it.setAction("com.imprexion.action.PLAY_APP");
-                it.putExtra("packageName", packageName);
-                mContext.sendBroadcast(it);
+                sendBroadcast(adContentInfo);
             }
         } else {
             YxLog.i(TAG, "playNextApp()--> play next app ad failed,because of invalid packageName:" + packageName);
         }
+    }
+
+    /**
+     * 轮播控制事件，发送广播通知其他进程。
+     *
+     * @param adContentInfo
+     */
+    private void sendBroadcast(ADContentInfo adContentInfo) {
+        Intent it = new Intent();
+        it.putExtra("contentType", adContentInfo.getContentType());
+        it.setAction("com.imprexion.action.PLAY_APP");
+        if (adContentInfo.getContentType() == ADContentInfo.CONTENT_TYPE_APP) {
+            it.putExtra("packageName", adContentInfo.getAppCode());
+        }
+        mContext.sendBroadcast(it);
+        YxLog.i(TAG, "playNext()--> sendBroadcast  contentType=" + adContentInfo.getContentType());
     }
 
     /**

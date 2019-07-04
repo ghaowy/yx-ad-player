@@ -90,13 +90,19 @@ public final class Util {
     public static boolean startApp(Context context, String pkgName) {
         try {
             Intent intent = context.getPackageManager().getLaunchIntentForPackage(pkgName);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(context,
-                    R.anim.right_in, R.anim.left_out);
-            context.startActivity(intent, options.toBundle());
-            YxLog.i(TAG, "start app with packageName success");
-            return true;
+            if (intent != null) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(context,
+                        R.anim.right_in, R.anim.left_out);
+                context.startActivity(intent, options.toBundle());
+                YxLog.i(TAG, "start app with packageName success");
+                return true;
+            } else {
+                YxLog.e(TAG, "start app with packageName failed " +
+                        "intent = null.maybe the target app is not installed.");
+                return false;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             YxLog.e(TAG, "start app with packageName failed error= " + e.getCause());
@@ -135,8 +141,8 @@ public final class Util {
     }
 
     private static void startAppWithActivityClass(Context context, Class cls,
-                                             Bundle bundle) {
-        Intent intent = new Intent(context,cls);
+                                                  Bundle bundle) {
+        Intent intent = new Intent(context, cls);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //传递参数
         if (bundle != null) {
