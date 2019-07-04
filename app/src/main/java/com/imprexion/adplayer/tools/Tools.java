@@ -121,10 +121,7 @@ public class Tools {
     public static void showPicWithGlide(ImageView imageView, String url) {
 //        YxLog.d(TAG, "url=" + url);
         if (!AdActivity.AD_DEFAULT.equals(url)) {
-            RequestOptions requestOptions = new RequestOptions()
-                    .placeholder(R.drawable.ad_default_2)
-//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .error(R.drawable.ad_default_2);
+            RequestOptions requestOptions = new RequestOptions();
             Glide.with(ADPlayApplication.getInstance().getApplicationContext())
                     .load(url)
                     .apply(requestOptions)
