@@ -262,7 +262,14 @@ public class PlayerControlCenter {
         String packageName = adContentInfo.getAppCode();
         if (!TextUtils.isEmpty(packageName)) {
             YxLog.i(TAG, "playNextApp()--> play next app ad, packageName=" + packageName);
-            Util.startApp(mContext, packageName);
+            boolean isSuccess = Util.startApp(mContext, packageName);
+            //如果成功需要发出一个广播；提供给导航栏高亮选中当前应用。
+            if (isSuccess) {
+                Intent it = new Intent();
+                it.setAction("com.imprexion.action.PLAY_APP");
+                it.putExtra("packageName", packageName);
+                mContext.sendBroadcast(it);
+            }
         } else {
             YxLog.i(TAG, "playNextApp()--> play next app ad failed,because of invalid packageName:" + packageName);
         }
