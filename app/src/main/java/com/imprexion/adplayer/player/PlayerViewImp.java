@@ -41,7 +41,6 @@ public class PlayerViewImp implements IPlayerView {
     public PlayerViewImp(AppCompatActivity activity) {
         mActivity = activity;
         initView();
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -143,8 +142,6 @@ public class PlayerViewImp implements IPlayerView {
         @Override
         public void onPageScrolled(int i, float v, int i1) {
             YxLog.i(TAG, "onPageScrolled: " + (i + 1) + "/" + (mFragmentList.size()));
-            mCurPageIndex = i;
-            sendPageScorllEvent(mADContents.get(i).getAdPlanId());
         }
 
         @Override
@@ -160,17 +157,4 @@ public class PlayerViewImp implements IPlayerView {
             }
         }
     };
-
-    private void sendPageScorllEvent(long selectedAdPlanId) {
-        EventBus.getDefault().post(new EventBusMessage(EventBusMessage.INDEX_CHANGED, selectedAdPlanId));
-    }
-
-    @Subscribe
-    public void onEventBusMessageShow(EventBusMessage eventBusMessage) {
-        YxLog.d(TAG, "onEventBusMessageShow");
-        //新的push消息到达，需要重置广告数据。
-        if (eventBusMessage.getType() == EventBusMessage.INDEX_CHANGED) {
-
-        }
-    }
 }

@@ -64,7 +64,6 @@ public class PlayerControlCenter {
         mContext = context;
         mPlayerModel = new PlayerModel();
         mPlayerModel.setonPlayerDataListener(mAdListener);
-        EventBus.getDefault().register(this);
 
         IntentFilter intentFilter = new IntentFilter();
         context.registerReceiver(mReceiver, intentFilter);
@@ -250,6 +249,7 @@ public class PlayerControlCenter {
         ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(mContext,
                 R.anim.right_in, R.anim.left_out);
         mContext.startActivity(intent, options.toBundle());
+        YxLog.i(TAG, "playNextPicture()--> play next picture ad");
         //发送广播出来，
         sendBroadcast(adContentInfo);
     }
@@ -299,6 +299,7 @@ public class PlayerControlCenter {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == PLAY_NEXT) {
+                YxLog.i(TAG, "mHandler.handleMessage() msg.what=PLAY_NEXT");
                 playNext();
             }
         }
@@ -333,22 +334,6 @@ public class PlayerControlCenter {
             }
         }
         return list;
-    }
-
-    @Subscribe
-    public void onEventBusMessageShow(EventBusMessage eventBusMessage) {
-        YxLog.d(TAG, "onEventBusMessageShow");
-        //新的push消息到达，需要重置广告数据。
-//        if (eventBusMessage.getType() == EventBusMessage.INDEX_CHANGED) {
-//            long adPlanId = Long.valueOf(eventBusMessage.getObject().toString());
-//            YxLog.i(TAG, "get EventBusMessage type=INDEX_CHANGED adPlanId=" + adPlanId);
-//            for (int i = 0; i < mAdContentPlay.getContentPlayVOList().size(); i++) {
-//                if (mAdContentPlay.getContentPlayVOList().get(i).getAdPlanId() == adPlanId) {
-//                    setNextPlayerIndex(i);
-//                    YxLog.d(TAG, "update mCurrentIndex=" + i + " success by type=INDEX_CHANGED event.");
-//                }
-//            }
-//        }
     }
 
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
