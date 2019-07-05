@@ -52,11 +52,15 @@ public class PlayerControlCenter {
      */
     private static final int DEFAULT_PLAY_TIME = 10;
 
+    private static final int NO_OPERATION_SCHEDULE_TIME = 30;
+
     PlayerModel mPlayerModel;
     private int mCurrentIndex;
     private int mPlaySize = 0;
     private Context mContext;
     private boolean mNewUpdateDataFlag;
+
+    private TimerStub mTimerStub;
 
     private ADContentPlay mAdContentPlay;
 
@@ -108,6 +112,7 @@ public class PlayerControlCenter {
         if (mReceiver != null) {
             mContext.unregisterReceiver(mReceiver);
         }
+        stopScheduler();
     }
 
     /**
@@ -148,7 +153,7 @@ public class PlayerControlCenter {
         if (adContentPlay == null || adContentPlay.getContentPlayVOList().size() == 0) {
             YxLog.e(TAG, "get error new update ad data,would not change current!!");
             //如果新收到的轮播数据无效或者今天已取消轮播计划，那么将马上停止广告轮播.
-            mHandler.removeMessages(PLAY_NEXT);
+            stopScheduler();
             if (ADPlayApplication.getInstance().pictureActivity != null) {
                 ADPlayApplication.getInstance().pictureActivity.finish();
             }
@@ -186,7 +191,7 @@ public class PlayerControlCenter {
             }
         } else if ("no_operation".equals(messageType)) {
             //如果收到无人操作的事件，那么将启动计时器，30s后开始轮播。
-            startScheduler(30);
+            startScheduler(NO_OPERATION_SCHEDULE_TIME);
             YxLog.i(TAG, "handleEvent() receive no_operation event, start scheduler,messageType=" + messageType);
         } else if ("interaction".equals(messageType)) {
             //如果有点击屏幕操作时间，当前播放图片的Activity不在前台，则取消定时器，不会再调度playNext()；
@@ -311,13 +316,31 @@ public class PlayerControlCenter {
      * @param delayed 单位是s
      */
     private void startScheduler(int delayed) {
-        Message msg = Message.obtain(mHandler, PLAY_NEXT);
-        mHandler.sendMessageDelayed(msg, delayed * 1000);
+//        Message msg = Message.obtain(mHandler, PLAY_NEXT);
+//        mHandler.sendMessageDelayed(msg, delayed * 1000);
         YxLog.i(TAG, "startScheduler() may cause play ads, delayed time =" + delayed + "s");
+
+        if (mTimerStub == null) {
+            mTimerStub = new TimerStub();
+        }
+        mTimerStub.postDelayed(new TimerStub.OnTimeListener() {
+            @Override
+            public void onTime() {
+                playNext();
+            }
+
+            @Override
+            public void onPeriod() {
+
+            }
+        }, delayed * 1000);
     }
 
     private void stopScheduler() {
-        mHandler.removeMessages(PLAY_NEXT);
+//        mHandler.removeMessages(PLAY_NEXT);
+        if (mTimerStub != null && mTimerStub.isScheduling()) {
+            mTimerStub.cancel();
+        }
     }
 
     /**
