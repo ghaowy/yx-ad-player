@@ -22,7 +22,7 @@ public class TimerStub {
      * 一次性延迟计时。
      *
      * @param onTimeListener
-     * @param delay
+     * @param delay  millisecond 毫秒
      */
     public void postDelayed(final OnTimeListener onTimeListener, final long delay) {
         if (timer == null) {
