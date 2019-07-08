@@ -304,8 +304,20 @@ public class PlayerControlCenter {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == PLAY_NEXT) {
-                YxLog.i(TAG, "mHandler.handleMessage() msg.what=PLAY_NEXT");
-                playNext();
+                int delayTime = msg.arg1;
+                int scheduleTime = (int) ((System.currentTimeMillis() - (long) msg.obj) / 1000);
+                YxLog.i(TAG, "mHandler.handleMessage() msg.what=PLAY_NEXT,delayTime=" + delayTime
+                        + ",scheduleTime=" + scheduleTime);
+                if (scheduleTime < delayTime) {
+                    //如果handler回调太快，清除消息，默认重新计时10s
+                    stopScheduler();
+                    startScheduler(DEFAULT_PLAY_TIME);
+                    YxLog.i(TAG, "mHandler.handleMessage()  callback too soon, reset delayTime,"
+                            + ",scheduleTime=" + DEFAULT_PLAY_TIME);
+                    return;
+                } else {
+                    playNext();
+                }
             }
         }
     };
@@ -316,31 +328,15 @@ public class PlayerControlCenter {
      * @param delayed 单位是s
      */
     private void startScheduler(int delayed) {
-//        Message msg = Message.obtain(mHandler, PLAY_NEXT);
-//        mHandler.sendMessageDelayed(msg, delayed * 1000);
+        Message msg = Message.obtain(mHandler, PLAY_NEXT);
+        msg.arg1 = delayed;
+        msg.obj = System.currentTimeMillis();
+        mHandler.sendMessageDelayed(msg, delayed * 1000);
         YxLog.i(TAG, "startScheduler() may cause play ads, delayed time =" + delayed + "s");
-
-        if (mTimerStub == null) {
-            mTimerStub = new TimerStub();
-        }
-        mTimerStub.postDelayed(new TimerStub.OnTimeListener() {
-            @Override
-            public void onTime() {
-                playNext();
-            }
-
-            @Override
-            public void onPeriod() {
-
-            }
-        }, delayed * 1000);
     }
 
     private void stopScheduler() {
-//        mHandler.removeMessages(PLAY_NEXT);
-        if (mTimerStub != null && mTimerStub.isScheduling()) {
-            mTimerStub.cancel();
-        }
+        mHandler.removeMessages(PLAY_NEXT);
     }
 
     /**

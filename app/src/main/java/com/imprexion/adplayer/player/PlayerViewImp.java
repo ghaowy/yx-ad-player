@@ -141,7 +141,6 @@ public class PlayerViewImp implements IPlayerView {
     ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.OnPageChangeListener() {
         @Override
         public void onPageScrolled(int i, float v, int i1) {
-            YxLog.i(TAG, "onPageScrolled: " + (i + 1) + "/" + (mFragmentList.size()));
         }
 
         @Override

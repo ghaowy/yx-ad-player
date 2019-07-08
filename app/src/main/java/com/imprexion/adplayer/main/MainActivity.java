@@ -58,6 +58,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        YxLog.i(TAG, "onPause()");
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //如果页面被系统回收调用此方法缓存一下数据，这样从onRestoreInstanceState()中恢复数据
