@@ -35,10 +35,10 @@ public class ADBroadcastReceiver extends BroadcastReceiver {
             it.putExtra("messageType", "get_push_data");
             it.putExtra("data", content);
             context.startService(it);
-        } else if (intent.getAction().equals("com.imprexion.action.EVENT_TOUCH") || intent.getAction().equals("com.imprexion.action.EVENT_GESTURE")) {
+        } else if (intent.getAction().equals("com.imprexion.action.EVENT_TOUCH")) {
             YxLog.i(TAG, "onReceive InteractionInfo");
             Intent it = new Intent(context, AdPlayService.class);
-            it.putExtra("messageType", "interaction");
+            it.putExtra("messageType", "touch");
             context.startService(it);
 //            EventBus.getDefault().post(new EventBusMessage(EventBusMessage.RECEIVE_INTERACTION_EVENT, null));
 //            ToastUtils.show("轮播接收到了，有人在交互！");
@@ -48,6 +48,10 @@ public class ADBroadcastReceiver extends BroadcastReceiver {
         } else if (intent.getAction().equals("com.imprexion.action.EVENT_NO_OPERATION")) {
             Intent it = new Intent(context, AdPlayService.class);
             it.putExtra("messageType", "no_operation");
+            context.startService(it);
+        }else if(intent.getAction().equals("com.imprexion.action.EVENT_GESTURE")){
+            Intent it = new Intent(context, AdPlayService.class);
+            it.putExtra("messageType", "geture");
             context.startService(it);
         }
     }

@@ -171,6 +171,22 @@ public final class Util {
         return false;
     }
 
+    public static boolean isAppOnForeground(Context context, String packageName) {
+        List<ActivityManager.RunningAppProcessInfo> appProcesses =
+                ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses();
+        if (appProcesses == null)
+            return false;
+
+        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+            if (appProcess.processName.equals(packageName) && appProcess.importance ==
+                    ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * 修改系统状态栏的颜色。
      *
