@@ -2,5 +2,5 @@
 	path = trackingproto
 	url = https://gitlab.com/imprexionData/android/protobuf/trackingproto.git
 [submodule "library"]
-	path = library
+	path = yx-base-library
 	url = git@gitlab.com:imprexionData/android/yx-base-library.git
