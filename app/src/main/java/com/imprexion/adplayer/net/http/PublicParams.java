@@ -20,12 +20,12 @@ public class PublicParams {
 //    public static String token = "30EFKHab7C5C56K9";
 //    public static final String ENV = "debug";
     //测试环境
-//    public static final String SERVER_BASE_URL = "http://test.imprexion.cn";
-//    public static String token = "30EFKHab7C5C56K9";
+    public static final String SERVER_BASE_URL = "http://test.imprexion.cn";
+    public static String token = "30EFKHab7C5C56K9";
 //    public static final String ENV = "test";
 //    //正式环境
-    public static final String SERVER_BASE_URL = "http://pro.imprexion.cn";
-    public static String token = "30EFKHab7C5C56K8";
+//    public static final String SERVER_BASE_URL = "http://pro.imprexion.cn";
+//    public static String token = "30EFKHab7C5C56K8";
     public static final String ENV = "pro";
     public static String sysVersion = getSysVersion();
     public static String deviceId = Build.SERIAL;

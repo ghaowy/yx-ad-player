@@ -1,12 +1,8 @@
 package com.imprexion.adplayer.main;
 
 import android.content.Intent;
-import android.os.PersistableBundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.base.ADPlayApplication;
@@ -121,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
             mPlayerView.playerNext();
         }
     }
+
+
 
     private void refreshAdDatas(List<ADContentInfo> newData) {
         try {

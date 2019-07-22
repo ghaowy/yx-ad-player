@@ -21,8 +21,8 @@ android {
         applicationId "com.imprexion.adplayer"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 11
-        versionName "1.11"
+        versionCode 14
+        versionName "1.13"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -110,7 +110,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:3.6.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.2.0'
     implementation 'io.reactivex:rxandroid:1.2.1'
-    implementation project(':library')
+    implementation project(':yx-base-library')
 }
 
 apply plugin: 'base-plugin'
@@ -120,7 +120,7 @@ buildscript {
         maven {
             google()
             jcenter()
-            url uri('../library/plugin')
+            url uri('../yx-base-library/plugin')
         }
     }
     dependencies {

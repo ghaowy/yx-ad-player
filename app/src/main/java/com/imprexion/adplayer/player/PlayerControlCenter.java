@@ -1,6 +1,7 @@
 package com.imprexion.adplayer.player;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -9,9 +10,8 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.Parcelable;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -21,14 +21,10 @@ import com.imprexion.adplayer.Util;
 import com.imprexion.adplayer.base.ADPlayApplication;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
-import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.main.MainActivity;
 import com.imprexion.adplayer.net.NetPresenter;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.library.YxLog;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -54,7 +50,7 @@ public class PlayerControlCenter {
 
     private static final int NO_OPERATION_SCHEDULE_TIME = 30;
 
-    PlayerModel mPlayerModel;
+    private PlayerModel mPlayerModel;
     private int mCurrentIndex;
     private int mPlaySize = 0;
     private Context mContext;
@@ -64,6 +60,8 @@ public class PlayerControlCenter {
 
     private ADContentPlay mAdContentPlay;
 
+//    ThreadPoolExecutor mThreadPoolExecutor;
+
     public PlayerControlCenter(Context context) {
         mContext = context;
         mPlayerModel = new PlayerModel();
@@ -71,6 +69,9 @@ public class PlayerControlCenter {
 
         IntentFilter intentFilter = new IntentFilter();
         context.registerReceiver(mReceiver, intentFilter);
+
+//        mThreadPoolExecutor = new ThreadPoolExecutor(1, 1, 60L,
+//                TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(5));
     }
 
     /**
@@ -112,7 +113,21 @@ public class PlayerControlCenter {
         if (mReceiver != null) {
             mContext.unregisterReceiver(mReceiver);
         }
-        stopScheduler();
+        if (mHandler != null) {
+            mHandler.removeCallbacksAndMessages(null);
+            mHandler = null;
+        }
+
+        if (mPlayerModel != null) {
+            mPlayerModel.release();
+            mPlayerModel = null;
+        }
+
+
+//        stopScheduler();
+//        if (mThreadPoolExecutor != null) {
+//            mThreadPoolExecutor.shutdownNow();
+//        }
     }
 
     /**
@@ -178,7 +193,8 @@ public class PlayerControlCenter {
      * @param messageType
      * @param data
      */
-    public void handleEvent(String messageType, Object data) {
+    public synchronized void handleEvent(String messageType, Object data) {
+        YxLog.i(TAG, "handleEvent() receive event, messageType=" + messageType);
         if ("get_push_data".equals(messageType)) {
             //收到push消息，更新广告数据,如果是需要马上播放，则停止当前计时，启动新计时；
             ADContentPlay adContentPlay = PlayerModel.parseObject(data.toString());
@@ -189,20 +205,43 @@ public class PlayerControlCenter {
             if (isNeedPlay) {
                 startScheduler(DEFAULT_PLAY_TIME);
             }
-        } else if ("no_operation".equals(messageType)) {
-            //如果收到无人操作的事件，那么将启动计时器，30s后开始轮播。
-            startScheduler(NO_OPERATION_SCHEDULE_TIME);
-            YxLog.i(TAG, "handleEvent() receive no_operation event, start scheduler,messageType=" + messageType);
-        } else if ("interaction".equals(messageType)) {
-            //如果有点击屏幕操作时间，当前播放图片的Activity不在前台，则取消定时器，不会再调度playNext()；
-            MainActivity mainActivity = (MainActivity) ADPlayApplication.getInstance().pictureActivity;
-            if (mainActivity == null || !mainActivity.isResumed) {
-                stopScheduler();
-                YxLog.i(TAG, "handleEvent() receive interaction event, cancelling scheduler,messageType=" + messageType);
+        } else if ("touch".equals(messageType)) {
+            //如果是点击屏幕操作事件，重置倒计时，调度playNext()；
+            reset(NO_OPERATION_SCHEDULE_TIME);
+//            stopScheduler();
+        } else if ("gesture".equals(messageType)) {
+            //如果是手势操作事件，检测当前是否有体感应用在前台运行，是，则重置定时器，调度playNext()；
+            //否则暂不处理；
+            boolean flag = isGestureAppRunning();
+            YxLog.i(TAG, "isGestureAppRunning=" + flag);
+            if (flag) {
+                reset(NO_OPERATION_SCHEDULE_TIME);
             }
         } else {
-            YxLog.i(TAG, "handleEvent() unknown intent Extra,messageType=" + messageType);
+            YxLog.i(TAG, "handleEvent() unknown event of null Extra data");
         }
+    }
+
+    private void reset(int noOperationScheduleTime) {
+        if (mHandler != null) {
+            YxLog.d(TAG, "reset--> PLAY_NEXT");
+            mHandler.removeMessages(PLAY_NEXT);
+        }
+        startScheduler(noOperationScheduleTime);
+    }
+
+    /**
+     * 当前只有一款体感应用。
+     */
+    private static String[] gestureAppPackageNames = new String[]{"com.Orbbec.MagicSalad2"};
+
+    private boolean isGestureAppRunning() {
+        for (int i = 0; i < gestureAppPackageNames.length; i++) {
+            if (Util.isAppOnForeground(mContext, gestureAppPackageNames[i])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -228,7 +267,10 @@ public class PlayerControlCenter {
         } else if (contentType == ADContentInfo.CONTENT_TYPE_APP) {
             playNextApp(adContentInfo);
         }
-        /*3.当前播放时间，即切换到下一个广告是需要等待的时间*/
+        /*3 启动avatar和tracking service*/
+        startAvatar();
+        startTrackingService();
+        /*4.当前播放时间，即切换到下一个广告是需要等待的时间*/
         int playTime = adContentInfo.getPlayTime();
         if (playTime < 0) {
             playTime = DEFAULT_PLAY_TIME;
@@ -292,7 +334,31 @@ public class PlayerControlCenter {
             it.putExtra("packageName", adContentInfo.getAppCode());
         }
         mContext.sendBroadcast(it);
-        YxLog.i(TAG, "playNext()--> sendBroadcast  contentType=" + adContentInfo.getContentType());
+        YxLog.d(TAG, "playNext()--> sendBroadcast  contentType=" + adContentInfo.getContentType());
+    }
+
+    private void startAvatar() {
+        final String packName = "com.imprexion.avatar";
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                boolean isSuccess = Util.startApp(mContext, packName);
+                YxLog.i(TAG, "start avatar isSuccess=" + isSuccess);
+            }
+        }, 300);
+    }
+
+    private void startTrackingService() {
+
+        String packName = "com.imprexion.service.tracking";
+        String serviceName = "com.imprexion.service.tracking.TrackingService";
+        if (!Util.isAppRunning(mContext, packName)) {
+            Intent it = new Intent();
+            it.setComponent(new ComponentName(packName, serviceName));
+            mContext.startService(it);
+            YxLog.i(TAG, "start tracking service with className");
+        }
+
     }
 
     /**
@@ -304,8 +370,13 @@ public class PlayerControlCenter {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == PLAY_NEXT) {
+                YxLog.d(TAG, "isGestureAppRunning --> " + isGestureAppRunning());
+                if (isGestureAppRunning()) {
+                    startScheduler(NO_OPERATION_SCHEDULE_TIME);
+                    return;
+                }
                 int delayTime = msg.arg1;
-                int scheduleTime = (int) ((System.currentTimeMillis() - (long) msg.obj) / 1000);
+                int scheduleTime = (int) ((SystemClock.elapsedRealtime() - (long) msg.obj) / 1000);
                 YxLog.i(TAG, "mHandler.handleMessage() msg.what=PLAY_NEXT,delayTime=" + delayTime
                         + ",scheduleTime=" + scheduleTime);
                 if (scheduleTime < delayTime) {
@@ -324,20 +395,92 @@ public class PlayerControlCenter {
 
     /**
      * 使用Handler发延迟消息模拟计时器，计算下一个广告的切换时间。支持通过mHandler.removeMessages(int)清楚消息。
+     * 注意使用SystemClock.elapsedRealtime()表示开机到现在的时间总数，包括睡眠时间，它保证一直计时，
+     * 而System.currentMills有可能不准。
      *
-     * @param delayed 单位是s
+     * @param delayed 需要计时的时长，单位是s
      */
     private void startScheduler(int delayed) {
         Message msg = Message.obtain(mHandler, PLAY_NEXT);
         msg.arg1 = delayed;
-        msg.obj = System.currentTimeMillis();
+        msg.obj = SystemClock.elapsedRealtime();
+        YxLog.d(TAG, "startScheduler --> time" + delayed * 1000);
         mHandler.sendMessageDelayed(msg, delayed * 1000);
-        YxLog.i(TAG, "startScheduler() may cause play ads, delayed time =" + delayed + "s");
+//        YxLog.i(TAG, "startScheduler() may cause play ads, delayed time =" + delayed + "s");
+//        if (mScheduleRunnable == null) {
+//            mScheduleRunnable = new ScheduleRunnable(delayed);
+//        }else {
+//            mScheduleRunnable.setScheduleTime(delayed);
+//        }
+//        try {
+//            isScheduled = true;
+//            mThreadPoolExecutor.execute(mScheduleRunnable);
+//        } catch (RejectedExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
 
+    /**
+     * 停止计时器。
+     */
     private void stopScheduler() {
         mHandler.removeMessages(PLAY_NEXT);
+//        if (mScheduleRunnable != null) {
+//            mThreadPoolExecutor.remove(mScheduleRunnable);
+//            mThreadPoolExecutor.purge();
+//            YxLog.i(TAG, "stopScheduler()");
+//            mScheduleRunnable = null;
+//        }
+//        isScheduled = false;
     }
+
+//    /*是否已经启动计时，这个作为定时器到来时，需要执行轮播的标志。*/
+//    private boolean isScheduled;
+//
+//    /*计时器运行任务。*/
+//    private ScheduleRunnable mScheduleRunnable;
+//
+//    private class ScheduleRunnable implements Runnable {
+//
+//        private int scheduleTime;
+//
+//        ScheduleRunnable(int scheduleTime) {
+//            this.scheduleTime = scheduleTime;
+//        }
+//
+//        public void setScheduleTime(int scheduleTime) {
+//            this.scheduleTime = scheduleTime;
+//        }
+//
+//        @Override
+//        public void run() {
+//            try {
+//                Thread.sleep(scheduleTime * 1000);
+//                YxLog.d(TAG, "currentThread.getName=" + Thread.currentThread().getName() +
+//                        ",isScheduled=" + isScheduled);
+//                if (isScheduled) {
+//                    while (isGestureAppRunning()) {
+//                        Thread.sleep(1000);
+//                    }
+//                    playNext();
+//                }
+//
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        private void reset(int time) {
+//            Thread.currentThread().interrupt();
+//            scheduleTime = time;
+//        }
+//    }
+//
+//    private void reset(int time) {
+//        mScheduleRunnable.reset(time);
+//        startScheduler(time);
+//    }
+
 
     /**
      * 通过contentType广告类型获取子列表。
