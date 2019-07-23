@@ -118,8 +118,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     private void refreshAdDatas(List<ADContentInfo> newData) {
         try {
             mPlayerView.updateAds(newData);
