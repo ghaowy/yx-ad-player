@@ -110,7 +110,6 @@ public final class Util {
         }
     }
 
-
     public static void startApp(Context context, String pkgName, Map<String, String> mapExtras) {
 //        Bundle bd = new Bundle();
         try {
@@ -179,7 +178,6 @@ public final class Util {
             return false;
 
         for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
-            YxLog.d(TAG ,"appProcess packageName= " + appProcess.processName + " appProcess.importance= " + appProcess.importance);
             if (appProcess.processName.equals(packageName) && appProcess.importance ==
                     ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
                 return true;

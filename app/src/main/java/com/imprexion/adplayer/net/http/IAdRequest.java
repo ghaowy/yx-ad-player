@@ -1,9 +1,13 @@
 package com.imprexion.adplayer.net.http;
 
+import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
 
-import io.reactivex.Flowable;
+import java.util.Map;
+
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 /**
@@ -20,8 +24,8 @@ public interface IAdRequest {
 
 
     @GET(INTERFACE_GET_AD_CONTENT)
-    Flowable<BaseResult<ADContentPlay>> getAdDatas(@Query("deviceId") String deviceId,
-                                                   @Query("playDate") String playDate,
-                                                   @Query("token") String token);
+    rx.Observable<BaseResult<ADContentPlay>> getAdDatas(@Query("deviceId") String deviceId,
+                                                        @Query("playDate") String playDate,
+                                                        @Query("token") String token);
 
 }
