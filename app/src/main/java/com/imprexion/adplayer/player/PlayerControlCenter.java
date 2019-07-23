@@ -345,7 +345,7 @@ public class PlayerControlCenter {
                 boolean isSuccess = Util.startApp(mContext, packName);
                 YxLog.i(TAG, "start avatar isSuccess=" + isSuccess);
             }
-        }, 300);
+        }, 500);
     }
 
     private void startTrackingService() {
@@ -401,6 +401,10 @@ public class PlayerControlCenter {
      * @param delayed 需要计时的时长，单位是s
      */
     private void startScheduler(int delayed) {
+        if (mHandler != null) {
+            mHandler.removeMessages(PLAY_NEXT);
+        }
+
         Message msg = Message.obtain(mHandler, PLAY_NEXT);
         msg.arg1 = delayed;
         msg.obj = SystemClock.elapsedRealtime();
