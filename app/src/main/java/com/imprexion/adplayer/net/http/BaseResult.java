@@ -48,15 +48,4 @@ public class BaseResult<T> implements Serializable {
     public boolean isSuccess(){
         return code == 1000 || code == 0;
     }
-
-
-    @Override
-    public String toString() {
-        return "BaseResult{" +
-                "code=" + code +
-                ", msg='" + msg + '\'' +
-                ", time='" + time + '\'' +
-                ", data=" + data +
-                '}';
-    }
 }
