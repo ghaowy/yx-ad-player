@@ -2,18 +2,28 @@ package com.imprexion.adplayer.player;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.google.gson.Gson;
 import com.imprexion.adplayer.base.ADPlayApplication;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
-import com.imprexion.adplayer.net.http.HttpADManager;
+import com.imprexion.adplayer.net.http.BaseResult;
+import com.imprexion.adplayer.net.http.HttpHelper;
+import com.imprexion.adplayer.net.http.IAdRequest;
+import com.imprexion.adplayer.net.http.PublicParams;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.library.YxLog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Author: Xianquan Feng
@@ -33,6 +43,9 @@ public class PlayerModel {
     private SharedPreferences.Editor mEditor;
 
     private Context mContext;
+
+    private onPlayerDataListener mAdListener;
+
 
     public PlayerModel() {
         mContext = ADPlayApplication.getInstance().getApplicationContext();
@@ -54,12 +67,45 @@ public class PlayerModel {
     }
 
     public void setonPlayerDataListener(onPlayerDataListener listener) {
-        HttpADManager.getInstance().setonPlayerDataListener(listener);
+        mAdListener = listener;
     }
 
     public void getAdDataServerAds() {
+        String deviceId = Build.SERIAL;
         String playDate = Tools.getCurrentDate("yyyy-MM-dd");
-        HttpADManager.getInstance().getAdData(playDate);
+
+        HttpHelper httpHelper = new HttpHelper(PublicParams.SERVER_BASE_URL, PublicParams.getHeaders());
+        IAdRequest adRequest = httpHelper.create(IAdRequest.class);
+        adRequest.getAdDatas(deviceId, playDate, PublicParams.token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<BaseResult<ADContentPlay>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        YxLog.e(TAG, "get ad data error. e=" + e.getMessage());
+                        mAdListener.onGetAdError(-1, e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(BaseResult<ADContentPlay> result) {
+                        YxLog.i(TAG, "get ad data success. result=" + new Gson().toJson(result));
+                        if (result != null && result.isSuccess()) {
+                            if (mAdListener != null) {
+                                mAdListener.onGetAdDatas(result.getData());
+                            }
+                        } else if (result != null) {
+                            if (mAdListener != null) {
+                                mAdListener.onGetAdError(result.getCode(), result.getMsg());
+                            }
+                        }
+                    }
+                });
+
     }
 
     /**
@@ -140,9 +186,5 @@ public class PlayerModel {
         } finally {
             return adContentPlay;
         }
-    }
-
-    public void release() {
-        HttpADManager.getInstance().release();
     }
 }
