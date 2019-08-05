@@ -17,7 +17,7 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.TimerStub;
-import com.imprexion.adplayer.Util;
+import com.imprexion.adplayer.utils.Util;
 import com.imprexion.adplayer.base.ADPlayApplication;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;

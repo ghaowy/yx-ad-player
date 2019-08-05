@@ -1,4 +1,4 @@
-package com.imprexion.adplayer;
+package com.imprexion.adplayer.utils;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -16,6 +16,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.imprexion.adplayer.R;
 import com.imprexion.library.YxLog;
 
 import java.util.Date;

@@ -16,4 +16,9 @@
         <item name="android:windowDisablePreview">true</item>
     </style>
 
+    <style name="window_anim">
+        <item name="android:windowExitAnimation">@anim/window_right_out</item>
+        <item name="android:windowEnterAnimation">@anim/window_right_in</item>
+    </style>
+
 </resources>

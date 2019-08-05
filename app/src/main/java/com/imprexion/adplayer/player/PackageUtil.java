@@ -2,7 +2,7 @@ package com.imprexion.adplayer.player;
 
 import android.content.Context;
 
-import com.imprexion.adplayer.Util;
+import com.imprexion.adplayer.utils.Util;
 
 /**
  * @author : yan
