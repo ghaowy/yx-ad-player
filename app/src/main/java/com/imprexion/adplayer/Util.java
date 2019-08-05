@@ -2,6 +2,7 @@ package com.imprexion.adplayer;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -172,8 +173,14 @@ public final class Util {
     }
 
     public static boolean isAppOnForeground(Context context, String packageName) {
+        Context thisContext = null;
+        if (context instanceof Application) {
+            thisContext = context;
+        } else {
+            thisContext = context.getApplicationContext();
+        }
         List<ActivityManager.RunningAppProcessInfo> appProcesses =
-                ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses();
+                ((ActivityManager) thisContext.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses();
         if (appProcesses == null)
             return false;
 

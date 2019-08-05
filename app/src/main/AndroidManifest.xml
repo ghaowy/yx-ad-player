@@ -25,9 +25,9 @@
             android:launchMode="singleTask"
             android:theme="@style/Transparent">
             <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
@@ -49,7 +49,9 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".component.ADBroadcastReceiver">
+        <receiver
+            android:name=".component.ADBroadcastReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.imprexion.push.MESSAGE" />
                 <action android:name="com.imprexion.action.EVENT_TOUCH" />

@@ -48,7 +48,7 @@ public class PlayerControlCenter {
      */
     private static final int DEFAULT_PLAY_TIME = 10;
 
-    private static final int NO_OPERATION_SCHEDULE_TIME = 30;
+    private static final int NO_OPERATION_SCHEDULE_TIME = 60;
 
     private PlayerModel mPlayerModel;
     private int mCurrentIndex;
@@ -59,19 +59,19 @@ public class PlayerControlCenter {
     private TimerStub mTimerStub;
 
     private ADContentPlay mAdContentPlay;
+    private WindowControl mViewControl;
 
 //    ThreadPoolExecutor mThreadPoolExecutor;
 
     public PlayerControlCenter(Context context) {
         mContext = context;
         mPlayerModel = new PlayerModel();
+        mViewControl = new WindowControl(context);
         mPlayerModel.setonPlayerDataListener(mAdListener);
 
         IntentFilter intentFilter = new IntentFilter();
         context.registerReceiver(mReceiver, intentFilter);
 
-//        mThreadPoolExecutor = new ThreadPoolExecutor(1, 1, 60L,
-//                TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(5));
     }
 
     /**
@@ -123,11 +123,11 @@ public class PlayerControlCenter {
             mPlayerModel = null;
         }
 
+        if (mViewControl != null) {
+            mViewControl.release();
+            mViewControl = null;
+        }
 
-//        stopScheduler();
-//        if (mThreadPoolExecutor != null) {
-//            mThreadPoolExecutor.shutdownNow();
-//        }
     }
 
     /**
@@ -212,7 +212,7 @@ public class PlayerControlCenter {
         } else if ("gesture".equals(messageType)) {
             //如果是手势操作事件，检测当前是否有体感应用在前台运行，是，则重置定时器，调度playNext()；
             //否则暂不处理；
-            boolean flag = isGestureAppRunning();
+            boolean flag = PackageUtil.isGestureAppRunning(mContext);
             YxLog.i(TAG, "isGestureAppRunning=" + flag);
             if (flag) {
                 reset(NO_OPERATION_SCHEDULE_TIME);
@@ -224,25 +224,12 @@ public class PlayerControlCenter {
 
     private void reset(int noOperationScheduleTime) {
         if (mHandler != null) {
-            YxLog.d(TAG, "reset--> PLAY_NEXT");
+            YxLog.i(TAG, "reset--> PLAY_NEXT");
             mHandler.removeMessages(PLAY_NEXT);
         }
         startScheduler(noOperationScheduleTime);
     }
 
-    /**
-     * 当前只有一款体感应用。
-     */
-    private static String[] gestureAppPackageNames = new String[]{"com.Orbbec.MagicSalad2"};
-
-    private boolean isGestureAppRunning() {
-        for (int i = 0; i < gestureAppPackageNames.length; i++) {
-            if (Util.isAppOnForeground(mContext, gestureAppPackageNames[i])) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * 轮播下一个广告。控制器主流程。
@@ -334,7 +321,7 @@ public class PlayerControlCenter {
             it.putExtra("packageName", adContentInfo.getAppCode());
         }
         mContext.sendBroadcast(it);
-        YxLog.d(TAG, "playNext()--> sendBroadcast  contentType=" + adContentInfo.getContentType());
+        YxLog.i(TAG, "playNext()--> sendBroadcast  contentType=" + adContentInfo.getContentType());
     }
 
     private void startAvatar() {
@@ -370,8 +357,8 @@ public class PlayerControlCenter {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == PLAY_NEXT) {
-                YxLog.d(TAG, "isGestureAppRunning --> " + isGestureAppRunning());
-                if (isGestureAppRunning()) {
+                if (PackageUtil.isGestureAppRunning(mContext)) {
+                    YxLog.i(TAG, "isGestureAppRunning is Running --> reset");
                     startScheduler(NO_OPERATION_SCHEDULE_TIME);
                     return;
                 }
@@ -404,24 +391,15 @@ public class PlayerControlCenter {
         if (mHandler != null) {
             mHandler.removeMessages(PLAY_NEXT);
         }
+        if (mViewControl != null) {
+            mViewControl.setPlayTime(delayed);
+        }
 
         Message msg = Message.obtain(mHandler, PLAY_NEXT);
         msg.arg1 = delayed;
         msg.obj = SystemClock.elapsedRealtime();
-        YxLog.d(TAG, "startScheduler --> time" + delayed * 1000);
+        YxLog.i(TAG, "startScheduler --> time" + delayed * 1000);
         mHandler.sendMessageDelayed(msg, delayed * 1000);
-//        YxLog.i(TAG, "startScheduler() may cause play ads, delayed time =" + delayed + "s");
-//        if (mScheduleRunnable == null) {
-//            mScheduleRunnable = new ScheduleRunnable(delayed);
-//        }else {
-//            mScheduleRunnable.setScheduleTime(delayed);
-//        }
-//        try {
-//            isScheduled = true;
-//            mThreadPoolExecutor.execute(mScheduleRunnable);
-//        } catch (RejectedExecutionException e) {
-//            e.printStackTrace();
-//        }
     }
 
     /**
@@ -429,61 +407,7 @@ public class PlayerControlCenter {
      */
     private void stopScheduler() {
         mHandler.removeMessages(PLAY_NEXT);
-//        if (mScheduleRunnable != null) {
-//            mThreadPoolExecutor.remove(mScheduleRunnable);
-//            mThreadPoolExecutor.purge();
-//            YxLog.i(TAG, "stopScheduler()");
-//            mScheduleRunnable = null;
-//        }
-//        isScheduled = false;
     }
-
-//    /*是否已经启动计时，这个作为定时器到来时，需要执行轮播的标志。*/
-//    private boolean isScheduled;
-//
-//    /*计时器运行任务。*/
-//    private ScheduleRunnable mScheduleRunnable;
-//
-//    private class ScheduleRunnable implements Runnable {
-//
-//        private int scheduleTime;
-//
-//        ScheduleRunnable(int scheduleTime) {
-//            this.scheduleTime = scheduleTime;
-//        }
-//
-//        public void setScheduleTime(int scheduleTime) {
-//            this.scheduleTime = scheduleTime;
-//        }
-//
-//        @Override
-//        public void run() {
-//            try {
-//                Thread.sleep(scheduleTime * 1000);
-//                YxLog.d(TAG, "currentThread.getName=" + Thread.currentThread().getName() +
-//                        ",isScheduled=" + isScheduled);
-//                if (isScheduled) {
-//                    while (isGestureAppRunning()) {
-//                        Thread.sleep(1000);
-//                    }
-//                    playNext();
-//                }
-//
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        private void reset(int time) {
-//            Thread.currentThread().interrupt();
-//            scheduleTime = time;
-//        }
-//    }
-//
-//    private void reset(int time) {
-//        mScheduleRunnable.reset(time);
-//        startScheduler(time);
-//    }
 
 
     /**
@@ -517,7 +441,7 @@ public class PlayerControlCenter {
                     YxLog.i(TAG, "current network：" + name);
                     mPlayerModel.getAdDataServerAds();
                 } else {
-                    YxLog.w(TAG, "no network available.");
+                    YxLog.i(TAG, "no network available.");
                 }
             }
         }
