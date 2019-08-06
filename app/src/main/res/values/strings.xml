@@ -10,5 +10,7 @@
     <string name="guide_tips_4">抬起手，挥动你的手试试~</string>
     <string name="enter_launcher">进入主应用</string>
     <string name="keep_dont_move">保持静止</string>
+    <string name="window_time_hint_left">无人操作，</string>
+    <string name="window_time_hint_right">秒后将打开新页面~</string>
 
 </resources>

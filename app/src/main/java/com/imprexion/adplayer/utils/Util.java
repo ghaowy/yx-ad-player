@@ -1,7 +1,8 @@
-package com.imprexion.adplayer;
+package com.imprexion.adplayer.utils;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.imprexion.adplayer.R;
 import com.imprexion.library.YxLog;
 
 import java.util.Date;
@@ -172,8 +174,14 @@ public final class Util {
     }
 
     public static boolean isAppOnForeground(Context context, String packageName) {
+        Context thisContext = null;
+        if (context instanceof Application) {
+            thisContext = context;
+        } else {
+            thisContext = context.getApplicationContext();
+        }
         List<ActivityManager.RunningAppProcessInfo> appProcesses =
-                ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses();
+                ((ActivityManager) thisContext.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses();
         if (appProcesses == null)
             return false;
 
