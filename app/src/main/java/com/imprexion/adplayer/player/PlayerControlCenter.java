@@ -60,6 +60,7 @@ public class PlayerControlCenter {
 
     private ADContentPlay mAdContentPlay;
     private WindowControl mViewControl;
+    private volatile boolean mIsDataPrepared;
 
 //    ThreadPoolExecutor mThreadPoolExecutor;
 
@@ -245,6 +246,7 @@ public class PlayerControlCenter {
             YxLog.i(TAG, "the playing ad content data is null, cancel next playing!!");
             return;
         }
+        mIsDataPrepared = true;
         ADContentInfo adContentInfo = mAdContentPlay.getContentPlayVOList().get(mCurrentIndex);
         /*2.根据广告的类型，调不同的轮播方法*/
         int contentType = adContentInfo.getContentType();
@@ -391,7 +393,7 @@ public class PlayerControlCenter {
         if (mHandler != null) {
             mHandler.removeMessages(PLAY_NEXT);
         }
-        if (mViewControl != null) {
+        if (mViewControl != null && mIsDataPrepared) {
             mViewControl.setPlayTime(delayed);
         }
 
