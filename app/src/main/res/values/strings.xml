@@ -12,5 +12,6 @@
     <string name="keep_dont_move">保持静止</string>
     <string name="window_time_hint_left">无人操作，</string>
     <string name="window_time_hint_right">秒后将打开新页面~</string>
+    <string name="cancel_window_hint">点击屏幕任意地方即可继续</string>
 
 </resources>

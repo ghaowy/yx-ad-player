@@ -1,5 +1,6 @@
 package com.imprexion.adplayer.utils;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.view.View;
@@ -11,12 +12,15 @@ import android.view.View;
  */
 public class AnimUtil {
 
-    public static void playObjectAnim(View view, String property, float start, float end, int duration, boolean loop) {
+    public static void playObjectAnim(View view, String property, float start, float end, int duration, boolean loop, Animator.AnimatorListener listener) {
         ObjectAnimator animator = ObjectAnimator.ofFloat(view, property, start, end);
         animator.setDuration(duration);
         if (loop) {
             animator.setRepeatMode(ValueAnimator.REVERSE);
             animator.setRepeatCount(ValueAnimator.INFINITE);
+        }
+        if (listener != null) {
+            animator.addListener(listener);
         }
         animator.start(); //启动
     }

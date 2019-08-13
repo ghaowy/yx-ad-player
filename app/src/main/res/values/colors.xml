@@ -7,6 +7,9 @@
     <color name="spreadColor">#5BFFFFFF</color>
     <color name="guide_text_bg_color">#E5FFFFFF</color>
     <color name="color_494949">#494949</color>
+    <color name="color_0091FF">#0091FF</color>
+    <color name="color_00FBFF">#00FBFF</color>
+    <color name="color_00E6B9">#00E6B9</color>
 
 
 </resources>
