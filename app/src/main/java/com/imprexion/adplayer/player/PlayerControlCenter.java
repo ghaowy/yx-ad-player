@@ -209,6 +209,7 @@ public class PlayerControlCenter {
         } else if ("touch".equals(messageType)) {
             //如果是点击屏幕操作事件，重置倒计时，调度playNext()；
             reset(NO_OPERATION_SCHEDULE_TIME);
+            updateUseFlag(true);
 //            stopScheduler();
         } else if ("gesture".equals(messageType)) {
             //如果是手势操作事件，检测当前是否有体感应用在前台运行，是，则重置定时器，调度playNext()；
@@ -221,6 +222,13 @@ public class PlayerControlCenter {
         } else {
             YxLog.i(TAG, "handleEvent() unknown event of null Extra data");
         }
+    }
+
+    private void updateUseFlag(boolean isUse) {
+        if (mViewControl == null) {
+            return;
+        }
+        mViewControl.setUserUse(isUse);
     }
 
     private void reset(int noOperationScheduleTime) {
@@ -244,6 +252,7 @@ public class PlayerControlCenter {
                 mAdContentPlay.getContentPlayVOList().size() == 0 ||
                 mAdContentPlay.getContentPlayVOList().get(mCurrentIndex) == null) {
             YxLog.i(TAG, "the playing ad content data is null, cancel next playing!!");
+            updateUseFlag(false);
             return;
         }
         mIsDataPrepared = true;
@@ -265,6 +274,7 @@ public class PlayerControlCenter {
             playTime = DEFAULT_PLAY_TIME;
         }
         startScheduler(playTime);
+        updateUseFlag(false);
     }
 
     /**

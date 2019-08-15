@@ -10,12 +10,11 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.main.activation.ViewUtils;
 import com.imprexion.adplayer.utils.AnimUtil;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.YxPermission;
@@ -36,6 +35,7 @@ public class WindowControl {
     private TextView mTvShowTime;
     private Timer mTimer;
     private int mPlayTime;
+    private boolean mIsUserUse;
     private LoopTimerTask mTimerTask;
     private TimerHandler mHandler;
     private static final int MSG_GONE_TEXT_VIEW = 0x222;
@@ -46,7 +46,10 @@ public class WindowControl {
     private WindowManager mWindowManager;
     private WindowManager.LayoutParams mParams;
     private LottieAnimationView mRabbitAnimView;
-    private LinearLayout mLlContainer;
+    private RelativeLayout mRlContainer;
+    private LottieAnimationView mCircleAnimView;
+    private TextView mTvShowNum;
+    private StringBuilder mBuilder;
 
     WindowControl(Context context) {
         mContext = context;
@@ -66,8 +69,14 @@ public class WindowControl {
         return View.inflate(context, R.layout.view_overlay_window, null);
     }
 
+
+    public void setUserUse(boolean userUse) {
+        mIsUserUse = userUse;
+    }
+
+
     private void addOverLayWindow(Context context) {
-        if (isAddWindow || PackageUtil.isGestureAppRunning(context)) {
+        if (isAddWindow || PackageUtil.isGestureAppRunning(context) || !mIsUserUse) {
             return;
         }
         YxLog.i(TAG, "addOverLayWindow --> isAddWindow" + isAddWindow);
@@ -78,7 +87,10 @@ public class WindowControl {
         if (mRabbitAnimView != null) {
             mRabbitAnimView.playAnimation();
         }
-        AnimUtil.playObjectAnim(mLlContainer, "translationY", 0, -10, 1000, true);
+        if (mCircleAnimView != null) {
+            mCircleAnimView.playAnimation();
+        }
+        AnimUtil.playObjectAnim(mRlContainer, "translationY", 0, -10, 1000, true, null);
     }
 
     private WindowManager getWindowManager(Context context) {
@@ -94,10 +106,30 @@ public class WindowControl {
             mWindowView = getWindowView(context);
             mTvShowTime = mWindowView.findViewById(R.id.tv_show_time);
             mRabbitAnimView = mWindowView.findViewById(R.id.iv_rabbit_anim);
-            mLlContainer = mWindowView.findViewById(R.id.ll_container);
+            mRlContainer = mWindowView.findViewById(R.id.ll_container);
+            mCircleAnimView = mWindowView.findViewById(R.id.anim_circle_lottie);
+            mTvShowNum = mWindowView.findViewById(R.id.tv_show_num);
             playLottieAnim("rabbit_anim", "rabbit_anim.json", mRabbitAnimView);
+            playLottieAnim("circle", "circle_anim.json", mCircleAnimView);
         }
+
+        mTvShowNum.setVisibility(View.VISIBLE);
+        mCircleAnimView.setVisibility(View.VISIBLE);
     }
+//
+//    private void playRootAlphaAnim(boolean isAdd) {
+//        mIsAdd = isAdd;
+//        float start = 0.0f;
+//        float end = 0.0f;
+//        if (isAdd) {
+//            start = 1.0f;
+//            end = 0.4f;
+//        } else {
+//            start = 0.4f;
+//            end = 1.0f;
+//        }
+//        AnimUtil.playObjectAnim(mRootView, "alpha", start, end, 1000, false, this);
+//    }
 
     private void playLottieAnim(String imgFolder, String animJson, LottieAnimationView view) {
         view.setImageAssetsFolder(imgFolder);
@@ -107,10 +139,11 @@ public class WindowControl {
 
     private ViewGroup.LayoutParams getParams() {
         if (mParams == null) {
-            int flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+            int flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             int type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-            mParams = new WindowManager.LayoutParams(ViewUtils.dip2px(340), ViewGroup.LayoutParams.WRAP_CONTENT, type, flags, PixelFormat.TRANSLUCENT);
-            mParams.gravity = Gravity.END | Gravity.TOP;
+            mParams = new WindowManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, type, flags, PixelFormat.TRANSLUCENT);
+            mParams.dimAmount = 0.7f;
+            mParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
             mParams.windowAnimations = R.style.window_anim;
         }
         return mParams;
@@ -125,6 +158,7 @@ public class WindowControl {
         }
         if (playTime <= TIME_LIMIT) {
             addOverLayWindow(mContext);
+//            playRootAlphaAnim(true);
         } else {
             removeOverLayWindow(mContext);
         }
@@ -144,7 +178,8 @@ public class WindowControl {
                 mRabbitAnimView.cancelAnimation();
             }
             isAddWindow = false;
-            AnimUtil.clearAnim(mLlContainer);
+            AnimUtil.clearAnim(mRlContainer);
+//            playRootAlphaAnim(false);
         }
     }
 
@@ -179,9 +214,18 @@ public class WindowControl {
         }
     }
 
+    public StringBuilder getStringBuilder() {
+        if (mBuilder == null) {
+            mBuilder = new StringBuilder();
+        }
+        mBuilder.setLength(0);
+        return mBuilder;
+    }
+
     private void updateTimeShow(Message msg) {
         if (msg.what == MSG_UPDATE_VIEW) {
             if (mPlayTime <= TIME_LIMIT && !isAddWindow) {
+//                playRootAlphaAnim(true);
                 addOverLayWindow(mContext);
             }
             if (mTvShowTime == null) {
@@ -190,17 +234,33 @@ public class WindowControl {
             if (mPlayTime <= 0) {
                 mPlayTime = 0;
             }
+
+            if (mTvShowNum != null) {
+                mTvShowNum.setVisibility(View.VISIBLE);
+                if (mPlayTime >= 10) {
+                    mTvShowNum.setText(String.valueOf(mPlayTime));
+                } else {
+                    mTvShowNum.setText(getStringBuilder().append(0).append(mPlayTime).toString());
+                }
+            }
             mTvShowTime.setVisibility(View.VISIBLE);
             mTvShowTime.setText(String.valueOf(mPlayTime));
+
             if (mHandler != null) {
                 mHandler.removeMessages(MSG_GONE_TEXT_VIEW);
                 mHandler.sendEmptyMessageDelayed(MSG_GONE_TEXT_VIEW, 700);
             }
         } else if (msg.what == MSG_GONE_TEXT_VIEW) {
-            if (mTvShowTime == null) {
+            if (mTvShowTime == null || mTvShowNum == null) {
                 return;
             }
             mTvShowTime.setVisibility(View.INVISIBLE);
+            mTvShowNum.setVisibility(View.INVISIBLE);
+        }
+
+        if (mPlayTime == 0) {
+            mTvShowNum.setVisibility(View.INVISIBLE);
+            mCircleAnimView.setVisibility(View.INVISIBLE);
         }
     }
 
