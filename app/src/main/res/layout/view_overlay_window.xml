@@ -1,51 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="340dp"
-    android:layout_height="wrap_content">
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/iv_rabbit_anim"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="182dp"
+        android:layout_marginTop="400dp"
         android:scaleType="centerCrop"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/ll_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:background="@mipmap/bg_text_show"
-        android:paddingTop="13dp"
-        android:gravity="center_horizontal"
         android:orientation="horizontal"
+        android:paddingTop="13dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@id/iv_rabbit_anim"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
+        <LinearLayout
+            android:id="@+id/ll_in_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/window_time_hint_left"
+                android:textColor="@color/color_494949"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_show_time"
+                android:layout_width="22dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/window_time_hint_right"
+                android:textSize="20sp" />
+        </LinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/window_time_hint_left"
-            android:textColor="@color/color_494949"
+            android:layout_below="@id/ll_in_container"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:text="@string/cancel_window_hint"
+            android:textColor="@color/color_0091FF"
             android:textSize="20sp" />
+    </RelativeLayout>
 
-        <TextView
-            android:id="@+id/tv_show_time"
-            android:layout_width="22dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="20sp" />
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/anim_circle_lottie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="23dp"
+        app:layout_constraintBottom_toTopOf="@id/ll_container"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/window_time_hint_right"
-            android:textSize="20sp" />
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/tv_show_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_00E6B9"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toBottomOf="@id/anim_circle_lottie"
+        app:layout_constraintLeft_toLeftOf="@id/anim_circle_lottie"
+        app:layout_constraintRight_toRightOf="@id/anim_circle_lottie"
+        app:layout_constraintTop_toTopOf="@id/anim_circle_lottie" />
 
 
 </android.support.constraint.ConstraintLayout>
