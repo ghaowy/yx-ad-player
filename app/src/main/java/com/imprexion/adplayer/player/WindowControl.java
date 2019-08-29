@@ -76,7 +76,7 @@ public class WindowControl {
 
 
     private void addOverLayWindow(Context context) {
-        if (isAddWindow || PackageUtil.isGestureAppRunning(context) || !mIsUserUse) {
+        if (isAddWindow || PackageUtil.isGestureAppRunning(context)) {
             return;
         }
         YxLog.i(TAG, "addOverLayWindow --> isAddWindow" + isAddWindow);
@@ -156,7 +156,7 @@ public class WindowControl {
             mTimerTask = new LoopTimerTask();
             mTimer.schedule(mTimerTask, 0, 1000);
         }
-        if (playTime <= TIME_LIMIT) {
+        if (playTime <= TIME_LIMIT && mIsUserUse) {
             addOverLayWindow(mContext);
 //            playRootAlphaAnim(true);
         } else {
@@ -224,7 +224,7 @@ public class WindowControl {
 
     private void updateTimeShow(Message msg) {
         if (msg.what == MSG_UPDATE_VIEW) {
-            if (mPlayTime <= TIME_LIMIT && !isAddWindow) {
+            if (mPlayTime <= TIME_LIMIT && !isAddWindow && mIsUserUse) {
 //                playRootAlphaAnim(true);
                 addOverLayWindow(mContext);
             }
