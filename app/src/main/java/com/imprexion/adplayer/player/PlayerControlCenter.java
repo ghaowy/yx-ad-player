@@ -273,8 +273,8 @@ public class PlayerControlCenter {
         if (playTime < 0) {
             playTime = DEFAULT_PLAY_TIME;
         }
-        startScheduler(playTime);
         updateUseFlag(false);
+        startScheduler(playTime);
     }
 
     /**

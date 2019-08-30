@@ -156,6 +156,7 @@ public class WindowControl {
             mTimerTask = new LoopTimerTask();
             mTimer.schedule(mTimerTask, 0, 1000);
         }
+        YxLog.i(TAG ,"setPlayTime--> mIsUserUse" + mIsUserUse);
         if (playTime <= TIME_LIMIT && mIsUserUse) {
             addOverLayWindow(mContext);
 //            playRootAlphaAnim(true);
