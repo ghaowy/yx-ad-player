@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.imprexion.adplayer.R;
+import com.imprexion.adplayer.app.Constants;
 import com.imprexion.library.YxLog;
 
 import java.util.Date;
@@ -95,6 +96,7 @@ public final class Util {
             if (intent != null) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra(Constants.KEY_FROM ,context.getPackageName());
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(context,
                         R.anim.right_in, R.anim.left_out);
                 context.startActivity(intent, options.toBundle());

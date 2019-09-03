@@ -21,7 +21,6 @@ public interface IAdRequest {
 
     @GET(INTERFACE_GET_AD_CONTENT)
     Flowable<BaseResult<ADContentPlay>> getAdDatas(@Query("deviceId") String deviceId,
-                                                   @Query("playDate") String playDate,
-                                                   @Query("token") String token);
+                                                   @Query("playDate") String playDate);
 
 }
