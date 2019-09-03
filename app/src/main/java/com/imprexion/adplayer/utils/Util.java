@@ -96,7 +96,7 @@ public final class Util {
             if (intent != null) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(Constants.KEY_FROM ,context.getPackageName());
+                intent.putExtra(Constants.KEY_FROM, context.getPackageName());
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(context,
                         R.anim.right_in, R.anim.left_out);
                 context.startActivity(intent, options.toBundle());
@@ -176,24 +176,27 @@ public final class Util {
     }
 
     public static boolean isAppOnForeground(Context context, String packageName) {
-        Context thisContext = null;
-        if (context instanceof Application) {
-            thisContext = context;
-        } else {
-            thisContext = context.getApplicationContext();
-        }
-        List<ActivityManager.RunningAppProcessInfo> appProcesses =
-                ((ActivityManager) thisContext.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses();
-        if (appProcesses == null)
-            return false;
-
-        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
-            if (appProcess.processName.equals(packageName) && appProcess.importance ==
-                    ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                return true;
+        try {
+            Context thisContext = null;
+            if (context instanceof Application) {
+                thisContext = context;
+            } else {
+                thisContext = context.getApplicationContext();
             }
+            List<ActivityManager.RunningAppProcessInfo> appProcesses = ((ActivityManager) thisContext.getSystemService(Context.ACTIVITY_SERVICE)).getRunningAppProcesses();
+            if (appProcesses == null) return false;
+            for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+                if (appProcess == null) {
+                    continue;
+                }
+                if (appProcess.processName.equals(packageName) && appProcess.importance ==
+                        ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
         return false;
     }
 
