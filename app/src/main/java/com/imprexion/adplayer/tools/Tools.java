@@ -14,8 +14,6 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -26,11 +24,11 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.base.ADPlayApplication;
 import com.imprexion.adplayer.main.AdActivity;
+import com.imprexion.library.YxImage;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.YxPermission;
 
@@ -122,10 +120,7 @@ public class Tools {
 //        YxLog.d(TAG, "url=" + url);
         if (!AdActivity.AD_DEFAULT.equals(url)) {
             RequestOptions requestOptions = new RequestOptions();
-            Glide.with(ADPlayApplication.getInstance().getApplicationContext())
-                    .load(url)
-                    .apply(requestOptions)
-                    .into(imageView);
+            YxImage.load(url ,imageView ,R.drawable.ad_default_2 , R.drawable.ad_default_2);
         } else {
             Glide.with(ADPlayApplication.getInstance().getApplicationContext())
                     .load(R.drawable.ad_default_2)
