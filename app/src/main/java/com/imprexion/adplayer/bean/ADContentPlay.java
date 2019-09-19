@@ -25,8 +25,21 @@ public class ADContentPlay {
      * 轮播对象
      */
     private List<ADContentInfo> contentPlayVOList;
+    /**
+     * 特别轮播列表
+     */
+    private List<SpecialLoopDataInfo> specialVOList;
 
     private transient boolean isLocalDefault;
+
+    public List<SpecialLoopDataInfo> getSpecialVOList() {
+        return specialVOList;
+    }
+
+    public void setSpecialVOList(List<SpecialLoopDataInfo> specialVOList) {
+        this.specialVOList = specialVOList;
+    }
+
 
     public String getDeviceId() {
         return deviceId;

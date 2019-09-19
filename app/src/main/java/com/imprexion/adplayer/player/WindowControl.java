@@ -171,7 +171,7 @@ public class WindowControl {
         }
     }
 
-    private void removeOverLayWindow(Context context) {
+    public void removeOverLayWindow(Context context) {
         if (mWindowView != null && isAddWindow) {
             YxLog.i(TAG, "removeOverLayWindow --> isAddWindow" + isAddWindow);
             getWindowManager(context).removeView(mWindowView);
@@ -180,7 +180,6 @@ public class WindowControl {
             }
             isAddWindow = false;
             AnimUtil.clearAnim(mRlContainer);
-//            playRootAlphaAnim(false);
         }
     }
 

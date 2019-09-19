@@ -10,20 +10,20 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.SystemClock;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.TimerStub;
-import com.imprexion.adplayer.utils.Util;
 import com.imprexion.adplayer.base.ADPlayApplication;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
+import com.imprexion.adplayer.bean.SpecialLoopDataInfo;
 import com.imprexion.adplayer.main.MainActivity;
 import com.imprexion.adplayer.net.NetPresenter;
 import com.imprexion.adplayer.tools.Tools;
+import com.imprexion.adplayer.utils.TimeUtil;
+import com.imprexion.adplayer.utils.Util;
 import com.imprexion.library.YxLog;
 
 import java.io.Serializable;
@@ -56,11 +56,12 @@ public class PlayerControlCenter {
     private Context mContext;
     private boolean mNewUpdateDataFlag;
 
-    private TimerStub mTimerStub;
-
     private ADContentPlay mAdContentPlay;
     private WindowControl mViewControl;
     private volatile boolean mIsDataPrepared;
+    private boolean mIsUserUse = false;  // 是否有用户操作
+    private long mStartL;
+    private long mEndL;
 
 //    ThreadPoolExecutor mThreadPoolExecutor;
 
@@ -90,9 +91,33 @@ public class PlayerControlCenter {
             mAdContentPlay = adContentPlay;
             mPlaySize = mAdContentPlay.getContentPlayVOList().size();
             mCurrentIndex = mPlayerModel.getCurPageIndexFromSP();
+            dealDelaySpecialLoop();
             return true;
         }
         return false;
+    }
+
+    private void dealDelaySpecialLoop() {
+        if (mAdContentPlay == null || mAdContentPlay.getSpecialVOList() == null || mAdContentPlay.getSpecialVOList().size() == 0 || mHandler == null) {
+            return;
+        }
+        mHandler.removeMessages(MSG_SPECIAL_NEXT);
+        List<SpecialLoopDataInfo> specialVOList = mAdContentPlay.getSpecialVOList();
+        for (SpecialLoopDataInfo dataInfo : specialVOList) {
+            mStartL = TimeUtil.parserDateTime(dataInfo.getStartTime(), null);
+            mEndL = TimeUtil.parserDateTime(dataInfo.getEndTime(), null);
+            if (mStartL < System.currentTimeMillis() && System.currentTimeMillis() < mEndL) {
+                sendSpecialNextMessage(0);
+            }
+
+            if (mStartL >= System.currentTimeMillis()) {
+                sendSpecialNextMessage(mStartL - System.currentTimeMillis());
+            }
+
+            if (mEndL >= System.currentTimeMillis()) {
+                sendSpecialNextMessage(mEndL - System.currentTimeMillis());
+            }
+        }
     }
 
     public void setNextPlayerIndex(int index) {
@@ -182,6 +207,7 @@ public class PlayerControlCenter {
                 mNewUpdateDataFlag = true;
                 mCurrentIndex = -1;
                 mPlaySize = adContentPlay.getContentPlayVOList().size();
+                dealDelaySpecialLoop();
                 return true;
             }
         }
@@ -210,6 +236,7 @@ public class PlayerControlCenter {
             //如果是点击屏幕操作事件，重置倒计时，调度playNext()；
             reset(NO_OPERATION_SCHEDULE_TIME);
             updateUseFlag(true);
+            mIsUserUse = true;
 //            stopScheduler();
         } else if ("gesture".equals(messageType)) {
             //如果是手势操作事件，检测当前是否有体感应用在前台运行，是，则重置定时器，调度playNext()；
@@ -233,8 +260,8 @@ public class PlayerControlCenter {
 
     private void reset(int noOperationScheduleTime) {
         if (mHandler != null) {
-            YxLog.i(TAG, "reset--> PLAY_NEXT");
-            mHandler.removeMessages(PLAY_NEXT);
+            YxLog.i(TAG, "reset--> MSG_PLAY_NEXT");
+            mHandler.removeMessages(MSG_PLAY_NEXT);
         }
         startScheduler(noOperationScheduleTime);
     }
@@ -244,6 +271,11 @@ public class PlayerControlCenter {
      * 轮播下一个广告。控制器主流程。
      */
     private synchronized void playNext() {
+        if (dealSpecialLoop()) { // 当前时间内是否存在特别轮播
+            YxLog.i(TAG, " dealSpecialLoop return");
+            return;
+        }
+
         //mCurrentIndex自增1
         mCurrentIndex++;
         setNextPlayerIndex(mCurrentIndex);
@@ -275,6 +307,30 @@ public class PlayerControlCenter {
         }
         updateUseFlag(false);
         startScheduler(playTime);
+    }
+
+    // 处理特别轮播逻辑 ,当有特别轮播,则启动对应的应用
+    private boolean dealSpecialLoop() {
+        if (mAdContentPlay == null || mAdContentPlay.getSpecialVOList() == null || mAdContentPlay.getSpecialVOList().size() == 0) {
+            return false;
+        }
+        List<SpecialLoopDataInfo> specialVOList = mAdContentPlay.getSpecialVOList();
+        for (SpecialLoopDataInfo specialData : specialVOList) {
+            if (specialData == null) {
+                continue;
+            }
+            mStartL = TimeUtil.parserDateTime(specialData.getStartTime(), null);
+            mEndL = TimeUtil.parserDateTime(specialData.getEndTime(), null);
+            if (System.currentTimeMillis() >= mStartL && System.currentTimeMillis() <= mEndL) {
+                YxLog.i(TAG, "startApp --> " + specialData.getAppCode());
+                Util.startApp(mContext, specialData.getAppCode());
+                if (mViewControl != null) {
+                    mViewControl.removeOverLayWindow(mContext);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -363,34 +419,44 @@ public class PlayerControlCenter {
     /**
      * 初始化主线程的Handler。
      */
-    private static final int PLAY_NEXT = 1;
+    private static final int MSG_PLAY_NEXT = 1;
+    private static final int MSG_SPECIAL_NEXT = 2;
     Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == PLAY_NEXT) {
-                if (PackageUtil.isGestureAppRunning(mContext)) {
-                    YxLog.i(TAG, "isGestureAppRunning is Running --> reset");
-                    startScheduler(NO_OPERATION_SCHEDULE_TIME);
-                    return;
-                }
-                int delayTime = msg.arg1;
-                int scheduleTime = (int) ((SystemClock.elapsedRealtime() - (long) msg.obj) / 1000);
-                YxLog.i(TAG, "mHandler.handleMessage() msg.what=PLAY_NEXT,delayTime=" + delayTime
-                        + ",scheduleTime=" + scheduleTime);
-                if (scheduleTime < delayTime) {
-                    //如果handler回调太快，清除消息，默认重新计时10s
-                    stopScheduler();
-                    startScheduler(DEFAULT_PLAY_TIME);
-                    YxLog.i(TAG, "mHandler.handleMessage()  callback too soon, reset delayTime,"
-                            + ",scheduleTime=" + DEFAULT_PLAY_TIME);
-                    return;
-                } else {
+            switch (msg.what) {
+                case MSG_PLAY_NEXT:
+                    if (PackageUtil.isGestureAppRunning(mContext)) {
+                        YxLog.i(TAG, "isGestureAppRunning is Running --> reset");
+                        startScheduler(NO_OPERATION_SCHEDULE_TIME);
+                        return;
+                    }
                     playNext();
-                }
+                    mIsUserUse = false;
+                    break;
+                case MSG_SPECIAL_NEXT:
+                    if (PackageUtil.isGestureAppRunning(mContext) || mIsUserUse) {
+                        sendSpecialNextMessage(NO_OPERATION_SCHEDULE_TIME * 1000);
+                        return;
+                    }
+                    playNext();
+                    break;
+                default:
+                    break;
             }
         }
     };
+
+    private void sendSpecialNextMessage(long delayTime) {
+        if (mHandler == null) {
+            return;
+        }
+        YxLog.i(TAG, "sendSpecialNextMessage --> delayTime = " + delayTime);
+        Message message = Message.obtain();
+        message.what = MSG_SPECIAL_NEXT;
+        mHandler.sendMessageDelayed(message, delayTime);
+    }
 
     /**
      * 使用Handler发延迟消息模拟计时器，计算下一个广告的切换时间。支持通过mHandler.removeMessages(int)清楚消息。
@@ -401,15 +467,14 @@ public class PlayerControlCenter {
      */
     private void startScheduler(int delayed) {
         if (mHandler != null) {
-            mHandler.removeMessages(PLAY_NEXT);
+            mHandler.removeMessages(MSG_PLAY_NEXT);
         }
         if (mViewControl != null && mIsDataPrepared) {
             mViewControl.setPlayTime(delayed);
         }
 
-        Message msg = Message.obtain(mHandler, PLAY_NEXT);
+        Message msg = Message.obtain(mHandler, MSG_PLAY_NEXT);
         msg.arg1 = delayed;
-        msg.obj = SystemClock.elapsedRealtime();
         YxLog.i(TAG, "startScheduler --> time" + delayed * 1000);
         mHandler.sendMessageDelayed(msg, delayed * 1000);
     }
@@ -418,7 +483,7 @@ public class PlayerControlCenter {
      * 停止计时器。
      */
     private void stopScheduler() {
-        mHandler.removeMessages(PLAY_NEXT);
+        mHandler.removeMessages(MSG_PLAY_NEXT);
     }
 
 
