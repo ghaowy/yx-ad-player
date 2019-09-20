@@ -314,6 +314,7 @@ public class PlayerControlCenter {
         if (mAdContentPlay == null || mAdContentPlay.getSpecialVOList() == null || mAdContentPlay.getSpecialVOList().size() == 0) {
             return false;
         }
+        YxLog.i(TAG, "dealSpecialLoop --> " + mAdContentPlay.getSpecialVOList());
         List<SpecialLoopDataInfo> specialVOList = mAdContentPlay.getSpecialVOList();
         for (SpecialLoopDataInfo specialData : specialVOList) {
             if (specialData == null) {
@@ -323,7 +324,9 @@ public class PlayerControlCenter {
             mEndL = TimeUtil.parserDateTime(specialData.getEndTime(), null);
             if (System.currentTimeMillis() >= mStartL && System.currentTimeMillis() <= mEndL) {
                 YxLog.i(TAG, "startApp --> " + specialData.getAppCode());
-                Util.startApp(mContext, specialData.getAppCode());
+                if (Util.startApp(mContext, specialData.getAppCode())) {
+                    sendBroadcast(ADContentInfo.CONTENT_TYPE_APP, specialData.getAppCode());
+                }
                 if (mViewControl != null) {
                     mViewControl.removeOverLayWindow(mContext);
                 }
@@ -382,15 +385,22 @@ public class PlayerControlCenter {
      * @param adContentInfo
      */
     private void sendBroadcast(ADContentInfo adContentInfo) {
+        sendBroadcast(adContentInfo.getContentType(), adContentInfo.getAppCode());
+    }
+
+    /**
+     * 轮播控制事件，发送广播通知其他进程。
+     */
+    private void sendBroadcast(int contentType, String packageName) {
         Intent it = new Intent();
-        it.putExtra("contentType", adContentInfo.getContentType());
+        it.putExtra("contentType", contentType);
         it.setAction("com.imprexion.action.PLAY_APP");
-        if (adContentInfo.getContentType() == ADContentInfo.CONTENT_TYPE_APP) {
-            it.putExtra("packageName", adContentInfo.getAppCode());
+        if (!TextUtils.isEmpty(packageName) && contentType == ADContentInfo.CONTENT_TYPE_APP) {
+            it.putExtra("packageName", packageName);
         }
         mContext.sendBroadcast(it);
-        YxLog.i(TAG, "playNext()--> sendBroadcast  contentType=" + adContentInfo.getContentType());
     }
+
 
     private void startAvatar() {
         final String packName = "com.imprexion.avatar";
