@@ -50,6 +50,7 @@ public class WindowControl {
     private LottieAnimationView mCircleAnimView;
     private TextView mTvShowNum;
     private StringBuilder mBuilder;
+    private boolean mIsSpecialLoop;
 
     WindowControl(Context context) {
         mContext = context;
@@ -74,9 +75,17 @@ public class WindowControl {
         mIsUserUse = userUse;
     }
 
+    public void setIsSpecialLoop(boolean isSpecialLoop) {
+        mIsSpecialLoop = isSpecialLoop;
+        if (isAddWindow) {
+            removeOverLayWindow(mContext);
+        }
+        YxLog.i(TAG, "setIsSpecialLoop --> " + mIsSpecialLoop);
+    }
+
 
     private void addOverLayWindow(Context context) {
-        if (isAddWindow || PackageUtil.isGestureAppRunning(context)) {
+        if (isAddWindow || PackageUtil.isGestureAppRunning(context) || mIsSpecialLoop) {
             return;
         }
         YxLog.i(TAG, "addOverLayWindow --> isAddWindow" + isAddWindow);
@@ -156,7 +165,7 @@ public class WindowControl {
             mTimerTask = new LoopTimerTask();
             mTimer.schedule(mTimerTask, 0, 1000);
         }
-        YxLog.i(TAG ,"setPlayTime--> mIsUserUse" + mIsUserUse);
+        YxLog.i(TAG, "setPlayTime--> mIsUserUse" + mIsUserUse);
         if (playTime <= TIME_LIMIT && mIsUserUse) {
             addOverLayWindow(mContext);
 //            playRootAlphaAnim(true);

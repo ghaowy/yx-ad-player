@@ -260,11 +260,6 @@ public class PlayerControlCenter {
     }
 
     private void reset(int noOperationScheduleTime) {
-        if (mIsSpecialLoop) {
-            YxLog.i(TAG, "mIsSpecialLoop , cancel Reset");
-            return;
-        }
-
         if (mHandler != null) {
             YxLog.i(TAG, "reset--> MSG_PLAY_NEXT");
             mHandler.removeMessages(MSG_PLAY_NEXT);
@@ -279,10 +274,10 @@ public class PlayerControlCenter {
     private synchronized void playNext() {
         if (dealSpecialLoop()) { // 当前时间内是否存在特别轮播
             YxLog.i(TAG, " dealSpecialLoop return");
-            mIsSpecialLoop = true;
+            mViewControl.setIsSpecialLoop(true);
             return;
         }
-        mIsSpecialLoop = false;
+        mViewControl.setIsSpecialLoop(false);
         //mCurrentIndex自增1
         mCurrentIndex++;
         setNextPlayerIndex(mCurrentIndex);
