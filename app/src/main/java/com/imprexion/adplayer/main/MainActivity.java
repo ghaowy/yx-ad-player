@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         }
         String messageType = intent.getStringExtra("messageType");
         if ("playNext".equals(messageType)) {
-            List<ADContentInfo> data = (List<ADContentInfo>) intent.getSerializableExtra("data");
+            List<ADContentInfo> data = intent.getParcelableArrayListExtra("data");
             boolean isNewData = intent.getBooleanExtra("isNewData", true);
             //如果需要刷新数据播放，则先替换数据，然后从index = 0，播放第一个页面；否则直接播放下一个。
             if (isNewData) {

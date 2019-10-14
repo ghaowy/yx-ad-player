@@ -5,7 +5,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,11 +14,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -40,7 +37,6 @@ import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.YxStatistics;
 import com.imprexion.library.util.ContextUtils;
-import com.imprexion.library.util.ToastUtils;
 import com.imprexion.service.tracking.bean.aiscreen;
 
 import org.greenrobot.eventbus.EventBus;
@@ -308,7 +304,7 @@ public class AdActivity extends AppCompatActivity {
                     firstPicIndex = i;
                 }
                 Fragment fragment = new AdContentImageFragment();
-                ((AdContentImageFragment) fragment).setUrl(adContentInfo.getFileUrl());
+                ((AdContentImageFragment) fragment).setUrl(adContentInfo.getFileUrl() , adContentInfo.getFileType() == ADContentInfo.TYPE_VIDEO);
                 mFragmentList.add(fragment);
             } else if (adContentInfo.getContentType() == 2) {//ContentType==2表示播放应用
                 if (adContentInfo.getAppCode().equals("1001")) {//1001代表雨滴
@@ -321,7 +317,7 @@ public class AdActivity extends AppCompatActivity {
         ADContentInfo adContentInfo = mAdContentInfoList.get(firstPicIndex);
         if (adContentInfo.getContentType() == 1) {
             Fragment fragment = new AdContentImageFragment();
-            ((AdContentImageFragment) fragment).setUrl(adContentInfo.getFileUrl());
+            ((AdContentImageFragment) fragment).setUrl(adContentInfo.getFileUrl() , adContentInfo.getFileType() == ADContentInfo.TYPE_VIDEO);
             mFragmentList.add(fragment);
         } else if (adContentInfo.getContentType() == 2) {
             if (adContentInfo.getAppCode().equals("1001")) {

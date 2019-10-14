@@ -26,7 +26,6 @@ import com.imprexion.adplayer.utils.TimeUtil;
 import com.imprexion.adplayer.utils.Util;
 import com.imprexion.library.YxLog;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +61,6 @@ public class PlayerControlCenter {
     private boolean mIsUserUse = false;  // 是否有用户操作
     private long mStartL;
     private long mEndL;
-    private boolean mIsSpecialLoop = false;// 标志位 判断当前是否为特别轮播
 
 //    ThreadPoolExecutor mThreadPoolExecutor;
 
@@ -294,7 +292,7 @@ public class PlayerControlCenter {
         /*2.根据广告的类型，调不同的轮播方法*/
         int contentType = adContentInfo.getContentType();
         //图片类型广告或应用类型广告
-        if (contentType == ADContentInfo.CONTENT_TYPE_PICTURE) {
+        if (contentType == ADContentInfo.CONTENT_TYPE_AD) {
             playNextPicture(adContentInfo);
         } else if (contentType == ADContentInfo.CONTENT_TYPE_APP) {
             playNextApp(adContentInfo);
@@ -309,6 +307,10 @@ public class PlayerControlCenter {
         }
         updateUseFlag(false);
         startScheduler(playTime);
+    }
+
+    private void playNextVideo(ADContentInfo adContentInfo) {
+
     }
 
     // 处理特别轮播逻辑 ,当有特别轮播,则启动对应的应用
@@ -342,12 +344,18 @@ public class PlayerControlCenter {
      * 轮播下一个图片类型广告。
      */
     private void playNextPicture(ADContentInfo adContentInfo) {
+        if (adContentInfo == null) {
+            YxLog.i(TAG, "playNextPicture--> adContentInfo is Null");
+            return;
+        }
+        YxLog.i(TAG, "playNextPicture()--> play next picture adContentInfo = " + adContentInfo);
         Intent intent = new Intent(mContext, MainActivity.class);
         intent.putExtra("messageType", "playNext");
 
-        List<ADContentInfo> dataList = getAdsByType(mAdContentPlay, ADContentInfo.CONTENT_TYPE_PICTURE);
-        intent.putExtra("data", (Serializable) dataList);
+        ArrayList<ADContentInfo> dataList = (ArrayList<ADContentInfo>) getAdsByType(mAdContentPlay, ADContentInfo.CONTENT_TYPE_AD);
+        intent.putParcelableArrayListExtra("data", dataList);
         intent.putExtra("isNewData", mNewUpdateDataFlag);
+        intent.putExtra("isVideo", adContentInfo.getFileType() == ADContentInfo.TYPE_VIDEO);
         //如果是新数据，需要轮播的Activity通过isNewData标志，更新数据
         if (mNewUpdateDataFlag) {
             mNewUpdateDataFlag = false;
@@ -356,9 +364,8 @@ public class PlayerControlCenter {
         ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(mContext,
                 R.anim.right_in, R.anim.left_out);
         mContext.startActivity(intent, options.toBundle());
-        YxLog.i(TAG, "playNextPicture()--> play next picture ad");
         //发送广播出来，
-        sendBroadcast(adContentInfo);
+//        sendBroadcast(adContentInfo);
     }
 
     /**
