@@ -298,8 +298,8 @@ public class PlayerControlCenter {
             playNextApp(adContentInfo);
         }
         /*3 启动avatar和tracking service*/
-        startAvatar();
-        startTrackingService();
+//        startAvatar();
+//        startTrackingService();
         /*4.当前播放时间，即切换到下一个广告是需要等待的时间*/
         int playTime = adContentInfo.getPlayTime();
         if (playTime < 0) {
@@ -309,9 +309,6 @@ public class PlayerControlCenter {
         startScheduler(playTime);
     }
 
-    private void playNextVideo(ADContentInfo adContentInfo) {
-
-    }
 
     // 处理特别轮播逻辑 ,当有特别轮播,则启动对应的应用
     private boolean dealSpecialLoop() {

@@ -15,6 +15,8 @@ import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.adplayer.video.VideoPlayerPresenter;
 import com.imprexion.library.YxLog;
 
+import org.jetbrains.annotations.NotNull;
+
 import butterknife.BindView;
 
 import static com.imprexion.adplayer.base.ADPlayApplication.getProxy;
@@ -33,7 +35,6 @@ public class AdContentImageFragment extends Fragment {
     private boolean mIsVideo;
     private RelativeLayout mRlContainer;
     private VideoPlayerPresenter mVideoPlayerPresenter;
-    private HttpProxyCacheServer mProxy;
 
     public AdContentImageFragment() {
         // Required empty public constructor
@@ -45,9 +46,8 @@ public class AdContentImageFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_ad_content, container, false);
         initView(view);
         return view;
@@ -71,14 +71,13 @@ public class AdContentImageFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (mIsVideo) {
-//            mUrl = "http://9890.vod.myqcloud.com/9890_9c1fa3e2aea011e59fc841df10c92278.f20.mp4";
-            YxLog.i(TAG ," playVideo --> url= " + mUrl);
+            YxLog.i(TAG, " playVideo --> url= " + mUrl);
             if (mVideoPlayerPresenter == null) {
-                mVideoPlayerPresenter = new VideoPlayerPresenter(getContext(), mRlContainer);
+                mVideoPlayerPresenter = new VideoPlayerPresenter(mRlContainer);
             }
-            mProxy = getProxy(getContext());
-//            String proxyUrl = mProxy.getProxyUrl(mUrl);
-            mVideoPlayerPresenter.setVideoPath(mUrl);
+            HttpProxyCacheServer proxy = getProxy(getContext());
+            String proxyUrl = proxy.getProxyUrl(mUrl);
+            mVideoPlayerPresenter.setVideoPath(proxyUrl);
         } else {
             Tools.showPicWithGlide(ivAdFragment, mUrl);
         }

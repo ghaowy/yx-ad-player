@@ -98,7 +98,7 @@ public class PlayerViewImp implements IPlayerView {
     private void initView() {
         mViewPager = mActivity.findViewById(R.id.viewPager);
         mViewPager.setOnPageChangeListener(mOnPageChangeListener);
-        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setOffscreenPageLimit(1);
         if (mFragmentList == null) {
             mFragmentList = new ArrayList<>();
         }

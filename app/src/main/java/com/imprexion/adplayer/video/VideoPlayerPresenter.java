@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.dou361.ijkplayer.widget.IjkVideoView;
 import com.imprexion.library.YxLog;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -20,34 +19,35 @@ import tv.danmaku.ijk.media.player.IMediaPlayer;
 public class VideoPlayerPresenter implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnErrorListener {
 
     private static final String TAG = "VideoPlayerPresenter";
-    private IjkVideoView mIjkVideoView;
+    private IjkPlayView mIjkVideoView;
+    private RelativeLayout mRootView;
 
-    public VideoPlayerPresenter(Context context, RelativeLayout rootView) {
-        IjkVideoView ijkVideoView = initIjkView(context);
-        rootView.addView(ijkVideoView);
-
+    public VideoPlayerPresenter(RelativeLayout rootView) {
+        mRootView = rootView;
     }
 
     @NonNull
-    private IjkVideoView initIjkView(Context context) {
-        mIjkVideoView = new IjkVideoView(context);
+    private void initIjkView(Context context) {
+        mIjkVideoView = new IjkPlayView(context);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mIjkVideoView.setLayoutParams(layoutParams);
         mIjkVideoView.setOnPreparedListener(this);
         mIjkVideoView.setOnErrorListener(this);
-        return mIjkVideoView;
     }
 
     public void setVideoPath(String path) {
-        if (TextUtils.isEmpty(path)) {
+        if (TextUtils.isEmpty(path) || mRootView == null) {
             Log.e(TAG, "VideoPath is Null");
         }
-
+        mRootView.removeAllViews();
+        initIjkView(mRootView.getContext());
         mIjkVideoView.setVideoPath(path);
+        mRootView.addView(mIjkVideoView);
     }
 
     @Override
     public void onPrepared(IMediaPlayer iMediaPlayer) {
+        YxLog.i(TAG, "VideoPlayerPresenter --> onPrepared--> iMediaPlayer= " + iMediaPlayer);
         if (iMediaPlayer != null) {
             iMediaPlayer.start();
         }
@@ -55,7 +55,7 @@ public class VideoPlayerPresenter implements IMediaPlayer.OnPreparedListener, IM
 
     @Override
     public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
-        YxLog.i(TAG ,"VideoPlayerPresenter --> onError i= " + i + " i1= " + i1);
+        YxLog.i(TAG, "VideoPlayerPresenter --> onError i= " + i + " i1= " + i1);
         return false;
     }
 
@@ -63,6 +63,7 @@ public class VideoPlayerPresenter implements IMediaPlayer.OnPreparedListener, IM
         if (mIjkVideoView == null) {
             return;
         }
+        YxLog.i(TAG, "VideoPlayerPresenter --> pause");
         mIjkVideoView.pause();
     }
 }
