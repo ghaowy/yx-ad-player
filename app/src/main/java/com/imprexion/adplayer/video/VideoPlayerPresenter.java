@@ -39,6 +39,10 @@ public class VideoPlayerPresenter implements IMediaPlayer.OnPreparedListener, IM
         if (TextUtils.isEmpty(path) || mRootView == null) {
             Log.e(TAG, "VideoPath is Null");
         }
+        if (mIjkVideoView != null) {
+            mIjkVideoView.release(true);
+            mIjkVideoView = null;
+        }
         mRootView.removeAllViews();
         initIjkView(mRootView.getContext());
         mIjkVideoView.setVideoPath(path);
