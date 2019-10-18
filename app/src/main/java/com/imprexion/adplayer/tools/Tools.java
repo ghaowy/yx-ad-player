@@ -23,11 +23,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.base.ADPlayApplication;
-import com.imprexion.adplayer.main.AdActivity;
 import com.imprexion.library.YxImage;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.YxPermission;
@@ -118,14 +114,7 @@ public class Tools {
 
     public static void showPicWithGlide(ImageView imageView, String url) {
 //        YxLog.d(TAG, "url=" + url);
-        if (!AdActivity.AD_DEFAULT.equals(url)) {
-            RequestOptions requestOptions = new RequestOptions();
-            YxImage.load(url ,imageView ,R.drawable.ad_default_2 , R.drawable.ad_default_2);
-        } else {
-            Glide.with(ADPlayApplication.getInstance().getApplicationContext())
-                    .load(R.drawable.ad_default_2)
-                    .into(imageView);
-        }
+        YxImage.load(url, imageView, R.drawable.ad_default_2, R.drawable.ad_default_2);
     }
 
 

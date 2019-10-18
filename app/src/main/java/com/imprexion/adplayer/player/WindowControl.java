@@ -125,20 +125,6 @@ public class WindowControl {
         mTvShowNum.setVisibility(View.VISIBLE);
         mCircleAnimView.setVisibility(View.VISIBLE);
     }
-//
-//    private void playRootAlphaAnim(boolean isAdd) {
-//        mIsAdd = isAdd;
-//        float start = 0.0f;
-//        float end = 0.0f;
-//        if (isAdd) {
-//            start = 1.0f;
-//            end = 0.4f;
-//        } else {
-//            start = 0.4f;
-//            end = 1.0f;
-//        }
-//        AnimUtil.playObjectAnim(mRootView, "alpha", start, end, 1000, false, this);
-//    }
 
     private void playLottieAnim(String imgFolder, String animJson, LottieAnimationView view) {
         view.setImageAssetsFolder(imgFolder);

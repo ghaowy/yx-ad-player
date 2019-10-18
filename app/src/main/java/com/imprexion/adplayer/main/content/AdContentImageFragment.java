@@ -7,13 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.tools.Tools;
+import com.imprexion.adplayer.video.VideoPlayerPresenter;
+import com.imprexion.library.YxLog;
+
+import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
+
+import static com.imprexion.adplayer.base.ADPlayApplication.getProxy;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,38 +27,59 @@ import butterknife.Unbinder;
 public class AdContentImageFragment extends Fragment {
 
 
+    private static final String TAG = "AdContentImageFragment";
     @BindView(R.id.iv_ad_fragment)
     ImageView ivAdFragment;
-    Unbinder unbinder;
 
     private String mUrl;
+    private boolean mIsVideo;
+    private RelativeLayout mRlContainer;
+    private VideoPlayerPresenter mVideoPlayerPresenter;
 
     public AdContentImageFragment() {
         // Required empty public constructor
     }
 
-    public void setUrl(String url) {
+    public void setUrl(String url, boolean isVideo) {
         mUrl = url;
+        mIsVideo = isVideo;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_ad_content, container, false);
-        unbinder = ButterKnife.bind(this, view);
+        initView(view);
         return view;
+    }
+
+    private void initView(View view) {
+        ivAdFragment = view.findViewById(R.id.iv_ad_fragment);
+        mRlContainer = view.findViewById(R.id.rl_container);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mVideoPlayerPresenter == null) {
+            return;
+        }
+        mVideoPlayerPresenter.pause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Tools.showPicWithGlide(ivAdFragment, mUrl);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
+        if (mIsVideo) {
+            YxLog.i(TAG, " playVideo --> url= " + mUrl);
+            if (mVideoPlayerPresenter == null) {
+                mVideoPlayerPresenter = new VideoPlayerPresenter(mRlContainer);
+            }
+            HttpProxyCacheServer proxy = getProxy(getContext());
+            String proxyUrl = proxy.getProxyUrl(mUrl);
+            mVideoPlayerPresenter.setVideoPath(proxyUrl);
+        } else {
+            Tools.showPicWithGlide(ivAdFragment, mUrl);
+        }
     }
 }

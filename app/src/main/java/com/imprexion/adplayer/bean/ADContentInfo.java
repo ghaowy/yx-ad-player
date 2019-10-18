@@ -1,11 +1,15 @@
 package com.imprexion.adplayer.bean;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class ADContentInfo implements Serializable {
+public class ADContentInfo implements Parcelable {
 
-    public static final int CONTENT_TYPE_PICTURE = 1;
+    public static final int CONTENT_TYPE_AD = 1;
     public static final int CONTENT_TYPE_APP = 2;
+    public static final int TYPE_VIDEO = 3;
+    public static final int TYPE_PICTURE = 2;
+    public static final int TYPE_TEXT = 1;
 
     /**
      * 内容类型 (1:广告, 2:应用)
@@ -57,6 +61,50 @@ public class ADContentInfo implements Serializable {
      */
     private int isRun;
     // --------  app 应用相关 end
+
+    /**
+     * 1:文字,2:图片,3:视频 ,
+     */
+    private int fileType;
+
+    public ADContentInfo() {
+    }
+
+    protected ADContentInfo(Parcel in) {
+        contentType = in.readInt();
+        sort = in.readInt();
+        fileName = in.readString();
+        fileUrl = in.readString();
+        playTime = in.readInt();
+        isInteraction = in.readInt();
+        adPlanId = in.readLong();
+        useType = in.readInt();
+        appPlanId = in.readLong();
+        appCode = in.readString();
+        isRun = in.readInt();
+        fileType = in.readInt();
+    }
+
+    public static final Creator<ADContentInfo> CREATOR = new Creator<ADContentInfo>() {
+        @Override
+        public ADContentInfo createFromParcel(Parcel in) {
+            return new ADContentInfo(in);
+        }
+
+        @Override
+        public ADContentInfo[] newArray(int size) {
+            return new ADContentInfo[size];
+        }
+    };
+
+    public int getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(int fileType) {
+        this.fileType = fileType;
+    }
+
 
     public int getContentType() {
         return contentType;
@@ -144,5 +192,44 @@ public class ADContentInfo implements Serializable {
 
     public void setIsRun(int isRun) {
         this.isRun = isRun;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(contentType);
+        dest.writeInt(sort);
+        dest.writeString(fileName);
+        dest.writeString(fileUrl);
+        dest.writeInt(playTime);
+        dest.writeInt(isInteraction);
+        dest.writeLong(adPlanId);
+        dest.writeInt(useType);
+        dest.writeLong(appPlanId);
+        dest.writeString(appCode);
+        dest.writeInt(isRun);
+        dest.writeInt(fileType);
+    }
+
+    @Override
+    public String toString() {
+        return "ADContentInfo{" +
+                "contentType=" + contentType +
+                ", sort=" + sort +
+                ", fileName='" + fileName + '\'' +
+                ", fileUrl='" + fileUrl + '\'' +
+                ", playTime=" + playTime +
+                ", isInteraction=" + isInteraction +
+                ", adPlanId=" + adPlanId +
+                ", useType=" + useType +
+                ", appPlanId=" + appPlanId +
+                ", appCode='" + appCode + '\'' +
+                ", isRun=" + isRun +
+                ", fileType=" + fileType +
+                '}';
     }
 }

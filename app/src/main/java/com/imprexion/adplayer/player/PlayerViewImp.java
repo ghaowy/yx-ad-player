@@ -9,13 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
-import com.imprexion.adplayer.bean.EventBusMessage;
 import com.imprexion.adplayer.main.content.AdContentImageFragment;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.YxStatistics;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +62,7 @@ public class PlayerViewImp implements IPlayerView {
             for (int i = 0; i < adContentPlay.size(); i++) {
                 AdContentImageFragment fragment = new AdContentImageFragment();
                 mFragmentList.add(fragment);
-                fragment.setUrl(adContentPlay.get(i).getFileUrl());
+                fragment.setUrl(adContentPlay.get(i).getFileUrl() , adContentPlay.get(i).getFileType() == ADContentInfo.TYPE_VIDEO);
             }
             MyStatePagerAdapter adapter = new MyStatePagerAdapter(mActivity.getSupportFragmentManager());
             adapter.setFragments(mFragmentList);
@@ -102,7 +98,7 @@ public class PlayerViewImp implements IPlayerView {
     private void initView() {
         mViewPager = mActivity.findViewById(R.id.viewPager);
         mViewPager.setOnPageChangeListener(mOnPageChangeListener);
-        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.setOffscreenPageLimit(1);
         if (mFragmentList == null) {
             mFragmentList = new ArrayList<>();
         }
