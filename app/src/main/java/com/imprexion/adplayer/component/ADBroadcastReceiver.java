@@ -3,20 +3,11 @@ package com.imprexion.adplayer.component;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.imprexion.adplayer.bean.ADContentPlay;
-import com.imprexion.adplayer.bean.EventBusMessage;
-import com.imprexion.adplayer.net.NetPresenter;
+import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.service.AdPlayService;
-import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.library.YxLog;
-import com.imprexion.library.util.ToastUtils;
-
-import org.greenrobot.eventbus.EventBus;
+import com.imprexion.library.util.SharedPreferenceUtils;
 
 public class ADBroadcastReceiver extends BroadcastReceiver {
 
@@ -49,10 +40,19 @@ public class ADBroadcastReceiver extends BroadcastReceiver {
             Intent it = new Intent(context, AdPlayService.class);
             it.putExtra("messageType", "no_operation");
             context.startService(it);
-        }else if(intent.getAction().equals("com.imprexion.action.EVENT_GESTURE")){
+        } else if (intent.getAction().equals("com.imprexion.action.EVENT_GESTURE")) {
             Intent it = new Intent(context, AdPlayService.class);
             it.putExtra("messageType", "geture");
             context.startService(it);
+        } else if (intent.getAction().equals("com.imprexion.adplayer.LOOP_EVENT")) {
+            dealSaveMessage(intent);
         }
+    }
+
+    private void dealSaveMessage(Intent intent) {
+        if (intent == null) {
+            return;
+        }
+        SharedPreferenceUtils.putBoolean(Constants.KEY_IS_START, intent.getBooleanExtra(Constants.KEY_IS_START, false));
     }
 }

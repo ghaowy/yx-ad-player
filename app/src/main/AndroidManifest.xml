@@ -27,18 +27,19 @@
             android:theme="@style/Transparent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
         </activity>
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.MAIN" /> -->
 
 
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
+        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+        <!-- </intent-filter> -->
 
         <service
             android:name=".service.AdPlayService"
@@ -59,6 +60,7 @@
                 <action android:name="com.imprexion.action.EVENT_NO_OPERATION" />
                 <action android:name="android.intent.action.TIME_TICK" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="com.imprexion.adplayer.LOOP_EVENT" />
             </intent-filter>
         </receiver>
     </application>
