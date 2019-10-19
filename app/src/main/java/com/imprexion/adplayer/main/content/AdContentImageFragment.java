@@ -70,16 +70,20 @@ public class AdContentImageFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        YxLog.i(TAG, " playVideo --> url= " + mUrl);
         if (mIsVideo) {
-            YxLog.i(TAG, " playVideo --> url= " + mUrl);
             if (mVideoPlayerPresenter == null) {
                 mVideoPlayerPresenter = new VideoPlayerPresenter(mRlContainer);
             }
             HttpProxyCacheServer proxy = getProxy(getContext());
             String proxyUrl = proxy.getProxyUrl(mUrl);
             mVideoPlayerPresenter.setVideoPath(proxyUrl);
+            mRlContainer.setVisibility(View.VISIBLE);
+            ivAdFragment.setVisibility(View.GONE);
         } else {
             Tools.showPicWithGlide(ivAdFragment, mUrl);
+            mRlContainer.setVisibility(View.GONE);
+            ivAdFragment.setVisibility(View.VISIBLE);
         }
     }
 }
