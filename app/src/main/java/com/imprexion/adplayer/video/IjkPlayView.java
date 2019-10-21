@@ -42,6 +42,7 @@ import com.dou361.ijkplayer.widget.IRenderView;
 import com.dou361.ijkplayer.widget.PlayStateParams;
 import com.dou361.ijkplayer.widget.SurfaceRenderView;
 import com.dou361.ijkplayer.widget.TextureRenderView;
+import com.imprexion.library.YxLog;
 
 import java.io.File;
 import java.io.IOException;
@@ -241,6 +242,7 @@ public class IjkPlayView extends FrameLayout implements MediaController.MediaPla
      * 设置渲染器
      */
     public void setRenderView(IRenderView renderView) {
+        YxLog.i(TAG, "");
         if (mRenderView != null) {
             if (mMediaPlayer != null)
                 mMediaPlayer.setDisplay(null);
@@ -316,6 +318,9 @@ public class IjkPlayView extends FrameLayout implements MediaController.MediaPla
      * @param path the path of the video.
      */
     public void setVideoPath(String path) {
+        if (mSHCallback == null) {
+            initRenders();
+        }
         setVideoURI(Uri.parse(path));
     }
 
@@ -369,7 +374,7 @@ public class IjkPlayView extends FrameLayout implements MediaController.MediaPla
      * 打开视频
      */
     private void openVideo() {
-        if (mUri == null || mSurfaceHolder == null) {
+        if (mUri == null) {
             // not ready for playback just yet, will try again later
             return;
         }
@@ -457,7 +462,6 @@ public class IjkPlayView extends FrameLayout implements MediaController.MediaPla
             } else {
                 mMediaPlayer.setDataSource(mUri.toString());
             }
-            bindSurfaceHolder(mMediaPlayer, mSurfaceHolder);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setScreenOnWhilePlaying(true);
             mMediaPlayer.prepareAsync();
@@ -524,6 +528,11 @@ public class IjkPlayView extends FrameLayout implements MediaController.MediaPla
 
         public void onPrepared(IMediaPlayer mp) {
             // we don't set the target state here either, but preserve the target state that was there before.我们这里不设置目标状态,但保护的目标状态
+
+            if (mSurfaceHolder == null) {
+                return;
+            }
+            bindSurfaceHolder(mMediaPlayer, mSurfaceHolder);
             mCurrentState = PlayStateParams.STATE_PREPARED;
 
             // Get the capabilities of the player for this stream
@@ -686,9 +695,9 @@ public class IjkPlayView extends FrameLayout implements MediaController.MediaPla
                                 .setPositiveButton("error",
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int whichButton) {
-                                            /* If we get here, there is no onError listener, so
-                                             * at least inform them that the video is over.
-                                             */
+                                                /* If we get here, there is no onError listener, so
+                                                 * at least inform them that the video is over.
+                                                 */
                                                 if (mOnCompletionListener != null) {
                                                     mOnCompletionListener.onCompletion(mMediaPlayer);
                                                 }
@@ -766,6 +775,7 @@ public class IjkPlayView extends FrameLayout implements MediaController.MediaPla
     IRenderView.IRenderCallback mSHCallback = new IRenderView.IRenderCallback() {
         @Override
         public void onSurfaceChanged(@NonNull IRenderView.ISurfaceHolder holder, int format, int w, int h) {
+            YxLog.i(TAG, "onSurfaceChanged");
             if (holder.getRenderView() != mRenderView) {
                 Log.e(TAG, "onSurfaceChanged: unmatched render callback\n");
                 return;
@@ -785,6 +795,7 @@ public class IjkPlayView extends FrameLayout implements MediaController.MediaPla
 
         @Override
         public void onSurfaceCreated(@NonNull IRenderView.ISurfaceHolder holder, int width, int height) {
+            YxLog.i(TAG, "onSurfaceCreated");
             if (holder.getRenderView() != mRenderView) {
                 Log.e(TAG, "onSurfaceCreated: unmatched render callback\n");
                 return;
@@ -799,6 +810,7 @@ public class IjkPlayView extends FrameLayout implements MediaController.MediaPla
 
         @Override
         public void onSurfaceDestroyed(@NonNull IRenderView.ISurfaceHolder holder) {
+            YxLog.i(TAG, "onSurfaceDestroyed");
             if (holder.getRenderView() != mRenderView) {
                 Log.e(TAG, "onSurfaceDestroyed: unmatched render callback\n");
                 return;
@@ -1084,5 +1096,9 @@ public class IjkPlayView extends FrameLayout implements MediaController.MediaPla
                 break;
             }
         }
+    }
+
+    public void addVideoControlView() {
+        initRenders();
     }
 }

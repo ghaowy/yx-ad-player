@@ -36,12 +36,9 @@ public class VideoPlayerPresenter implements IMediaPlayer.OnPreparedListener, IM
     }
 
     public void setVideoPath(String path) {
+        YxLog.i(TAG, " setVideoPath--> " + path);
         if (TextUtils.isEmpty(path) || mRootView == null) {
             Log.e(TAG, "VideoPath is Null");
-        }
-        if (mIjkVideoView != null) {
-            mIjkVideoView.release(true);
-            mIjkVideoView = null;
         }
         mRootView.removeAllViews();
         initIjkView(mRootView.getContext());
@@ -69,5 +66,15 @@ public class VideoPlayerPresenter implements IMediaPlayer.OnPreparedListener, IM
         }
         YxLog.i(TAG, "VideoPlayerPresenter --> pause");
         mIjkVideoView.pause();
+    }
+
+    public void release() {
+        if (mIjkVideoView != null) {
+            mIjkVideoView.release(true);
+            mIjkVideoView = null;
+        }
+        if (mRootView != null) {
+            mRootView.removeAllViews();
+        }
     }
 }
