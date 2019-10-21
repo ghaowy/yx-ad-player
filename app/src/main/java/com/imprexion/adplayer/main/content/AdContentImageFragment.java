@@ -19,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import butterknife.BindView;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
+import static com.imprexion.adplayer.base.ADPlayApplication.getProxy;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -124,9 +126,11 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
     }
 
     public void loadVideo() {
-        YxLog.i(TAG, "loadVideo");
+        YxLog.i(TAG, "loadVideo mUrl= " + mUrl);
         if (mIsVideo) {
-            mIjkPlayView.setVideoPath(mUrl);
+            mIjkPlayView.setVisibility(View.VISIBLE);
+            ivAdFragment.setVisibility(View.GONE);
+            mIjkPlayView.setVideoPath(getProxy(getContext()).getProxyUrl(mUrl));
             mIjkPlayView.setOnPreparedListener(this);
             mIjkPlayView.setOnCompletionListener(this);
             mIjkPlayView.setOnErrorListener(this);
