@@ -18,14 +18,13 @@ import com.imprexion.library.YxLog;
 import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
-import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 import static com.imprexion.adplayer.base.ADPlayApplication.getProxy;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnCompletionListener, IMediaPlayer.OnErrorListener {
+public class AdContentImageFragment extends Fragment {
 
 
     private static final String TAG = "AdContentImageFragment";
@@ -129,32 +128,11 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
     public void loadVideo() {
         YxLog.i(TAG, "loadVideo mUrl= " + mUrl);
         if (mIsVideo) {
-//            mIjkPlayView.setVisibility(View.VISIBLE);
             ivAdFragment.setVisibility(View.GONE);
-            mVideoPlayerPresenter = new VideoPlayerPresenter(mRlContainer);
+            if (mVideoPlayerPresenter == null) {
+                mVideoPlayerPresenter = new VideoPlayerPresenter(mRlContainer);
+            }
             mVideoPlayerPresenter.setVideoPath(getProxy(getContext()).getProxyUrl(mUrl));
-//            mIjkPlayView.setVideoPath(getProxy(getContext()).getProxyUrl(mUrl));
-//            mIjkPlayView.setOnPreparedListener(this);
-//            mIjkPlayView.setOnCompletionListener(this);
-//            mIjkPlayView.setOnErrorListener(this);
         }
-    }
-
-    @Override
-    public void onPrepared(IMediaPlayer iMediaPlayer) {
-        YxLog.i(TAG, "onPrepared murl= " + mUrl);
-        if (iMediaPlayer != null) {
-            iMediaPlayer.start();
-        }
-    }
-
-    @Override
-    public void onCompletion(IMediaPlayer iMediaPlayer) {
-    }
-
-    @Override
-    public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
-        YxLog.i(TAG, "onError--> i= " + i + " i1= " + i1);
-        return false;
     }
 }
