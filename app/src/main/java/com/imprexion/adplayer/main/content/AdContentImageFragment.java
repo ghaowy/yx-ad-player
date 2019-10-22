@@ -8,23 +8,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.tools.Tools;
-import com.imprexion.adplayer.video.VideoPlayerPresenter;
+import com.imprexion.adplayer.video.IjkPlayView;
 import com.imprexion.library.YxLog;
 
 import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
-
-import static com.imprexion.adplayer.base.ADPlayApplication.getProxy;
+import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AdContentImageFragment extends Fragment {
+public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnErrorListener {
 
 
     private static final String TAG = "AdContentImageFragment";
@@ -34,8 +32,7 @@ public class AdContentImageFragment extends Fragment {
     private String mUrl;
     private boolean mIsVideo;
     private boolean isInit;
-    private RelativeLayout mRlContainer;
-    private VideoPlayerPresenter mVideoPlayerPresenter;
+    private IjkPlayView mIjkPlayView;
 
 
     @Override
@@ -63,11 +60,6 @@ public class AdContentImageFragment extends Fragment {
         if (mIsVideo) {
             YxLog.i(TAG, "onVisible " + mIsVideo);
             loadVideo();
-        } else {
-            YxLog.i(TAG, " playPic --> url= " + mUrl);
-            Tools.showPicWithGlide(ivAdFragment, mUrl);
-            mRlContainer.setVisibility(View.GONE);
-            ivAdFragment.setVisibility(View.VISIBLE);
         }
     }
 
@@ -92,16 +84,27 @@ public class AdContentImageFragment extends Fragment {
 
     private void initView(View view) {
         ivAdFragment = view.findViewById(R.id.iv_ad_fragment);
-        mRlContainer = view.findViewById(R.id.rl_container);
+        mIjkPlayView = view.findViewById(R.id.ijk_video_view);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (mVideoPlayerPresenter == null) {
+        if (mIjkPlayView == null) {
             return;
         }
-        mVideoPlayerPresenter.release();
+        mIjkPlayView.stopPlayback();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!mIsVideo) {
+            YxLog.i(TAG, " playPic --> url= " + mUrl);
+            Tools.showPicWithGlide(ivAdFragment, mUrl);
+            mIjkPlayView.setVisibility(View.GONE);
+            ivAdFragment.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -120,8 +123,8 @@ public class AdContentImageFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         YxLog.i(TAG, "onDetach");
-        if (mVideoPlayerPresenter != null) {
-            mVideoPlayerPresenter.release();
+        if (mIjkPlayView != null) {
+            mIjkPlayView.release(true);
         }
     }
 
@@ -129,10 +132,24 @@ public class AdContentImageFragment extends Fragment {
         YxLog.i(TAG, "loadVideo mUrl= " + mUrl);
         if (mIsVideo) {
             ivAdFragment.setVisibility(View.GONE);
-            if (mVideoPlayerPresenter == null) {
-                mVideoPlayerPresenter = new VideoPlayerPresenter(mRlContainer);
-            }
-            mVideoPlayerPresenter.setVideoPath(getProxy(getContext()).getProxyUrl(mUrl));
+            mIjkPlayView.setVisibility(View.VISIBLE);
+            mIjkPlayView.setVideoPath(mUrl);
+            mIjkPlayView.setOnPreparedListener(this);
+            mIjkPlayView.setOnErrorListener(this);
         }
+    }
+
+    @Override
+    public void onPrepared(IMediaPlayer iMediaPlayer) {
+        YxLog.i(TAG ,"onPrepared = iMediaPlayer= " + iMediaPlayer);
+        if (iMediaPlayer != null) {
+            iMediaPlayer.start();
+        }
+    }
+
+    @Override
+    public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
+        YxLog.i(TAG, "onError i= " + i + " i1= " + i1);
+        return false;
     }
 }
