@@ -106,6 +106,8 @@ dependencies {
     implementation 'com.dou361.ijkplayer:jjdxm-ijkplayer:1.0.5'
     compile 'tv.danmaku.ijk.media:ijkplayer-arm64:0.6.0'  //最小版本21=
     implementation 'com.danikula:videocache:2.7.1'
+    implementation 'com.arialyy.aria:aria-core:3.6.6'
+    annotationProcessor 'com.arialyy.aria:aria-compiler:3.6.6'
 }
 
 apply plugin: 'base-plugin'
