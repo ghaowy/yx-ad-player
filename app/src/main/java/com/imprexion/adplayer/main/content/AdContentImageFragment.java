@@ -88,13 +88,11 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
         if (TextUtils.isEmpty(mUrl) || mIsDownLoading || !mIsVideo) {
             return;
         }
-        int i = mUrl.indexOf("?");
         if (mUrl.contains("?")) {
-            mFileName = mUrl.substring(0, i);
+            mFileName = mUrl.substring(0, mUrl.indexOf("?"));
         }
         if (mFileName.contains("/")) {
-            int index = mFileName.lastIndexOf("/");
-            mFileName = mFileName.substring(index);
+            mFileName = mFileName.substring(mFileName.lastIndexOf("/"));
         }
 
         mFileName = Constants.FILE_BASE_DIR + mFileName;
