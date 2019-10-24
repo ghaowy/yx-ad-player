@@ -13,7 +13,7 @@ public class PackageUtil {
     /**
      * 当前只有一款体感应用。
      */
-    private static String[] gestureAppPackageNames = new String[]{"com.Orbbec.MagicSalad2" , "com.imprexion.aibar"};
+    private static String[] gestureAppPackageNames = new String[]{"com.Orbbec.MagicSalad2" , "com.imprexion.aibar" , "com.imprexion.screendominate"};
 
 
     public static boolean isGestureAppRunning(Context context) {
