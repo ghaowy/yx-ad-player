@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rl_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/color_000000"
     tools:context=".main.content.AdContentImageFragment">
 
     <ImageView
         android:id="@+id/iv_ad_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
+
+    <com.dou361.ijkplayer.widget.IjkVideoView
+        android:id="@+id/ijk_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </RelativeLayout>

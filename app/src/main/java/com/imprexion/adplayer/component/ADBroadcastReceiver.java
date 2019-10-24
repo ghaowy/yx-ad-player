@@ -4,10 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.service.AdPlayService;
 import com.imprexion.library.YxLog;
-import com.imprexion.library.util.SharedPreferenceUtils;
 
 public class ADBroadcastReceiver extends BroadcastReceiver {
 
@@ -44,15 +42,6 @@ public class ADBroadcastReceiver extends BroadcastReceiver {
             Intent it = new Intent(context, AdPlayService.class);
             it.putExtra("messageType", "geture");
             context.startService(it);
-        } else if (intent.getAction().equals("com.imprexion.adplayer.LOOP_EVENT")) {
-            dealSaveMessage(intent);
         }
-    }
-
-    private void dealSaveMessage(Intent intent) {
-        if (intent == null) {
-            return;
-        }
-        SharedPreferenceUtils.putBoolean(Constants.KEY_IS_START, intent.getBooleanExtra(Constants.KEY_IS_START, false));
     }
 }

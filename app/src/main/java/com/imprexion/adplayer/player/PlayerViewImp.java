@@ -62,7 +62,7 @@ public class PlayerViewImp implements IPlayerView {
             for (int i = 0; i < adContentPlay.size(); i++) {
                 AdContentImageFragment fragment = new AdContentImageFragment();
                 mFragmentList.add(fragment);
-                fragment.setUrl(adContentPlay.get(i).getFileUrl() , adContentPlay.get(i).getFileType() == ADContentInfo.TYPE_VIDEO);
+                fragment.setUrl(adContentPlay.get(i).getFileUrl(), adContentPlay.get(i).getFileType() == ADContentInfo.TYPE_VIDEO);
             }
             MyStatePagerAdapter adapter = new MyStatePagerAdapter(mActivity.getSupportFragmentManager());
             adapter.setFragments(mFragmentList);
