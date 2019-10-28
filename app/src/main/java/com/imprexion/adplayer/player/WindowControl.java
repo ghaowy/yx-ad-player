@@ -15,9 +15,11 @@ import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.imprexion.adplayer.R;
+import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.utils.AnimUtil;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.YxPermission;
+import com.imprexion.library.util.SharedPreferenceUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.Timer;
@@ -85,7 +87,7 @@ public class WindowControl {
 
 
     private void addOverLayWindow(Context context) {
-        if (isAddWindow || PackageUtil.isGestureAppRunning(context) || mIsSpecialLoop) {
+        if (isAddWindow || PackageUtil.isGestureAppRunning(context) || mIsSpecialLoop || SharedPreferenceUtils.getBoolean(Constants.KEY_IS_START, false)) {
             return;
         }
         YxLog.i(TAG, "addOverLayWindow --> isAddWindow" + isAddWindow);
