@@ -96,7 +96,7 @@ public final class Util {
             if (intent != null) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra(Constants.KEY_FROM, context.getPackageName());
+                intent.putExtra(Constants.Key.KEY_FROM, context.getPackageName());
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(context,
                         R.anim.right_in, R.anim.left_out);
                 context.startActivity(intent, options.toBundle());

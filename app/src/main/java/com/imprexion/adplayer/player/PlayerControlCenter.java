@@ -273,7 +273,7 @@ public class PlayerControlCenter {
      */
     private synchronized void playNext() {
         // 当霸屏轮播时 不能再轮播应用
-        if (SharedPreferenceUtils.getBoolean(Constants.KEY_IS_START, false)) {
+        if (SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_START, false)) {
             return;
         }
 
@@ -287,9 +287,7 @@ public class PlayerControlCenter {
         mCurrentIndex++;
         setNextPlayerIndex(mCurrentIndex);
         /*1.取出轮播对象*/
-        if (mAdContentPlay == null || mAdContentPlay.getContentPlayVOList() == null ||
-                mAdContentPlay.getContentPlayVOList().size() == 0 ||
-                mAdContentPlay.getContentPlayVOList().get(mCurrentIndex) == null) {
+        if (mAdContentPlay == null || mAdContentPlay.getContentPlayVOList() == null || mAdContentPlay.getContentPlayVOList().size() == 0 || mAdContentPlay.getContentPlayVOList().get(mCurrentIndex) == null) {
             YxLog.i(TAG, "the playing ad content data is null, cancel next playing!!");
             updateUseFlag(false);
             return;
