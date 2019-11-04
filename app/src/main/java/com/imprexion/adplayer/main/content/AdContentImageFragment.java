@@ -22,20 +22,24 @@ import com.imprexion.library.YxLog;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnErrorListener {
+public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnErrorListener, IMediaPlayer.OnCompletionListener {
 
 
     private static final String TAG = "AdContentImageFragment";
     @BindView(R.id.iv_ad_fragment)
     ImageView ivAdFragment;
-
     private String mFileName;
     private String mUrl;
     private boolean mIsVideo;
@@ -43,6 +47,8 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
     private IjkVideoView mIjkPlayView;
     private boolean mIsDownLoading;
     public boolean mIsVisible;
+    private boolean mIsLoop;
+    private Disposable mDisposable;
 
 
     @Override
@@ -78,7 +84,8 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
         // Required empty public constructor
     }
 
-    public void setUrl(String url, boolean isVideo) {
+    public void setUrl(String url, boolean isVideo, int size) {
+        mIsLoop = size == 1;
         mUrl = url;
         mIsVideo = isVideo;
     }
@@ -174,6 +181,7 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
             mIjkPlayView.setVisibility(View.VISIBLE);
             mIjkPlayView.setOnPreparedListener(this);
             mIjkPlayView.setOnErrorListener(this);
+            mIjkPlayView.setOnCompletionListener(this);
             File file = new File(mFileName);
             YxLog.i(TAG, "fileExist :  " + file.exists() + " filePath= " + file.getAbsolutePath());
             if (file.exists()) {
@@ -202,6 +210,9 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
     public void onDestroyView() {
         super.onDestroyView();
         Aria.download(this).unRegister();
+        if (mDisposable != null && !mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
     }
 
     //在这里处理任务执行中的状态，如进度进度条的刷新
@@ -218,9 +229,6 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
         mIsDownLoading = false;
         //在这里处理任务完成的状态
         YxLog.i(TAG, "downLoad complete filePath--> " + (task == null ? "is null" : task.getFilePath()));
-        if (mIsVisible) {
-            loadVideo();
-        }
     }
 
     @Download.onTaskFail
@@ -228,5 +236,21 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
         //在这里处理任务完成的状态
         mIsDownLoading = false;
         YxLog.i(TAG, "downLoad taskFailed filePath--> " + (task == null ? "is null" : task.getFilePath()));
+    }
+
+    @Override
+    public void onCompletion(IMediaPlayer iMediaPlayer) {
+        if (mIjkPlayView == null || !mIsLoop) {
+            return;
+        }
+        mDisposable = Observable.timer(2, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+                        loadVideo();
+                    }
+                });
     }
 }
