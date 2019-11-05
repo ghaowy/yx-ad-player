@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.danikula.videocache.HttpProxyCacheServer;
+import com.imprexion.adplayer.BuildConfig;
 import com.imprexion.adplayer.service.AdPlayService;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.base.BaseApplication;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +31,9 @@ public class ADPlayApplication extends BaseApplication {
         adPlayApplication = this;
         YxLog.i(TAG, "Application onCreate: version name is " + Tools.getVersionName(this));
         startADService();
-        initVideoCache();
-    }
-
-    private void initVideoCache() {
-
+        if (!BuildConfig.DEBUG) {
+            CrashReport.initCrashReport(getApplicationContext(), "4e152a32a2", true);
+        }
     }
 
 

@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         handleStartIntent(getIntent());
         //缓存一下当前activity的引用，可以被外部停止。
         ADPlayApplication.getInstance().pictureActivity = this;
+
     }
 
     @Override
