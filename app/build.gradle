@@ -102,6 +102,9 @@ dependencies {
     implementation 'androidx.annotation:annotation:1.0.0'
     //Http访问
     implementation project(':yx-base-library')
+    // 增加bugly 日志收集
+    implementation 'com.tencent.bugly:crashreport:2.2.0'
+    implementation 'com.tencent.bugly:nativecrashreport:3.0'
 
     implementation 'com.dou361.ijkplayer:jjdxm-ijkplayer:1.0.5'
     compile 'tv.danmaku.ijk.media:ijkplayer-arm64:0.6.0'  //最小版本21=

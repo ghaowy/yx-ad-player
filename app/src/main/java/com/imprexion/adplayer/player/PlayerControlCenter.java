@@ -15,6 +15,7 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.imprexion.adplayer.R;
+import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.base.ADPlayApplication;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
@@ -25,6 +26,7 @@ import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.adplayer.utils.TimeUtil;
 import com.imprexion.adplayer.utils.Util;
 import com.imprexion.library.YxLog;
+import com.imprexion.library.util.SharedPreferenceUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -271,6 +273,9 @@ public class PlayerControlCenter {
      */
     private synchronized void playNext() {
         // 当霸屏轮播时 不能再轮播应用
+        if (SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_START, false)) {
+            return;
+        }
 
         if (dealSpecialLoop()) { // 当前时间内是否存在特别轮播
             YxLog.i(TAG, " dealSpecialLoop return");
@@ -282,9 +287,7 @@ public class PlayerControlCenter {
         mCurrentIndex++;
         setNextPlayerIndex(mCurrentIndex);
         /*1.取出轮播对象*/
-        if (mAdContentPlay == null || mAdContentPlay.getContentPlayVOList() == null ||
-                mAdContentPlay.getContentPlayVOList().size() == 0 ||
-                mAdContentPlay.getContentPlayVOList().get(mCurrentIndex) == null) {
+        if (mAdContentPlay == null || mAdContentPlay.getContentPlayVOList() == null || mAdContentPlay.getContentPlayVOList().size() == 0 || mAdContentPlay.getContentPlayVOList().get(mCurrentIndex) == null) {
             YxLog.i(TAG, "the playing ad content data is null, cancel next playing!!");
             updateUseFlag(false);
             return;

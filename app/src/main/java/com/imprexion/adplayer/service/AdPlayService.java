@@ -7,15 +7,11 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
-import android.support.v4.app.ActivityOptionsCompat;
 
-import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.net.http.PublicParams;
 import com.imprexion.adplayer.player.PlayerControlCenter;
+import com.imprexion.library.YxConfig;
 import com.imprexion.library.YxLog;
-import com.imprexion.library.util.ContextUtils;
 
 public class AdPlayService extends Service {
 
@@ -28,13 +24,10 @@ public class AdPlayService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-//        throw new UnsupportedOperationException("Not yet implemented");
         int src = intent.getIntExtra("src", -1);
         if (src == 0) {
             return new AISBinder();
         }
-
         return null;
     }
 
@@ -54,8 +47,6 @@ public class AdPlayService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        YxLog.i(TAG, "onStartCommand()   本机的序列号，deviceId=" + Build.SERIAL
-                + ", 连接Server环境=" + PublicParams.ENV);
         Notification notification = getStartNotification();
         startForeground(115, notification);// 开始前台服务
         /**
@@ -72,6 +63,11 @@ public class AdPlayService extends Service {
 
     @TargetApi(16)
     private Notification getStartNotification() {
+        com.imprexion.library.config.HttpConfig config = YxConfig.getPublic(com.imprexion.library.config.HttpConfig.class);
+        String env = "";
+        if (config != null) {
+            env = config.env.trim().toLowerCase();
+        }
         //获取一个Notification构造器
         Notification.Builder builder = new Notification.Builder(this.getApplicationContext());
         Intent nfIntent = new Intent(this, this.getClass());
@@ -84,27 +80,15 @@ public class AdPlayService extends Service {
                 // 设置状态栏内的小图标
                 .setSmallIcon(android.R.mipmap.sym_def_app_icon)
                 // 设置上下文内容
-                .setContentText("ENV=" + PublicParams.ENV + " 正在运行。")
+                .setContentText("ENV=" + env + " 正在运行。")
                 // 设置该通知发生的时间
                 .setWhen(System.currentTimeMillis());
-
-        // 获取构建好的Notification
-        Notification notification = builder.build();
-        //设置为默认的声音
-//        notification.defaults = Notification.DEFAULT_SOUND;
-        return notification;
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        YxLog.d(TAG, "onUnbind");
-        return super.onUnbind(intent);
+        return builder.build();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        YxLog.d(TAG, "onDestroy()");
         mControlCenter.release();
     }
 }

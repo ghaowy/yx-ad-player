@@ -15,9 +15,11 @@ import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.imprexion.adplayer.R;
+import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.utils.AnimUtil;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.YxPermission;
+import com.imprexion.library.util.SharedPreferenceUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.Timer;
@@ -85,7 +87,7 @@ public class WindowControl {
 
 
     private void addOverLayWindow(Context context) {
-        if (isAddWindow || PackageUtil.isGestureAppRunning(context) || mIsSpecialLoop) {
+        if (isAddWindow || PackageUtil.isGestureAppRunning(context) || mIsSpecialLoop || SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_START, false)) {
             return;
         }
         YxLog.i(TAG, "addOverLayWindow --> isAddWindow" + isAddWindow);
@@ -154,7 +156,6 @@ public class WindowControl {
         YxLog.i(TAG, "setPlayTime--> mIsUserUse" + mIsUserUse);
         if (playTime <= TIME_LIMIT && mIsUserUse) {
             addOverLayWindow(mContext);
-//            playRootAlphaAnim(true);
         } else {
             removeOverLayWindow(mContext);
         }
@@ -166,6 +167,7 @@ public class WindowControl {
         }
     }
 
+    // 移除倒计时
     public void removeOverLayWindow(Context context) {
         if (mWindowView != null && isAddWindow) {
             YxLog.i(TAG, "removeOverLayWindow --> isAddWindow" + isAddWindow);
@@ -220,14 +222,14 @@ public class WindowControl {
     private void updateTimeShow(Message msg) {
         if (msg.what == MSG_UPDATE_VIEW) {
             if (mPlayTime <= TIME_LIMIT && !isAddWindow && mIsUserUse) {
-//                playRootAlphaAnim(true);
                 addOverLayWindow(mContext);
             }
             if (mTvShowTime == null) {
                 return;
             }
-            if (mPlayTime <= 0) {
+            if (mPlayTime < 0) {
                 mPlayTime = 0;
+                removeOverLayWindow(mContext);
             }
 
             if (mTvShowNum != null) {
