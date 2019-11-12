@@ -51,6 +51,16 @@ public class ADBroadcastReceiver extends BroadcastReceiver {
                 it.putExtra(Constants.Key.KEY_DATA, content);
                 context.startService(it);
                 break;
+            case Constants.Action.EVENT_COUNT_DOWN:
+                if (intent.getExtras() == null) {
+                    return;
+                }
+                int timeout = intent.getExtras().getInt("time");
+                YxLog.i(TAG, "receive push advertisement data. data = " + timeout);
+                it.putExtra(Constants.Key.KEY_MESSAGE_TYPE, "count_down");
+                it.putExtra(Constants.Key.KEY_DATA, String.valueOf(timeout));
+                context.startService(it);
+                break;
             default:
                 break;
         }

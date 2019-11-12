@@ -61,6 +61,7 @@
                 <action android:name="android.intent.action.TIME_TICK" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="com.imprexion.adplayer.LOOP_EVENT" />
+                <action android:name="com.imprexion.aibar.action.USER_LOGOUT_COUNT_DOWN" />
             </intent-filter>
         </receiver>
     </application>

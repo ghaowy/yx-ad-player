@@ -30,6 +30,8 @@ public interface Constants {
         String EVENT_GESTURE = "com.imprexion.action.EVENT_GESTURE";
         // 霸屏应用 霸屏时传递消息的Action
         String LOOP_EVENT = "com.imprexion.adplayer.LOOP_EVENT";
+        // 外部接口实现修改轮播停留时间
+        String EVENT_COUNT_DOWN = "com.imprexion.aibar.action.USER_LOGOUT_COUNT_DOWN";
         String EVENT_NO_OPERATION = "com.imprexion.action.EVENT_NO_OPERATION";
     }
 }

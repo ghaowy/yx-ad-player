@@ -49,7 +49,7 @@ public class PlayerControlCenter {
      */
     private static final int DEFAULT_PLAY_TIME = 10;
 
-    private static final int NO_OPERATION_SCHEDULE_TIME = 60;
+    private int NO_OPERATION_SCHEDULE_TIME = 60;
 
     private PlayerModel mPlayerModel;
     private int mCurrentIndex;
@@ -221,7 +221,7 @@ public class PlayerControlCenter {
      * @param messageType
      * @param data
      */
-    public synchronized void handleEvent(String messageType, Object data) {
+    public synchronized void handleEvent(String messageType, String data) {
         YxLog.i(TAG, "handleEvent() receive event, messageType=" + messageType);
         if ("get_push_data".equals(messageType)) {
             //收到push消息，更新广告数据,如果是需要马上播放，则停止当前计时，启动新计时；
@@ -247,6 +247,14 @@ public class PlayerControlCenter {
             if (flag) {
                 reset(NO_OPERATION_SCHEDULE_TIME);
             }
+        }
+        if ("count_down".equals(messageType)) {
+            if (Integer.parseInt(data) > 0) {
+                NO_OPERATION_SCHEDULE_TIME = Integer.parseInt(data);
+            } else {
+                NO_OPERATION_SCHEDULE_TIME = 60;
+            }
+            reset(NO_OPERATION_SCHEDULE_TIME);
         } else {
             YxLog.i(TAG, "handleEvent() unknown event of null Extra data");
         }
@@ -273,6 +281,7 @@ public class PlayerControlCenter {
      */
     private synchronized void playNext() {
         // 当霸屏轮播时 不能再轮播应用
+        NO_OPERATION_SCHEDULE_TIME = 60;
         if (SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_START, false)) {
             return;
         }
