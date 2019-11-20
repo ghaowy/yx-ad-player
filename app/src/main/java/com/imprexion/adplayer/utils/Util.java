@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.app.Constants;
 import com.imprexion.library.YxLog;
+import com.imprexion.library.util.ContextUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -99,6 +100,7 @@ public final class Util {
                 intent.putExtra(Constants.Key.KEY_FROM, context.getPackageName());
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(context,
                         R.anim.right_in, R.anim.left_out);
+                intent.putExtra("from", ContextUtils.get().getPackageName());
                 context.startActivity(intent, options.toBundle());
                 YxLog.i(TAG, "start app with packageName success");
                 return true;
