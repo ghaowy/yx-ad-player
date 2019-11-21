@@ -376,7 +376,7 @@ public class PlayerControlCenter {
                 R.anim.right_in, R.anim.left_out);
         mContext.startActivity(intent, options.toBundle());
         //发送广播出来，
-//        sendBroadcast(adContentInfo);
+        sendBroadcast(adContentInfo);
     }
 
     /**
