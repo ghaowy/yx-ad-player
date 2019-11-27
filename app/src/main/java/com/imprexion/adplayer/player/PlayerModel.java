@@ -1,19 +1,27 @@
 package com.imprexion.adplayer.player;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
-import com.imprexion.adplayer.base.ADPlayApplication;
+import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
+import com.imprexion.adplayer.net.NetService;
+import com.imprexion.adplayer.net.RetrofitFactory;
 import com.imprexion.adplayer.net.http.HttpADManager;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.library.YxLog;
+import com.imprexion.library.util.SharedPreferenceUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Author: Xianquan Feng
@@ -22,90 +30,26 @@ import java.util.List;
  * Desc: 从网络或者Local SP或者文件中，获取广告轮播数据；同时提供SP的缓存接口。
  */
 public class PlayerModel {
-
     private static final String TAG = "PlayerModel";
-
-    public static final String AD_CURRENT = "ADContentCurrent";
-    private static final String AD_NEXT = "ADContentNext";
     private final static String AD_DEFAULT = "adDefalt";
 
-    private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor mEditor;
-
-    private Context mContext;
-
     public PlayerModel() {
-        mContext = ADPlayApplication.getInstance().getApplicationContext();
-        if (mSharedPreferences == null) {
-            mSharedPreferences = mContext.getSharedPreferences("AIScreenSP", Context.MODE_PRIVATE);
-            mEditor = mSharedPreferences.edit();
-        }
     }
 
-    public interface onPlayerDataListener {
-        /**
-         * 主动向Presenter更新需要轮播的数据
-         *
-         * @param data
-         */
-        void onGetAdDatas(ADContentPlay data);
-
-        void onGetAdError(int code, String msg);
-    }
-
-    public void setonPlayerDataListener(onPlayerDataListener listener) {
-        HttpADManager.getInstance().setonPlayerDataListener(listener);
-    }
-
-    public void getAdDataServerAds() {
-        String playDate = Tools.getCurrentDate("yyyy-MM-dd");
-        HttpADManager.getInstance().getAdData(playDate);
+    public void getAdDataServerAds(onPlayerDataListener listener) {
+        HttpADManager.getInstance().getAdData(Tools.getCurrentDate("yyyy-MM-dd"), listener);
     }
 
     /**
      * 从SharedPreference中获取缓存的广告数据。
      */
     public ADContentPlay getLocalAds() {
-        String adContentCurrent = mSharedPreferences.getString(AD_CURRENT, null);
-        String adContentNext = mSharedPreferences.getString(AD_NEXT, null);
-        ADContentPlay adCurrent = parseObject(adContentCurrent);
-        ADContentPlay adNext = parseObject(adContentNext);
+        ADContentPlay adCurrent = parseObject(SharedPreferenceUtils.getString(Constants.AD_CURRENT, null));
         //判断今天是否有有效的播放计划
-        if (adCurrent != null && adCurrent.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
-            YxLog.i(TAG, "local SP current adContentPlay String is not valid.");
-            return adCurrent;
-        } else if (adNext != null && adNext.getPlayDate().equals(Tools.getCurrentDate("yyyy-MM-dd"))) {
-            YxLog.i(TAG, "local SP next adContentPlay String is valid,should return next and set it to current.");
-            saveAdsToSP(AD_CURRENT, adContentNext);
-            return adNext;
-        } else {
-            //今天没有有效的播放计划，返回默认的图片。
-            YxLog.i(TAG, "local SP has no valid ad data,should return default data.");
-            return getDefaultADContentPlay();
+        if (adCurrent == null || !Tools.getCurrentDate("yyyy-MM-dd").equals(adCurrent.getPlayDate())) {
+            return null;
         }
-    }
-
-    /**
-     * 把广告内容存储到SharedPreference
-     *
-     * @param ADContentPlayStr
-     */
-    public void saveAdsToSP(String curOrNext, String ADContentPlayStr) {
-        if (mEditor != null) {
-            mEditor.putString(curOrNext, ADContentPlayStr);
-            mEditor.commit();
-        }
-    }
-
-    public int getCurPageIndexFromSP() {
-        return mSharedPreferences.getInt("mCurrentPage", 0);
-    }
-
-    public void saveCurPageIndexToSP(int pageIndex) {
-        if (mEditor != null) {
-            mEditor.putInt("mCurrentPage", pageIndex);
-            mEditor.commit();
-        }
+        return adCurrent;
     }
 
     /**
@@ -114,8 +58,7 @@ public class PlayerModel {
      * @return
      */
     public ADContentPlay getDefaultADContentPlay() {
-        ADContentPlay adContentPlay;
-        adContentPlay = new ADContentPlay();
+        ADContentPlay adContentPlay = new ADContentPlay();
         adContentPlay.setLocalDefault(true);
         ADContentInfo adContentInfo = new ADContentInfo();
         adContentInfo.setFileUrl(AD_DEFAULT);
@@ -136,13 +79,41 @@ public class PlayerModel {
             adContentPlay = JSON.parseObject(adStr, ADContentPlay.class);
         } catch (Exception e) {
             e.printStackTrace();
-            YxLog.e(TAG, "error ad json string.");
-        } finally {
-            return adContentPlay;
         }
+        return adContentPlay;
     }
 
     public void release() {
         HttpADManager.getInstance().release();
+    }
+
+    public void onADCallback(ADContentPlay adContentPlay) {
+        Log.d(TAG, "onADCallback");
+        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), JSON.toJSONString(adContentPlay));
+        RetrofitFactory.getInstanceForAD()
+                .create(NetService.class)
+                .onAdcontentCallback(requestBody)
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        YxLog.d(TAG, "adcallback=" + response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        YxLog.d(TAG, "onFailure  " + t.getMessage());
+                    }
+                });
+    }
+
+    public interface onPlayerDataListener<T> {
+        /**
+         * 主动向Presenter更新需要轮播的数据
+         *
+         * @param data
+         */
+        void onDataLoadSuccess(T data);
+
+        void onDataLoadFailed(int code, String msg);
     }
 }

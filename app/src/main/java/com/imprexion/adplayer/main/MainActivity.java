@@ -2,10 +2,9 @@ package com.imprexion.adplayer.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.base.ADPlayApplication;
+import com.imprexion.adplayer.base.BaseActivity;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.player.PlayerViewImp;
 import com.imprexion.library.YxLog;
@@ -13,23 +12,21 @@ import com.imprexion.library.YxLog;
 import java.io.Serializable;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends BaseActivity {
     private static final String TAG = "MainActivity";
-
     private PlayerViewImp mPlayerView;
     public boolean isResumed;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        YxLog.i(TAG, "onCreate() savedInstanceState=" + savedInstanceState);
+    protected void initView() {
+        super.initView();
         mPlayerView = new PlayerViewImp(this);
         handleStartIntent(getIntent());
-        //缓存一下当前activity的引用，可以被外部停止。
-        ADPlayApplication.getInstance().pictureActivity = this;
+    }
 
+    @Override
+    public int attachResId() {
+        return R.layout.activity_main;
     }
 
     @Override
@@ -84,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         YxLog.i(TAG, "onDestroy()");
-        ADPlayApplication.getInstance().pictureActivity = null;
     }
 
     private void handleStartIntent(Intent intent) {
