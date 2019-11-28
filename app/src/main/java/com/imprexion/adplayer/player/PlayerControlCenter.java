@@ -272,6 +272,12 @@ public class PlayerControlCenter implements IControl {
     @Override
     public synchronized void playNext() {
         NO_OPERATION_SCHEDULE_TIME = 60;
+        // 当为第一次启动则不轮播
+        if (SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_FIRST, false)) {
+            SharedPreferenceUtils.putBoolean(Constants.Key.KEY_IS_FIRST, false);
+            startScheduler(NO_OPERATION_SCHEDULE_TIME);
+            return;
+        }
         // 1、判断当霸屏轮播时 不能再轮播应用
         if (SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_START, false) || PackageUtil.isGestureAppRunning(mContext)) {
             startScheduler(NO_OPERATION_SCHEDULE_TIME);

@@ -15,6 +15,7 @@ import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.player.PlayerControlCenter;
 import com.imprexion.library.YxConfig;
 import com.imprexion.library.YxLog;
+import com.imprexion.library.util.SharedPreferenceUtils;
 
 public class AdPlayService extends Service {
 
@@ -27,6 +28,7 @@ public class AdPlayService extends Service {
     public void onCreate() {
         super.onCreate();
         YxLog.i(TAG, "onCreate()");
+        SharedPreferenceUtils.putBoolean(Constants.Key.KEY_IS_FIRST, true);
         PlayerControlCenter.Holder.instance.loadData();
     }
 

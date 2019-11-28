@@ -31,6 +31,7 @@ public interface Constants {
         String KEY_IS_VIDEO = "isVideo";
         String KEY_CONTENT_TYPE = "contentType";
         String kEY_PACKAGE_NAME = "packageName";
+        String KEY_IS_FIRST = "is_first";
     }
 
 
