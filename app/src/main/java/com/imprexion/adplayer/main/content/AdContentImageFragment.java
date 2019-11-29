@@ -10,33 +10,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.arialyy.annotations.Download;
 import com.arialyy.aria.core.Aria;
-import com.arialyy.aria.core.download.DownloadTask;
-import com.dou361.ijkplayer.widget.IjkVideoView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.app.Constants;
+import com.imprexion.adplayer.main.control.VideoController;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.library.YxLog;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import tv.danmaku.ijk.media.player.IMediaPlayer;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnPreparedListener, IMediaPlayer.OnErrorListener, IMediaPlayer.OnCompletionListener {
-
-
+public class AdContentImageFragment extends Fragment implements View.OnClickListener {
     private static final String TAG = "AdContentImageFragment";
     @BindView(R.id.iv_ad_fragment)
     ImageView ivAdFragment;
@@ -44,12 +35,13 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
     private String mUrl;
     private boolean mIsVideo;
     private boolean isInit;
-    private IjkVideoView mIjkPlayView;
     private boolean mIsDownLoading;
     public boolean mIsVisible;
     private boolean mIsLoop;
-    private Disposable mDisposable;
-
+    private PlayerView mPlayerView;
+    private VideoController mVideoController;
+    public AdContentImageFragment() {
+    }
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -78,10 +70,6 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
             loadVideo();
         }
         mIsVisible = true;
-    }
-
-    public AdContentImageFragment() {
-        // Required empty public constructor
     }
 
     public void setUrl(String url, boolean isVideo, int size) {
@@ -129,16 +117,16 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
 
     private void initView(View view) {
         ivAdFragment = view.findViewById(R.id.iv_ad_fragment);
-        mIjkPlayView = view.findViewById(R.id.ijk_video_view);
+        mPlayerView = view.findViewById(R.id.video_view);
+        view.setOnClickListener(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (mIjkPlayView == null) {
-            return;
+        if (mVideoController != null) {
+            mVideoController.onPause();
         }
-        mIjkPlayView.stopPlayback();
     }
 
     @Override
@@ -147,7 +135,7 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
         if (!mIsVideo) {
             YxLog.i(TAG, " playPic --> url= " + mUrl);
             Tools.showPicWithGlide(ivAdFragment, mUrl);
-            mIjkPlayView.setVisibility(View.GONE);
+            mPlayerView.setVisibility(View.GONE);
             ivAdFragment.setVisibility(View.VISIBLE);
         }
     }
@@ -169,8 +157,8 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
     public void onDetach() {
         super.onDetach();
         YxLog.i(TAG, "onDetach");
-        if (mIjkPlayView != null) {
-            mIjkPlayView.release(true);
+        if (mVideoController != null) {
+            mVideoController.releasePlayer();
         }
     }
 
@@ -178,79 +166,25 @@ public class AdContentImageFragment extends Fragment implements IMediaPlayer.OnP
         YxLog.i(TAG, "loadVideo mUrl= " + mUrl);
         if (mIsVideo) {
             ivAdFragment.setVisibility(View.GONE);
-            mIjkPlayView.setVisibility(View.VISIBLE);
-            mIjkPlayView.setOnPreparedListener(this);
-            mIjkPlayView.setOnErrorListener(this);
-            mIjkPlayView.setOnCompletionListener(this);
-            File file = new File(mFileName);
-            YxLog.i(TAG, "fileExist :  " + file.exists() + " filePath= " + file.getAbsolutePath());
-            if (file.exists()) {
-                mIjkPlayView.setVideoPath(file.getAbsolutePath());
-            } else {
-                mIjkPlayView.setVideoPath(mUrl);
+            mPlayerView.setVisibility(View.VISIBLE);
+            if (mVideoController == null) {
+                mVideoController = new VideoController(mPlayerView);
             }
+            mVideoController.playVideo(mUrl, mIsLoop, mFileName, getContext());
         }
     }
 
-    @Override
-    public void onPrepared(IMediaPlayer iMediaPlayer) {
-        YxLog.i(TAG, "onPrepared = iMediaPlayer= " + iMediaPlayer);
-        if (iMediaPlayer != null) {
-            iMediaPlayer.start();
-        }
-    }
-
-    @Override
-    public boolean onError(IMediaPlayer iMediaPlayer, int i, int i1) {
-        YxLog.i(TAG, "onError i= " + i + " i1= " + i1);
-        return false;
-    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         Aria.download(this).unRegister();
-        if (mDisposable != null && !mDisposable.isDisposed()) {
-            mDisposable.dispose();
-        }
-    }
-
-    //在这里处理任务执行中的状态，如进度进度条的刷新
-    @Download.onTaskRunning
-    public void running(DownloadTask task) {
-        int percent = task.getPercent();
-        mIsDownLoading = false;
-        YxLog.d(TAG, "downLoad Presenter --> " + percent);
-    }
-
-
-    @Download.onTaskComplete
-    public void taskComplete(DownloadTask task) {
-        mIsDownLoading = false;
-        //在这里处理任务完成的状态
-        YxLog.i(TAG, "downLoad complete filePath--> " + (task == null ? "is null" : task.getFilePath()));
-    }
-
-    @Download.onTaskFail
-    public void taskFailed(DownloadTask task) {
-        //在这里处理任务完成的状态
-        mIsDownLoading = false;
-        YxLog.i(TAG, "downLoad taskFailed filePath--> " + (task == null ? "is null" : task.getFilePath()));
     }
 
     @Override
-    public void onCompletion(IMediaPlayer iMediaPlayer) {
-        if (mIjkPlayView == null || !mIsLoop) {
-            return;
+    public void onClick(View v) {
+        if (mIsVideo) {
+
         }
-        mDisposable = Observable.timer(2, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long aLong) throws Exception {
-                        loadVideo();
-                    }
-                });
     }
 }

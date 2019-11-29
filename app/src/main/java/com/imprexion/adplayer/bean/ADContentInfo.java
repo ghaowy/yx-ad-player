@@ -199,6 +199,10 @@ public class ADContentInfo implements Parcelable {
         return 0;
     }
 
+    public boolean isSame(ADContentInfo adContentInfo) {
+        return contentType == adContentInfo.contentType && fileName.equals(adContentInfo.fileName) && fileUrl.equals(adContentInfo.fileUrl) && fileType == adContentInfo.fileType;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(contentType);

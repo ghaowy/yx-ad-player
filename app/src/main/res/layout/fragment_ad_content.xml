@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,8 +13,9 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop" />
 
-    <com.dou361.ijkplayer.widget.IjkVideoView
-        android:id="@+id/ijk_video_view"
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/video_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:use_controller="false" />
 </RelativeLayout>

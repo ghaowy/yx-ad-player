@@ -73,6 +73,7 @@ public class PlayerControlCenter implements IControl {
             }
         }
     };
+    private ArrayList<ADContentInfo> mPreData;
 
     // 静态内部类实现单例
     public static class Holder {
@@ -273,12 +274,12 @@ public class PlayerControlCenter implements IControl {
     public synchronized void playNext() {
         NO_OPERATION_SCHEDULE_TIME = 60;
         // 当为第一次启动则不轮播
-        if (SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_FIRST, false)) {
-            SharedPreferenceUtils.putBoolean(Constants.Key.KEY_IS_FIRST, false);
-            startScheduler(NO_OPERATION_SCHEDULE_TIME);
-            ActivityStackUtil.Holder.instance.finishAllActivity();
-            return;
-        }
+//        if (SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_FIRST, false)) {
+//            SharedPreferenceUtils.putBoolean(Constants.Key.KEY_IS_FIRST, false);
+//            startScheduler(NO_OPERATION_SCHEDULE_TIME);
+//            ActivityStackUtil.Holder.instance.finishAllActivity();
+//            return;
+//        }
         // 1、判断当霸屏轮播时 不能再轮播应用
         if (SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_START, false) || PackageUtil.isGestureAppRunning(mContext)) {
             startScheduler(NO_OPERATION_SCHEDULE_TIME);
@@ -362,10 +363,29 @@ public class PlayerControlCenter implements IControl {
                 return ADContentInfo.CONTENT_TYPE_AD == adContentInfo.getContentType();
             }
         });
-        ActivityLaunchUtil.launchMainActivity(mContext, dataList, mNewUpdateDataFlag, adContentInfo.getFileType() == ADContentInfo.TYPE_VIDEO);
-        mNewUpdateDataFlag = false;
-        //发送广播出来，
-        sendBroadcast(adContentInfo.getContentType(), adContentInfo.getAppCode());
+
+        // 当不是只有一个视频 并且数据和之前数据不一样
+        if (isNotLastVideo(dataList)) {
+            ActivityLaunchUtil.launchMainActivity(mContext, dataList, mNewUpdateDataFlag, adContentInfo.getFileType() == ADContentInfo.TYPE_VIDEO);
+            mNewUpdateDataFlag = false;
+            //发送广播出来，
+            sendBroadcast(adContentInfo.getContentType(), adContentInfo.getAppCode());
+        }
+        mPreData = dataList;
+    }
+
+    // 当不是只有一个视频 并且数据和之前数据不一样
+    private boolean isNotLastVideo(ArrayList<ADContentInfo> dataList) {
+        if (mPreData == null || dataList == null) {
+            return true;
+        }
+        if (mPreData.size() != 1 || dataList.size() != 1) {
+            return true;
+        }
+        ADContentInfo adContentInfo = dataList.get(0);
+        boolean isSame = adContentInfo.isSame(mPreData.get(0));
+        YxLog.i(TAG, "isNotLastVideo  isSame--> " + isSame);
+        return !isSame;
     }
 
     /**

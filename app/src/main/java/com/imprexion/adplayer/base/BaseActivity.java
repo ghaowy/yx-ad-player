@@ -16,15 +16,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(attachResId());
         initView();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         initData();
     }
 
-    private void initData() {
+    protected void initData() {
 
     }
 

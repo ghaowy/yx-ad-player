@@ -32,6 +32,8 @@ public interface Constants {
         String KEY_CONTENT_TYPE = "contentType";
         String kEY_PACKAGE_NAME = "packageName";
         String KEY_IS_FIRST = "is_first";
+        String KEY_PLAY_NEXT = "playNext";
+        String KEY_CURRENT_INDEX = "currentPageIndex";
     }
 
 

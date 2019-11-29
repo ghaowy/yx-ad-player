@@ -75,13 +75,7 @@ public class ActivityStackUtil implements Application.ActivityLifecycleCallbacks
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        if (mActivityStack == null || mActivityStack.empty()) {
-            return;
-        }
-        int search = mActivityStack.search(activity);
-        if (search != -1) {
-            mActivityStack.remove(search);
-        }
+        mActivityStack.remove(activity);
     }
 
 
