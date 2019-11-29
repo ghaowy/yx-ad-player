@@ -39,6 +39,9 @@ public class AdPlayService extends Service {
         /**
          * 由广播接收者 {@code ADBroadcastReceiver} 回调过来的消息,或者首次启动Service的消息。
          */
+        if (intent == null) {
+            return START_STICKY;
+        }
         String messageType = intent.getStringExtra(Constants.Key.KEY_MESSAGE_TYPE);
         if (!TextUtils.isEmpty(messageType)) {
             String data = intent.getStringExtra(Constants.Key.KEY_DATA);

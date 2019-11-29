@@ -276,6 +276,7 @@ public class PlayerControlCenter implements IControl {
         if (SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_FIRST, false)) {
             SharedPreferenceUtils.putBoolean(Constants.Key.KEY_IS_FIRST, false);
             startScheduler(NO_OPERATION_SCHEDULE_TIME);
+            ActivityStackUtil.Holder.instance.finishAllActivity();
             return;
         }
         // 1、判断当霸屏轮播时 不能再轮播应用

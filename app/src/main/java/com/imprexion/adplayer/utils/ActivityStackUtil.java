@@ -18,6 +18,19 @@ public class ActivityStackUtil implements Application.ActivityLifecycleCallbacks
     private ActivityStackUtil() {
     }
 
+    public void finishAllActivity() {
+        if (mActivityStack == null || mActivityStack.empty()) {
+            return;
+        }
+        while (!mActivityStack.empty()) {
+            Activity activity = mActivityStack.pop();
+            if (activity == null) {
+                continue;
+            }
+            activity.finish();
+        }
+    }
+
     public static class Holder {
         public static ActivityStackUtil instance = new ActivityStackUtil();
     }
@@ -62,22 +75,18 @@ public class ActivityStackUtil implements Application.ActivityLifecycleCallbacks
 
     @Override
     public void onActivityDestroyed(Activity activity) {
-        mActivityStack.pop();
+        if (mActivityStack == null || mActivityStack.empty()) {
+            return;
+        }
+        int search = mActivityStack.search(activity);
+        if (search != -1) {
+            mActivityStack.remove(search);
+        }
     }
 
 
     public void exit() {
-        if (mActivityStack != null || mActivityStack.empty()) {
-            return;
-        }
-        while (!mActivityStack.empty()) {
-            Activity activity = mActivityStack.pop();
-            if (activity == null) {
-                continue;
-            }
-            activity.finish();
-        }
-        mActivityStack = null;
+        finishAllActivity();
         System.exit(0);
     }
 }
