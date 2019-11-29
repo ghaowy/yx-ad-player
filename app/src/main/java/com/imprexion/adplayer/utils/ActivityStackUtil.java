@@ -14,6 +14,7 @@ import java.util.Stack;
  */
 public class ActivityStackUtil implements Application.ActivityLifecycleCallbacks {
     private Stack<Activity> mActivityStack = new Stack<>();
+    private boolean isVisible;
 
     private ActivityStackUtil() {
     }
@@ -31,6 +32,10 @@ public class ActivityStackUtil implements Application.ActivityLifecycleCallbacks
         }
     }
 
+    public boolean isMainActivityVisible() {
+        return isVisible;
+    }
+
     public static class Holder {
         public static ActivityStackUtil instance = new ActivityStackUtil();
     }
@@ -45,12 +50,15 @@ public class ActivityStackUtil implements Application.ActivityLifecycleCallbacks
 
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+        if (mActivityStack == null) {
+            return;
+        }
         mActivityStack.push(activity);
     }
 
     @Override
     public void onActivityStarted(Activity activity) {
-
+        isVisible = true;
     }
 
     @Override
@@ -65,7 +73,7 @@ public class ActivityStackUtil implements Application.ActivityLifecycleCallbacks
 
     @Override
     public void onActivityStopped(Activity activity) {
-
+        isVisible = false;
     }
 
     @Override
@@ -75,6 +83,9 @@ public class ActivityStackUtil implements Application.ActivityLifecycleCallbacks
 
     @Override
     public void onActivityDestroyed(Activity activity) {
+        if (mActivityStack == null || mActivityStack.empty()) {
+            return;
+        }
         mActivityStack.remove(activity);
     }
 

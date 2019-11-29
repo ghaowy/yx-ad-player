@@ -40,6 +40,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     private boolean mIsLoop;
     private PlayerView mPlayerView;
     private VideoController mVideoController;
+
     public AdContentImageFragment() {
     }
 
@@ -65,11 +66,16 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     }
 
     private void onVisible() {
+        mIsVisible = true;
+        // 当只有一条记录, 在onResume中播放, 不会走onVisible
+        if (mIsLoop) {
+            return;
+        }
+
         if (mIsVideo) {
             YxLog.i(TAG, "onVisible " + mIsVideo);
             loadVideo();
         }
-        mIsVisible = true;
     }
 
     public void setUrl(String url, boolean isVideo, int size) {
@@ -137,6 +143,11 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
             Tools.showPicWithGlide(ivAdFragment, mUrl);
             mPlayerView.setVisibility(View.GONE);
             ivAdFragment.setVisibility(View.VISIBLE);
+        }
+
+        // 当只有一条视频记录时 在此时播放
+        if (mIsLoop) {
+            loadVideo();
         }
     }
 

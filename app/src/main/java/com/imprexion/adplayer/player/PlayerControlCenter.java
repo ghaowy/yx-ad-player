@@ -376,7 +376,7 @@ public class PlayerControlCenter implements IControl {
 
     // 当不是只有一个视频 并且数据和之前数据不一样
     private boolean isNotLastVideo(ArrayList<ADContentInfo> dataList) {
-        if (mPreData == null || dataList == null) {
+        if (mPreData == null || dataList == null || !ActivityStackUtil.Holder.instance.isMainActivityVisible()) {
             return true;
         }
         if (mPreData.size() != 1 || dataList.size() != 1) {
