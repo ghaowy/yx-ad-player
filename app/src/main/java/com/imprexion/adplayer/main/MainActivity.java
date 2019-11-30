@@ -116,7 +116,7 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 ADContentInfo adContentInfo = mADContents.get(i);
                 mFragments.add(fragment);
                 fragment.setUrl(adContentInfo.getFileUrl(), adContentInfo.getFileType()
-                        == ADContentInfo.TYPE_VIDEO, size);
+                        == ADContentInfo.TYPE_VIDEO, size , adContentInfo.getStartApp());
             }
             MyStatePagerAdapter pagerAdapter = new MyStatePagerAdapter(getSupportFragmentManager());
             pagerAdapter.setFragments(mFragments);

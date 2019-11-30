@@ -67,6 +67,8 @@ public class ADContentInfo implements Parcelable {
      */
     private int fileType;
 
+    private String startApp;
+
     public ADContentInfo() {
     }
 
@@ -83,6 +85,7 @@ public class ADContentInfo implements Parcelable {
         appCode = in.readString();
         isRun = in.readInt();
         fileType = in.readInt();
+        startApp = in.readString();
     }
 
     public static final Creator<ADContentInfo> CREATOR = new Creator<ADContentInfo>() {
@@ -194,6 +197,14 @@ public class ADContentInfo implements Parcelable {
         this.isRun = isRun;
     }
 
+    public String getStartApp() {
+        return startApp;
+    }
+
+    public void setStartApp(String startApp) {
+        this.startApp = startApp;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -217,6 +228,7 @@ public class ADContentInfo implements Parcelable {
         dest.writeString(appCode);
         dest.writeInt(isRun);
         dest.writeInt(fileType);
+        dest.writeString(startApp);
     }
 
     @Override
@@ -234,6 +246,7 @@ public class ADContentInfo implements Parcelable {
                 ", appCode='" + appCode + '\'' +
                 ", isRun=" + isRun +
                 ", fileType=" + fileType +
+                ", startApp='" + startApp + '\'' +
                 '}';
     }
 }

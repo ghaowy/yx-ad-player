@@ -16,6 +16,7 @@ import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.main.control.VideoController;
 import com.imprexion.adplayer.tools.Tools;
+import com.imprexion.adplayer.utils.Util;
 import com.imprexion.library.YxLog;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,6 +35,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     private String mFileName;
     private String mUrl;
     private boolean mIsVideo;
+    private String mStartPackageName;
     private boolean isInit;
     private boolean mIsDownLoading;
     public boolean mIsVisible;
@@ -78,10 +80,11 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
         }
     }
 
-    public void setUrl(String url, boolean isVideo, int size) {
+    public void setUrl(String url, boolean isVideo, int size, String startPackageName) {
         mIsLoop = size == 1;
         mUrl = url;
         mIsVideo = isVideo;
+        mStartPackageName = startPackageName;
     }
 
     // 更新皮肤数据
@@ -194,8 +197,12 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        if (mIsVideo) {
-
+        YxLog.i(TAG, "packageName= " + mStartPackageName);
+        if (TextUtils.isEmpty(mStartPackageName)) {
+            return;
+        }
+        if (!Util.startApp(getContext(), mStartPackageName)) {
+            YxLog.e(TAG, "startAppError packageName = " + mStartPackageName);
         }
     }
 }
