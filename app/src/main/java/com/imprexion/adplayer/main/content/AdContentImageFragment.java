@@ -15,6 +15,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.main.control.VideoController;
+import com.imprexion.adplayer.report.AdPlayerReport;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.adplayer.utils.Util;
 import com.imprexion.library.YxLog;
@@ -42,6 +43,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     private boolean mIsLoop;
     private PlayerView mPlayerView;
     private VideoController mVideoController;
+    private String mAdFileName;
 
     public AdContentImageFragment() {
     }
@@ -80,7 +82,8 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
         }
     }
 
-    public void setUrl(String url, boolean isVideo, int size, String startPackageName) {
+    public void setUrl(String fileName, String url, boolean isVideo, int size, String startPackageName) {
+        this.mAdFileName = fileName;
         mIsLoop = size == 1;
         mUrl = url;
         mIsVideo = isVideo;
@@ -204,5 +207,6 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
         if (!Util.startApp(getContext(), mStartPackageName)) {
             YxLog.e(TAG, "startAppError packageName = " + mStartPackageName);
         }
+        AdPlayerReport.onClickAdPlayer(mAdFileName, mStartPackageName, mUrl);
     }
 }

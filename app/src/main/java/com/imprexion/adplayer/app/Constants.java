@@ -19,6 +19,9 @@ public interface Constants {
     String TYPE_COUNT_DOWN = "count_down";
     String AD_CURRENT = "ADContentCurrent";
     String AD_INDEX = "mCurrentPage";
+    String AD_URL = "ad_url";
+    String PACKAGE = "package";
+    String AD_NAME = "ad_name";
 
 
     interface Key {

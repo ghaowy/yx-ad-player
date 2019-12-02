@@ -11,8 +11,8 @@ import com.imprexion.adplayer.base.BaseActivity;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.main.adapter.MyStatePagerAdapter;
 import com.imprexion.adplayer.main.content.AdContentImageFragment;
+import com.imprexion.adplayer.report.AdPlayerReport;
 import com.imprexion.library.YxLog;
-import com.imprexion.library.YxStatistics;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -115,8 +115,8 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
                 AdContentImageFragment fragment = new AdContentImageFragment();
                 ADContentInfo adContentInfo = mADContents.get(i);
                 mFragments.add(fragment);
-                fragment.setUrl(adContentInfo.getFileUrl(), adContentInfo.getFileType()
-                        == ADContentInfo.TYPE_VIDEO, size , adContentInfo.getStartApp());
+                fragment.setUrl(adContentInfo.getFileName() ,adContentInfo.getFileUrl(), adContentInfo.getFileType()
+                        == ADContentInfo.TYPE_VIDEO, size, adContentInfo.getStartApp());
             }
             MyStatePagerAdapter pagerAdapter = new MyStatePagerAdapter(getSupportFragmentManager());
             pagerAdapter.setFragments(mFragments);
@@ -141,7 +141,10 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
 
     @Override
     public void onPageSelected(int i) {
-        YxStatistics.version(1).param("cur", (i + 1)).param("total", mFragments.size()).report("slide_ad_content");
+        if (mADContents == null || i < 0 || i >= mADContents.size()) {
+            return;
+        }
+        AdPlayerReport.onLoopAdplayer(mADContents.get(i).getFileName() ,mADContents.get(i).getFileUrl(), mADContents.get(i).getStartApp());
     }
 
     @Override
