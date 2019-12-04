@@ -111,19 +111,3 @@ dependencies {
     implementation 'com.arialyy.aria:aria-core:3.6.6'
     annotationProcessor 'com.arialyy.aria:aria-compiler:3.6.6'
 }
-
-apply plugin: 'base-plugin'
-
-buildscript {
-    repositories {
-        maven {
-            google()
-            jcenter()
-            url uri('../yx-base-library/plugin')
-        }
-    }
-    dependencies {
-        //引入cooker-plugin
-        classpath 'com.imprexion.plugin:base-plugin:1.0'
-    }
-}
