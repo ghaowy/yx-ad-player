@@ -21,7 +21,7 @@ import io.reactivex.schedulers.Schedulers;
 public class HttpADManager {
     private static final String TAG = "HttpADManager";
     private static HttpADManager mHttpManager;
-    private PlayerModel.onPlayerDataListener mAdListener;
+    private PlayerModel.onPlayerDataListener<ADContentPlay> mAdListener;
     private Disposable mDisposable;
 
     private HttpADManager() {
@@ -38,11 +38,8 @@ public class HttpADManager {
         return mHttpManager;
     }
 
-    public void setonPlayerDataListener(PlayerModel.onPlayerDataListener listener) {
+    public void getAdData(String playDate, PlayerModel.onPlayerDataListener<ADContentPlay> listener) {
         mAdListener = listener;
-    }
-
-    public void getAdData(String playDate) {
         mDisposable = YxHttp.getDefaultInstance()
                 .service(IAdRequest.class)
                 .getAdDatas(Build.SERIAL, playDate)
@@ -54,11 +51,11 @@ public class HttpADManager {
                                    YxLog.i(TAG, "get ad data success. result= " + adContentPlayBaseResult);
                                    if (adContentPlayBaseResult != null && adContentPlayBaseResult.isSuccess()) {
                                        if (mAdListener != null) {
-                                           mAdListener.onGetAdDatas(adContentPlayBaseResult.getData());
+                                           mAdListener.onDataLoadSuccess(adContentPlayBaseResult.getData());
                                        }
                                    } else if (adContentPlayBaseResult != null) {
                                        if (mAdListener != null) {
-                                           mAdListener.onGetAdError(adContentPlayBaseResult.getCode(), adContentPlayBaseResult.getMsg());
+                                           mAdListener.onDataLoadFailed(adContentPlayBaseResult.getCode(), adContentPlayBaseResult.getMsg());
                                        }
                                    }
                                }
@@ -67,7 +64,7 @@ public class HttpADManager {
                             @Override
                             public void accept(Throwable throwable) throws Exception {
                                 YxLog.e(TAG, "get ad data error. e= " + throwable.getMessage());
-                                mAdListener.onGetAdError(-1, throwable.getMessage());
+                                mAdListener.onDataLoadFailed(-1, throwable.getMessage());
                             }
                         }
                 );

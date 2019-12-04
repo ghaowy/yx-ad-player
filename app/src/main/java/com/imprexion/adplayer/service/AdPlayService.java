@@ -6,43 +6,30 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.os.Binder;
 import android.os.IBinder;
+import android.text.TextUtils;
 
+import androidx.annotation.Nullable;
+
+import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.player.PlayerControlCenter;
 import com.imprexion.library.YxConfig;
 import com.imprexion.library.YxLog;
+import com.imprexion.library.util.SharedPreferenceUtils;
 
 public class AdPlayService extends Service {
 
     private static final String TAG = "AdPlayService";
 
-    private PlayerControlCenter mControlCenter;
-
     public AdPlayService() {
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        int src = intent.getIntExtra("src", -1);
-        if (src == 0) {
-            return new AISBinder();
-        }
-        return null;
-    }
-
-    public class AISBinder extends Binder {
-        public AdPlayService getService() {
-            return AdPlayService.this;
-        }
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         YxLog.i(TAG, "onCreate()");
-        mControlCenter = new PlayerControlCenter(this);
-        mControlCenter.start();
+        SharedPreferenceUtils.putBoolean(Constants.Key.KEY_IS_FIRST, true);
+        PlayerControlCenter.Holder.instance.loadData();
     }
 
     @Override
@@ -52,11 +39,13 @@ public class AdPlayService extends Service {
         /**
          * 由广播接收者 {@code ADBroadcastReceiver} 回调过来的消息,或者首次启动Service的消息。
          */
-        if (intent != null) {
-            String messageType = intent.getStringExtra("messageType");
-            String data = intent.getStringExtra("data");
-            YxLog.i(TAG, "onStartCommand() messageType=" + messageType + ",data=" + data);
-            mControlCenter.handleEvent(messageType, data);
+        if (intent == null) {
+            return START_STICKY;
+        }
+        String messageType = intent.getStringExtra(Constants.Key.KEY_MESSAGE_TYPE);
+        if (!TextUtils.isEmpty(messageType)) {
+            String data = intent.getStringExtra(Constants.Key.KEY_DATA);
+            PlayerControlCenter.Holder.instance.handleEvent(messageType, data);
         }
         return START_STICKY;
     }
@@ -86,9 +75,15 @@ public class AdPlayService extends Service {
         return builder.build();
     }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mControlCenter.release();
+        PlayerControlCenter.Holder.instance.release();
     }
 }

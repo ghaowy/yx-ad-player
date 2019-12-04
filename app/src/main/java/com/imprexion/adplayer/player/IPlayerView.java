@@ -1,7 +1,6 @@
 package com.imprexion.adplayer.player;
 
 import com.imprexion.adplayer.bean.ADContentInfo;
-import com.imprexion.adplayer.bean.ADContentPlay;
 
 import java.util.List;
 
@@ -13,7 +12,9 @@ import java.util.List;
  */
 public interface IPlayerView {
 
+    // 播放下一个
     void playerNext();
 
+    // 更新广告数据
     void updateAds(List<ADContentInfo> adContentPlays);
 }
