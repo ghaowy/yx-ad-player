@@ -22,6 +22,7 @@ public interface Constants {
     String AD_URL = "ad_url";
     String PACKAGE = "package";
     String AD_NAME = "ad_name";
+    String PACKAGE_NAME_AI_BAR = "com.imprexion.aibar";
 
 
     interface Key {
