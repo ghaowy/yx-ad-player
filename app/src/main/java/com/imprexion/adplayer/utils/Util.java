@@ -134,7 +134,7 @@ public final class Util {
         }
     }
 
-    private static void startAppWithActivity(Context context, String packageName, String clsName,
+    public static void startAppWithActivity(Context context, String packageName, String clsName,
                                              Bundle bundle) {
         ComponentName componetName = new ComponentName(
                 packageName, clsName);

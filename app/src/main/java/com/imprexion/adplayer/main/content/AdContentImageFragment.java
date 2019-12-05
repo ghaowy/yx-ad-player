@@ -204,6 +204,12 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
         if (TextUtils.isEmpty(mStartPackageName)) {
             return;
         }
+        // 当包名是AIBar的包名时, 做个特殊处理,打开指定界面
+        if (mStartPackageName.equals(Constants.PACKAGE_NAME_AI_BAR)) {
+            Util.startAppWithActivity(getContext(), mStartPackageName, "com.imprexion.aibar.game_service.activity.MagicSalad2Activity", null);
+            return;
+        }
+
         if (!Util.startApp(getContext(), mStartPackageName)) {
             YxLog.e(TAG, "startAppError packageName = " + mStartPackageName);
         }
