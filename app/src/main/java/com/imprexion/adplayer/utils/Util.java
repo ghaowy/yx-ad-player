@@ -134,14 +134,11 @@ public final class Util {
         }
     }
 
-    public static void startAppWithActivity(Context context, String packageName, String clsName,
-                                             Bundle bundle) {
+    public static void startAppWithActivity(Context context, String packageName, String clsName) {
         ComponentName componetName = new ComponentName(
                 packageName, clsName);
         Intent intent = new Intent();
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        //传递参数
-        intent.putExtras(bundle);
         intent.setComponent(componetName);
         context.startActivity(intent);
     }
