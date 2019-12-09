@@ -92,6 +92,5 @@ public class ActivityStackUtil implements Application.ActivityLifecycleCallbacks
 
     public void exit() {
         finishAllActivity();
-        System.exit(0);
     }
 }
