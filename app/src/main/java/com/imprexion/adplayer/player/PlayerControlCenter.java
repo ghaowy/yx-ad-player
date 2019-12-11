@@ -281,7 +281,8 @@ public class PlayerControlCenter implements IControl {
 //            return;
 //        }
         // 1、判断当霸屏轮播时 不能再轮播应用
-        if (SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_START, false) || PackageUtil.isGestureAppRunning(mContext)) {
+        if ((SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_START, false) && PackageUtil.isScreenApp(mContext)) || PackageUtil.isGestureAppRunning(mContext)) {
+            YxLog.i(TAG ,"不轮播, 霸屏 或者体感应用 在运行 !!!");
             startScheduler(NO_OPERATION_SCHEDULE_TIME);
             return;
         }

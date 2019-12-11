@@ -15,6 +15,7 @@ public class PackageUtil {
      * 当前只有一款体感应用。
      */
     private static String[] gestureAppPackageNames = new String[]{"com.Orbbec.MagicSalad2", "com.imprexion.aibar"};
+    private static final String PACKAGE_SCREEN_DONIMATE = "com.imprexion.screendominate";
     public static final String TAG = "PackageUtil";
 
 
@@ -26,5 +27,9 @@ public class PackageUtil {
             }
         }
         return false;
+    }
+
+    public static boolean isScreenApp(Context context) {
+        return Util.isAppOnForeground(context, PACKAGE_SCREEN_DONIMATE);
     }
 }
