@@ -102,7 +102,7 @@ public class VideoController implements Player.EventListener {
         String stateString;
         // actually playing media
         if (playWhenReady && playbackState == Player.STATE_READY) {
-            YxLog.d(TAG, "onPlayerStateChanged: actually playing media");
+            YxLog.i(TAG, "onPlayerStateChanged: actually playing media");
         }
         switch (playbackState) {
             case Player.STATE_IDLE:
@@ -121,7 +121,7 @@ public class VideoController implements Player.EventListener {
                 stateString = "UNKNOWN_STATE             -";
                 break;
         }
-        YxLog.d(TAG, "stateChange= stateString + " + stateString);
+        YxLog.i(TAG, "stateChange= stateString + " + stateString);
     }
 
     @Override
