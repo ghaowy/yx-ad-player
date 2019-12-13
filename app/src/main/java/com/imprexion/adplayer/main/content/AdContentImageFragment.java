@@ -19,6 +19,7 @@ import com.imprexion.adplayer.report.AdPlayerReport;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.adplayer.utils.Util;
 import com.imprexion.library.YxLog;
+import com.imprexion.library.util.ContextUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -174,10 +175,12 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     public void onDetach() {
         super.onDetach();
         YxLog.i(TAG, "onDetach");
-        if (mVideoController != null) {
-            mVideoController.releasePlayer();
-        }
+//        if (mVideoController != null) {
+//            mVideoController.releasePlayer();
+//        }
     }
+
+
 
     public void loadVideo() {
         YxLog.i(TAG, "loadVideo mUrl= " + mUrl);
@@ -187,7 +190,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
             if (mVideoController == null) {
                 mVideoController = new VideoController(mPlayerView);
             }
-            mVideoController.playVideo(mUrl, mIsLoop, mFileName, getContext());
+            mVideoController.playVideo(mUrl, mIsLoop, mFileName, ContextUtils.get());
         }
     }
 

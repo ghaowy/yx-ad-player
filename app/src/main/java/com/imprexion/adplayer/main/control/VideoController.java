@@ -43,10 +43,12 @@ public class VideoController implements Player.EventListener {
         if (mPlayerView == null || mPlayerView.getPlayer() == null) {
             return;
         }
+        YxLog.i(TAG, " onPause== ");
         mPlayerView.getPlayer().stop();
     }
 
     public void releasePlayer() {
+        YxLog.i(TAG, "releasePlayer");
         if (player != null) {
             player.release();
             player.removeListener(this);
@@ -58,7 +60,6 @@ public class VideoController implements Player.EventListener {
         YxLog.i(TAG, "url--> " + url + " isLoop--> " + isLoop + " fileName= " + fileName);
         if (player == null) {
             player = ExoPlayerFactory.newSimpleInstance(context, new DefaultTrackSelector());
-
             player.addListener(this);
 
             mPlayerView.setPlayer(player);
