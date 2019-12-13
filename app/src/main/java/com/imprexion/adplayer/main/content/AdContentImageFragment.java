@@ -2,6 +2,7 @@ package com.imprexion.adplayer.main.content;
 
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.VideoView;
 
 import com.arialyy.aria.core.Aria;
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -30,7 +32,7 @@ import butterknife.BindView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AdContentImageFragment extends Fragment implements View.OnClickListener {
+public class AdContentImageFragment extends Fragment implements View.OnClickListener, MediaPlayer.OnPreparedListener {
     private static final String TAG = "AdContentImageFragment";
     @BindView(R.id.iv_ad_fragment)
     ImageView ivAdFragment;
@@ -45,6 +47,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     private PlayerView mPlayerView;
     private VideoController mVideoController;
     private String mAdFileName;
+    private VideoView mVideoView;
 
     public AdContentImageFragment() {
     }
@@ -131,6 +134,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     private void initView(View view) {
         ivAdFragment = view.findViewById(R.id.iv_ad_fragment);
         mPlayerView = view.findViewById(R.id.video_view);
+        mVideoView = view.findViewById(R.id.video_view_1);
         view.setOnClickListener(this);
     }
 
@@ -139,6 +143,9 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
         super.onPause();
         if (mVideoController != null) {
             mVideoController.onPause();
+        }
+        if (mVideoView.isPlaying()) {
+            mVideoView.stopPlayback();
         }
     }
 
@@ -149,6 +156,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
             YxLog.i(TAG, " playPic --> url= " + mUrl);
             Tools.showPicWithGlide(ivAdFragment, mUrl);
             mPlayerView.setVisibility(View.GONE);
+            mVideoView.setVisibility(View.GONE);
             ivAdFragment.setVisibility(View.VISIBLE);
         }
 
@@ -175,22 +183,35 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     public void onDetach() {
         super.onDetach();
         YxLog.i(TAG, "onDetach");
-//        if (mVideoController != null) {
-//            mVideoController.releasePlayer();
-//        }
+        if (mVideoController != null) {
+            mVideoController.releasePlayer();
+        }
+        mVideoView.stopPlayback();
     }
-
 
 
     public void loadVideo() {
         YxLog.i(TAG, "loadVideo mUrl= " + mUrl);
         if (mIsVideo) {
-            ivAdFragment.setVisibility(View.GONE);
-            mPlayerView.setVisibility(View.VISIBLE);
-            if (mVideoController == null) {
-                mVideoController = new VideoController(mPlayerView);
+            if (mIsLoop) {
+                mPlayerView.setVisibility(View.VISIBLE);
+                if (mVideoController == null) {
+                    mVideoController = new VideoController(mPlayerView);
+                }
+                mVideoController.playVideo(mUrl, mIsLoop, mFileName, ContextUtils.get());
+                return;
+            } else {
+                mPlayerView.setVisibility(View.GONE);
             }
-            mVideoController.playVideo(mUrl, mIsLoop, mFileName, ContextUtils.get());
+            ivAdFragment.setVisibility(View.GONE);
+            File file = new File(mFileName);
+            YxLog.i(TAG, "fileExist :  " + file.exists() + " filePath= " + file.getAbsolutePath());
+            if (file.exists()) {
+                mVideoView.setVideoPath(file.getAbsolutePath());
+            } else {
+                mVideoView.setVideoPath(mUrl);
+            }
+            mVideoView.setOnPreparedListener(this);
         }
     }
 
@@ -217,5 +238,12 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
             YxLog.e(TAG, "startAppError packageName = " + mStartPackageName);
         }
         AdPlayerReport.onClickAdPlayer(mAdFileName, mStartPackageName, mUrl);
+    }
+
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        if (mp != null) {
+            mp.start();
+        }
     }
 }
