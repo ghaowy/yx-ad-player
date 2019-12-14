@@ -145,8 +145,8 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     }
 
     private void initView(View view) {
+        view.setOnClickListener(this);
         mDisplayView = view.findViewById(R.id.root_view);
-        mDisplayView.setOnClickListener(this);
         if (mIsVideo) {
             mIvImg = view.findViewById(R.id.iv_first_frame);
         }
@@ -243,16 +243,21 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
         if (TextUtils.isEmpty(mStartPackageName)) {
             return;
         }
-        // 当包名是AIBar的包名时, 做个特殊处理,打开指定界面
-        if (mStartPackageName.equals(Constants.PACKAGE_NAME_AI_BAR)) {
-            Util.startAppWithActivity(getContext(), mStartPackageName, "com.imprexion.aibar.game_service.activity.MagicSalad2Activity");
-            return;
+        try {
+            // 当包名是AIBar的包名时, 做个特殊处理,打开指定界面
+            if (mStartPackageName.equals(Constants.PACKAGE_NAME_AI_BAR)) {
+                Util.startAppWithActivity(getContext(), mStartPackageName, "com.imprexion.aibar.game_service.activity.MagicSalad2Activity");
+                return;
+            }
+
+            if (!Util.startApp(getContext(), mStartPackageName)) {
+                YxLog.e(TAG, "startAppError packageName = " + mStartPackageName);
+            }
+            AdPlayerReport.onClickAdPlayer(mAdFileName, mStartPackageName, mUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        if (!Util.startApp(getContext(), mStartPackageName)) {
-            YxLog.e(TAG, "startAppError packageName = " + mStartPackageName);
-        }
-        AdPlayerReport.onClickAdPlayer(mAdFileName, mStartPackageName, mUrl);
     }
 
     @Override
