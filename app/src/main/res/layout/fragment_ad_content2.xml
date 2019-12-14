@@ -7,12 +7,14 @@
     android:background="@color/color_000000"
     tools:context=".main.content.AdContentImageFragment">
 
-    <com.google.android.exoplayer2.ui.PlayerView
+    <VideoView
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        app:use_controller="false" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/iv_first_frame"
@@ -22,5 +24,4 @@
         android:focusable="false"
         android:scaleType="fitXY"
         android:visibility="visible" />
-
 </RelativeLayout>
