@@ -1,9 +1,15 @@
 package com.imprexion.adplayer.main.content;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.media.PlaybackParams;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -20,22 +26,23 @@ import com.imprexion.adplayer.main.control.VideoController;
 import com.imprexion.adplayer.report.AdPlayerReport;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.adplayer.utils.Util;
+import com.imprexion.library.YxImage;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.util.ContextUtils;
+import com.sprylab.android.widget.TextureVideoView;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-
-import butterknife.BindView;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class AdContentImageFragment extends Fragment implements View.OnClickListener, MediaPlayer.OnPreparedListener {
     private static final String TAG = "AdContentImageFragment";
-    @BindView(R.id.iv_ad_fragment)
-    ImageView ivAdFragment;
+    private int MSG_SET_FIRST_FRAME = 1;
+    private int MSG_SET_STOP_PLAY = 2;
+    private int MSG_SET_START_PLAY = 3;
     private String mFileName;
     private String mUrl;
     private boolean mIsVideo;
@@ -44,10 +51,11 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     private boolean mIsDownLoading;
     public boolean mIsVisible;
     private boolean mIsLoop;
-    private PlayerView mPlayerView;
     private VideoController mVideoController;
     private String mAdFileName;
-    private VideoView mVideoView;
+    private View mDisplayView;
+    private ImageView mIvImg;
+    private Bitmap mBitmap;
 
     public AdContentImageFragment() {
     }
@@ -123,7 +131,14 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_ad_content, container, false);
+        View view = null;
+        if (mIsVideo && mIsLoop) {
+            view = inflater.inflate(R.layout.fragment_ad_content, container, false);
+        } else if (mIsVideo) {
+            view = inflater.inflate(R.layout.fragment_ad_content2, container, false);
+        } else {
+            view = inflater.inflate(R.layout.fragment_ad_content1, container, false);
+        }
         initView(view);
         isInit = true;
         isCanLoadData();
@@ -132,10 +147,11 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     }
 
     private void initView(View view) {
-        ivAdFragment = view.findViewById(R.id.iv_ad_fragment);
-        mPlayerView = view.findViewById(R.id.video_view);
-        mVideoView = view.findViewById(R.id.video_view_1);
         view.setOnClickListener(this);
+        mDisplayView = view.findViewById(R.id.root_view);
+        if (mIsVideo) {
+            mIvImg = view.findViewById(R.id.iv_first_frame);
+        }
     }
 
     @Override
@@ -144,9 +160,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
         if (mVideoController != null) {
             mVideoController.onPause();
         }
-        if (mVideoView.isPlaying()) {
-            mVideoView.stopPlayback();
-        }
+        mHandler.sendEmptyMessage(MSG_SET_STOP_PLAY);
     }
 
     @Override
@@ -154,17 +168,30 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
         super.onResume();
         if (!mIsVideo) {
             YxLog.i(TAG, " playPic --> url= " + mUrl);
-            Tools.showPicWithGlide(ivAdFragment, mUrl);
-            mPlayerView.setVisibility(View.GONE);
-            mVideoView.setVisibility(View.GONE);
-            ivAdFragment.setVisibility(View.VISIBLE);
+            Tools.showPicWithGlide(((ImageView) mDisplayView), mUrl);
         }
+
 
         // 当只有一条视频记录时 在此时播放
         if (mIsLoop) {
             loadVideo();
         }
+
+        if (mIsVideo && mBitmap == null) {
+            YxLog.i(TAG, "mBitmap= " + mBitmap);
+            File file = new File(mFileName);
+            if (!file.exists()) {
+                return;
+            }
+            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+            mmr.setDataSource(file.getAbsolutePath());
+
+            //获取第一帧图片
+            mBitmap = mmr.getFrameAtTime(2);
+            mmr.release();//释放资源
+        }
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -186,33 +213,24 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
         if (mVideoController != null) {
             mVideoController.releasePlayer();
         }
-        mVideoView.stopPlayback();
+        if (mDisplayView instanceof VideoView) {
+            mHandler.sendEmptyMessage(MSG_SET_STOP_PLAY);
+        }
     }
 
 
     public void loadVideo() {
         YxLog.i(TAG, "loadVideo mUrl= " + mUrl);
-        if (mIsVideo) {
-            if (mIsLoop) {
-                mPlayerView.setVisibility(View.VISIBLE);
-                if (mVideoController == null) {
-                    mVideoController = new VideoController(mPlayerView);
-                }
-                mVideoController.playVideo(mUrl, mIsLoop, mFileName, ContextUtils.get());
-                return;
-            } else {
-                mPlayerView.setVisibility(View.GONE);
+        if (mIsVideo && mIsLoop) {
+            if (mVideoController == null) {
+                mVideoController = new VideoController(((PlayerView) mDisplayView));
             }
-            ivAdFragment.setVisibility(View.GONE);
-            File file = new File(mFileName);
-            YxLog.i(TAG, "fileExist :  " + file.exists() + " filePath= " + file.getAbsolutePath());
-            if (file.exists()) {
-                mVideoView.setVideoPath(file.getAbsolutePath());
-            } else {
-                mVideoView.setVideoPath(mUrl);
-            }
-            mVideoView.setOnPreparedListener(this);
+            mVideoController.playVideo(mUrl, true, mFileName, ContextUtils.get());
+            return;
         }
+
+        mHandler.sendEmptyMessageDelayed(MSG_SET_START_PLAY, 200);
+
     }
 
 
@@ -228,22 +246,69 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
         if (TextUtils.isEmpty(mStartPackageName)) {
             return;
         }
-        // 当包名是AIBar的包名时, 做个特殊处理,打开指定界面
-        if (mStartPackageName.equals(Constants.PACKAGE_NAME_AI_BAR)) {
-            Util.startAppWithActivity(getContext(), mStartPackageName, "com.imprexion.aibar.game_service.activity.MagicSalad2Activity");
-            return;
+        try {
+            // 当包名是AIBar的包名时, 做个特殊处理,打开指定界面
+            if (mStartPackageName.equals(Constants.PACKAGE_NAME_AI_BAR)) {
+                Util.startAppWithActivity(getContext(), mStartPackageName, "com.imprexion.aibar.game_service.activity.MagicSalad2Activity");
+                return;
+            }
+
+            if (!Util.startApp(getContext(), mStartPackageName)) {
+                YxLog.e(TAG, "startAppError packageName = " + mStartPackageName);
+            }
+            AdPlayerReport.onClickAdPlayer(mAdFileName, mStartPackageName, mUrl);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        if (!Util.startApp(getContext(), mStartPackageName)) {
-            YxLog.e(TAG, "startAppError packageName = " + mStartPackageName);
-        }
-        AdPlayerReport.onClickAdPlayer(mAdFileName, mStartPackageName, mUrl);
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
         if (mp != null) {
+            PlaybackParams params = mp.getPlaybackParams();
+            params.setSpeed(1.0f);
             mp.start();
         }
     }
+
+
+    @SuppressLint("HandlerLeak")
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == MSG_SET_STOP_PLAY) {
+                if (mDisplayView instanceof VideoView) {
+                    ((TextureVideoView) mDisplayView).stopPlayback();
+                }
+            }
+
+            if (msg.what == MSG_SET_START_PLAY) {
+                mIvImg.setVisibility(View.GONE);
+                File file = new File(mFileName);
+                YxLog.i(TAG, "fileExist :  " + file.exists() + " filePath= " + file.getAbsolutePath());
+                if (file.exists()) {
+                    ((TextureVideoView) mDisplayView).setVideoPath(file.getAbsolutePath());
+                } else {
+                    ((TextureVideoView) mDisplayView).setVideoPath(mUrl);
+                }
+                ((TextureVideoView) mDisplayView).setOnPreparedListener(AdContentImageFragment.this);
+            }
+
+            if (msg.what == MSG_SET_FIRST_FRAME) {
+                if (mIvImg == null) {
+                    return;
+                }
+                mIvImg.setVisibility(View.VISIBLE);
+                if (mBitmap == null) {
+                    YxImage.load(R.drawable.ad_default, mIvImg);
+                } else {
+                    mIvImg.setImageBitmap(mBitmap);
+                }
+            }
+        }
+    };
+
+
 }
