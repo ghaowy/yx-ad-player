@@ -105,6 +105,7 @@ dependencies {
     // 增加bugly 日志收集
     implementation 'com.tencent.bugly:crashreport:2.2.0'
     implementation 'com.tencent.bugly:nativecrashreport:3.0'
+    implementation 'com.sprylab.android.texturevideoview:texturevideoview:1.1.1'
 
     implementation 'com.google.android.exoplayer:exoplayer:2.8.3'
     implementation 'com.danikula:videocache:2.7.1'

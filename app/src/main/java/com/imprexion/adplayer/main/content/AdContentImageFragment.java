@@ -26,8 +26,10 @@ import com.imprexion.adplayer.main.control.VideoController;
 import com.imprexion.adplayer.report.AdPlayerReport;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.adplayer.utils.Util;
+import com.imprexion.library.YxImage;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.util.ContextUtils;
+import com.sprylab.android.widget.TextureVideoView;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -176,6 +178,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
         }
 
         if (mIsVideo && mBitmap == null) {
+            YxLog.i(TAG, "mBitmap= " + mBitmap);
             File file = new File(mFileName);
             if (!file.exists()) {
                 return;
@@ -184,7 +187,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
             mmr.setDataSource(file.getAbsolutePath());
 
             //获取第一帧图片
-            mBitmap = mmr.getFrameAtTime();
+            mBitmap = mmr.getFrameAtTime(2);
             mmr.release();//释放资源
         }
     }
@@ -211,7 +214,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
             mVideoController.releasePlayer();
         }
         if (mDisplayView instanceof VideoView) {
-            ((VideoView) mDisplayView).stopPlayback();
+            mHandler.sendEmptyMessage(MSG_SET_STOP_PLAY);
         }
     }
 
@@ -226,7 +229,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
             return;
         }
 
-        mHandler.sendEmptyMessageDelayed(MSG_SET_START_PLAY, 500);
+        mHandler.sendEmptyMessageDelayed(MSG_SET_START_PLAY, 200);
 
     }
 
@@ -277,7 +280,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
             super.handleMessage(msg);
             if (msg.what == MSG_SET_STOP_PLAY) {
                 if (mDisplayView instanceof VideoView) {
-                    ((VideoView) mDisplayView).stopPlayback();
+                    ((TextureVideoView) mDisplayView).stopPlayback();
                 }
             }
 
@@ -286,16 +289,21 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
                 File file = new File(mFileName);
                 YxLog.i(TAG, "fileExist :  " + file.exists() + " filePath= " + file.getAbsolutePath());
                 if (file.exists()) {
-                    ((VideoView) mDisplayView).setVideoPath(file.getAbsolutePath());
+                    ((TextureVideoView) mDisplayView).setVideoPath(file.getAbsolutePath());
                 } else {
-                    ((VideoView) mDisplayView).setVideoPath(mUrl);
+                    ((TextureVideoView) mDisplayView).setVideoPath(mUrl);
                 }
-                ((VideoView) mDisplayView).setOnPreparedListener(AdContentImageFragment.this);
+                ((TextureVideoView) mDisplayView).setOnPreparedListener(AdContentImageFragment.this);
             }
 
             if (msg.what == MSG_SET_FIRST_FRAME) {
-                if (mIvImg != null) {
-                    mIvImg.setVisibility(View.VISIBLE);
+                if (mIvImg == null) {
+                    return;
+                }
+                mIvImg.setVisibility(View.VISIBLE);
+                if (mBitmap == null) {
+                    YxImage.load(R.drawable.ad_default, mIvImg);
+                } else {
                     mIvImg.setImageBitmap(mBitmap);
                 }
             }

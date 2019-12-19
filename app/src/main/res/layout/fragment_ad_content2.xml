@@ -7,7 +7,7 @@
     android:background="@color/color_000000"
     tools:context=".main.content.AdContentImageFragment">
 
-    <VideoView
+    <com.sprylab.android.widget.TextureVideoView
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
