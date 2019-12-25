@@ -173,7 +173,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
 
 
         // 当只有一条视频记录时 在此时播放
-        if (mIsLoop) {
+        if (mIsLoop && mIsVideo) {
             loadVideo();
         }
 
@@ -285,6 +285,9 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
             }
 
             if (msg.what == MSG_SET_START_PLAY) {
+                if (mIvImg == null) {
+                    return;
+                }
                 mIvImg.setVisibility(View.GONE);
                 File file = new File(mFileName);
                 YxLog.i(TAG, "fileExist :  " + file.exists() + " filePath= " + file.getAbsolutePath());
