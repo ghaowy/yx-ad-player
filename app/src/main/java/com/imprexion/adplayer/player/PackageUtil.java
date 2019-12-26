@@ -16,6 +16,7 @@ public class PackageUtil {
      */
     private static String[] gestureAppPackageNames = new String[]{"com.Orbbec.MagicSalad2", "com.imprexion.aibar"};
     private static final String PACKAGE_SCREEN_DONIMATE = "com.imprexion.screendominate";
+    private static final String PACKAGE_AI_SMILE = "com.imprexion.aismile";
     public static final String TAG = "PackageUtil";
 
 
@@ -30,6 +31,6 @@ public class PackageUtil {
     }
 
     public static boolean isScreenApp(Context context) {
-        return Util.isAppOnForeground(context, PACKAGE_SCREEN_DONIMATE);
+        return Util.isAppOnForeground(context, PACKAGE_SCREEN_DONIMATE) || Util.isAppOnForeground(context, PACKAGE_AI_SMILE);
     }
 }
