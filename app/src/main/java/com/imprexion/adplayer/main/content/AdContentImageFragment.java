@@ -19,16 +19,13 @@ import android.widget.ImageView;
 import android.widget.VideoView;
 
 import com.arialyy.aria.core.Aria;
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.imprexion.adplayer.R;
 import com.imprexion.adplayer.app.Constants;
-import com.imprexion.adplayer.main.control.VideoController;
 import com.imprexion.adplayer.report.AdPlayerReport;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.adplayer.utils.Util;
 import com.imprexion.library.YxImage;
 import com.imprexion.library.YxLog;
-import com.imprexion.library.util.ContextUtils;
 import com.sprylab.android.widget.TextureVideoView;
 
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +35,7 @@ import java.io.File;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AdContentImageFragment extends Fragment implements View.OnClickListener, MediaPlayer.OnPreparedListener {
+public class AdContentImageFragment extends Fragment implements View.OnClickListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
     private static final String TAG = "AdContentImageFragment";
     private int MSG_SET_FIRST_FRAME = 1;
     private int MSG_SET_STOP_PLAY = 2;
@@ -51,7 +48,6 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     private boolean mIsDownLoading;
     public boolean mIsVisible;
     private boolean mIsLoop;
-    private VideoController mVideoController;
     private String mAdFileName;
     private View mDisplayView;
     private ImageView mIvImg;
@@ -132,9 +128,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = null;
-        if (mIsVideo && mIsLoop) {
-            view = inflater.inflate(R.layout.fragment_ad_content, container, false);
-        } else if (mIsVideo) {
+        if (mIsVideo) {
             view = inflater.inflate(R.layout.fragment_ad_content2, container, false);
         } else {
             view = inflater.inflate(R.layout.fragment_ad_content1, container, false);
@@ -157,9 +151,6 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     @Override
     public void onPause() {
         super.onPause();
-        if (mVideoController != null) {
-            mVideoController.onPause();
-        }
         mHandler.sendEmptyMessage(MSG_SET_STOP_PLAY);
     }
 
@@ -173,7 +164,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
 
 
         // 当只有一条视频记录时 在此时播放
-        if (mIsLoop) {
+        if (mIsLoop && mIsVideo) {
             loadVideo();
         }
 
@@ -210,9 +201,6 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     public void onDetach() {
         super.onDetach();
         YxLog.i(TAG, "onDetach");
-        if (mVideoController != null) {
-            mVideoController.releasePlayer();
-        }
         if (mDisplayView instanceof VideoView) {
             mHandler.sendEmptyMessage(MSG_SET_STOP_PLAY);
         }
@@ -221,16 +209,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
 
     public void loadVideo() {
         YxLog.i(TAG, "loadVideo mUrl= " + mUrl);
-        if (mIsVideo && mIsLoop) {
-            if (mVideoController == null) {
-                mVideoController = new VideoController(((PlayerView) mDisplayView));
-            }
-            mVideoController.playVideo(mUrl, true, mFileName, ContextUtils.get());
-            return;
-        }
-
         mHandler.sendEmptyMessageDelayed(MSG_SET_START_PLAY, 200);
-
     }
 
 
@@ -285,6 +264,9 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
             }
 
             if (msg.what == MSG_SET_START_PLAY) {
+                if (mIvImg == null) {
+                    return;
+                }
                 mIvImg.setVisibility(View.GONE);
                 File file = new File(mFileName);
                 YxLog.i(TAG, "fileExist :  " + file.exists() + " filePath= " + file.getAbsolutePath());
@@ -294,6 +276,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
                     ((TextureVideoView) mDisplayView).setVideoPath(mUrl);
                 }
                 ((TextureVideoView) mDisplayView).setOnPreparedListener(AdContentImageFragment.this);
+                ((TextureVideoView) mDisplayView).setOnCompletionListener(AdContentImageFragment.this);
             }
 
             if (msg.what == MSG_SET_FIRST_FRAME) {
@@ -311,4 +294,11 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     };
 
 
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        if (mIsLoop) {
+            mp.seekTo(0);
+            mp.start();
+        }
+    }
 }
