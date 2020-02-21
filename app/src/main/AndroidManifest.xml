@@ -72,6 +72,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="com.imprexion.adplayer.LOOP_EVENT" />
                 <action android:name="com.imprexion.aibar.action.USER_LOGOUT_COUNT_DOWN" />
+                <action android:name="com.imprexion.adplayer.action.PLAY_NEXT" />
             </intent-filter>
         </receiver>
     </application>

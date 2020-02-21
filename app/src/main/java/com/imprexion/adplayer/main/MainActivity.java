@@ -46,7 +46,6 @@ public class MainActivity extends BaseActivity implements ViewPager.OnPageChange
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         handleStartIntent(intent);
-        startActivity();
     }
 
     @Override
