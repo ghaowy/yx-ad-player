@@ -26,6 +26,6 @@ public interface IAdRequest {
                                                    @Query("playDate") String playDate);
 
 
-    @GET(INTERFACE_GET_AD_CONTENT)
+    @GET(INTERFACE_GET_LAUNCH_PIC)
     Flowable<BaseResult<ADLaunchPicData>> getLaunchPic();
 }

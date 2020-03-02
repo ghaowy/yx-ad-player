@@ -38,18 +38,14 @@
         </activity>
 
         <activity android:name=".launcher.LauncherActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
 
-            <category android:name="android.intent.category.HOME" />
-
-            <!--通过startActivity隐式启动时，启动的是匹配Intent的默认Activity，因此需要DEFAULT标签 -->
-            <category android:name="android.intent.category.DEFAULT" />
+                <!--通过startActivity隐式启动时，启动的是匹配Intent的默认Activity，因此需要DEFAULT标签 -->
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-        <!-- </intent-filter> -->
 
         <service
             android:name=".service.AdPlayService"

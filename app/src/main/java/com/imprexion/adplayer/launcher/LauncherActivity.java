@@ -1,7 +1,6 @@
 package com.imprexion.adplayer.launcher;
 
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.imprexion.adplayer.R;
@@ -11,8 +10,6 @@ import com.imprexion.adplayer.net.http.HttpADManager;
 import com.imprexion.adplayer.player.PlayerModel;
 import com.imprexion.library.YxImage;
 import com.imprexion.library.YxLog;
-
-import java.awt.font.TextAttribute;
 
 public class LauncherActivity extends BaseActivity implements PlayerModel.onPlayerDataListener<ADLaunchPicData> {
     private static final String TAG = "LauncherActivity ";
@@ -50,6 +47,7 @@ public class LauncherActivity extends BaseActivity implements PlayerModel.onPlay
 
     @Override
     public void onDataLoadSuccess(ADLaunchPicData data) {
+        YxLog.d(TAG, "onDataLoadSuccess--> " + data);
         if (mIvPic != null && !TextUtils.isEmpty(data.getFileUrl())) {
             YxImage.load(data.getFileUrl(), mIvPic, R.drawable.ad_default_2);
             mIsDataLoaded = true;
@@ -59,7 +57,7 @@ public class LauncherActivity extends BaseActivity implements PlayerModel.onPlay
 
     @Override
     public void onDataLoadFailed(int code, String msg) {
+        YxLog.d(TAG, "onDataLoadFailed--> " + msg);
         mIsDataLoaded = false;
-        YxLog.i(TAG, "getLaunchPic onDataLoadFailed msg:  " + msg);
     }
 }
