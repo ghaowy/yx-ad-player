@@ -29,4 +29,11 @@ public class AdPlayerReport {
                 .report("adplayer_on_click_ad");
     }
 
+    // 轮播应用埋点 统计次数
+    public static void onLoopApp(String packageName) {
+        YxStatistics
+                .param(Constants.PACKAGE, packageName)
+                .version(26)
+                .report("adplayer_on_loop_app");
+    }
 }
