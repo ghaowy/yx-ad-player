@@ -3,6 +3,7 @@ package com.imprexion.adplayer.net.http;
 import android.os.Build;
 
 import com.imprexion.adplayer.bean.ADContentPlay;
+import com.imprexion.adplayer.bean.ADLaunchPicData;
 import com.imprexion.adplayer.player.PlayerModel;
 import com.imprexion.library.YxHttp;
 import com.imprexion.library.YxLog;
@@ -22,6 +23,7 @@ public class HttpADManager {
     private static final String TAG = "HttpADManager";
     private static HttpADManager mHttpManager;
     private PlayerModel.onPlayerDataListener<ADContentPlay> mAdListener;
+    private PlayerModel.onPlayerDataListener<ADLaunchPicData> mAdPicListener;
     private Disposable mDisposable;
 
     private HttpADManager() {
@@ -71,8 +73,42 @@ public class HttpADManager {
     }
 
 
+    public void getLaunchPic(PlayerModel.onPlayerDataListener<ADLaunchPicData> listener) {
+        mAdPicListener = listener;
+        mDisposable = YxHttp.getDefaultInstance()
+                .service(IAdRequest.class)
+                .getLaunchPic()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<BaseResult<ADLaunchPicData>>() {
+                               @Override
+                               public void accept(BaseResult<ADLaunchPicData> adContentPlayBaseResult) throws Exception {
+                                   YxLog.i(TAG, "get ad data success. result= " + adContentPlayBaseResult);
+                                   if (adContentPlayBaseResult != null && adContentPlayBaseResult.isSuccess()) {
+                                       if (mAdListener != null) {
+                                           mAdPicListener.onDataLoadSuccess(adContentPlayBaseResult.getData());
+                                       }
+                                   } else if (adContentPlayBaseResult != null) {
+                                       if (mAdPicListener != null) {
+                                           mAdPicListener.onDataLoadFailed(adContentPlayBaseResult.getCode(), adContentPlayBaseResult.getMsg());
+                                       }
+                                   }
+                               }
+                           }
+                        , new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Exception {
+                                YxLog.e(TAG, "get ad data error. e= " + throwable.getMessage());
+                                mAdPicListener.onDataLoadFailed(-1, throwable.getMessage());
+                            }
+                        }
+                );
+    }
+
+
     public void release() {
         mAdListener = null;
+        mAdPicListener = null;
         mDisposable.dispose();
     }
 

@@ -15,6 +15,7 @@ import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
 import com.imprexion.adplayer.bean.SpecialLoopDataInfo;
+import com.imprexion.adplayer.report.AdPlayerReport;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.adplayer.utils.ActivityLaunchUtil;
 import com.imprexion.adplayer.utils.ActivityStackUtil;
@@ -122,6 +123,10 @@ public class PlayerControlCenter implements IControl {
                 //如果是点击屏幕操作事件，重置倒计时，调度playNext()；
                 reset(NO_OPERATION_SCHEDULE_TIME);
                 updateUseFlag(true);
+                break;
+            case Constants.PLAY_NEXT:
+                // 接收到外部接口发来的指令轮播下一个
+                playNext();
                 break;
             default:
                 break;
@@ -403,6 +408,7 @@ public class PlayerControlCenter implements IControl {
         }
         //如果成功需要发出一个广播；提供给导航栏高亮选中当前应用。
         if (Util.startApp(mContext, packageName)) {
+            AdPlayerReport.onLoopApp(packageName);
             sendBroadcast(adContentInfo.getContentType(), adContentInfo.getAppCode());
         }
     }

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
+
 import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.service.AdPlayService;
 import com.imprexion.library.YxLog;
@@ -58,6 +59,9 @@ public class ADBroadcastReceiver extends BroadcastReceiver {
                 YxLog.i(TAG, "receive push advertisement data. data = " + timeout);
                 it.putExtra(Constants.Key.KEY_MESSAGE_TYPE, Constants.TYPE_COUNT_DOWN);
                 it.putExtra(Constants.Key.KEY_DATA, String.valueOf(timeout));
+                context.startService(it);
+            case Constants.Action.EVENT_PLAY_NEXT:
+                it.putExtra(Constants.Key.KEY_MESSAGE_TYPE, Constants.PLAY_NEXT);
                 context.startService(it);
                 break;
             default:
