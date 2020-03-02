@@ -23,6 +23,7 @@ public interface Constants {
     String PACKAGE = "package";
     String AD_NAME = "ad_name";
     String PACKAGE_NAME_AI_BAR = "com.imprexion.aibar";
+    String PLAY_NEXT = "play_next";
 
 
     interface Key {
@@ -54,6 +55,8 @@ public interface Constants {
         String EVENT_NO_OPERATION = "com.imprexion.action.EVENT_NO_OPERATION";
         // 播放下一个应用的action
         String BROADCAST_PLAY_NEXT_APP = "com.imprexion.action.PLAY_APP";
+        // 外部接口控制直接轮播下一个
+        String EVENT_PLAY_NEXT = "com.imprexion.adplayer.action.PLAY_NEXT";
     }
 
 

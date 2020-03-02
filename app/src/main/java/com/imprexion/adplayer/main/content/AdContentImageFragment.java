@@ -1,7 +1,6 @@
 package com.imprexion.adplayer.main.content;
 
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
@@ -31,15 +30,14 @@ import com.sprylab.android.widget.TextureVideoView;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class AdContentImageFragment extends Fragment implements View.OnClickListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
     private static final String TAG = "AdContentImageFragment";
-    private int MSG_SET_FIRST_FRAME = 1;
-    private int MSG_SET_STOP_PLAY = 2;
-    private int MSG_SET_START_PLAY = 3;
+    Handler mHandler = new AdHandler(this);
     private String mFileName;
     private String mUrl;
     private boolean mIsVideo;
@@ -151,7 +149,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     @Override
     public void onPause() {
         super.onPause();
-        mHandler.sendEmptyMessage(MSG_SET_STOP_PLAY);
+        mHandler.sendEmptyMessage(AdHandler.MSG_SET_STOP_PLAY);
     }
 
     @Override
@@ -202,14 +200,14 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
         super.onDetach();
         YxLog.i(TAG, "onDetach");
         if (mDisplayView instanceof VideoView) {
-            mHandler.sendEmptyMessage(MSG_SET_STOP_PLAY);
+            mHandler.sendEmptyMessage(AdHandler.MSG_SET_STOP_PLAY);
         }
     }
 
 
     public void loadVideo() {
         YxLog.i(TAG, "loadVideo mUrl= " + mUrl);
-        mHandler.sendEmptyMessageDelayed(MSG_SET_START_PLAY, 200);
+        mHandler.sendEmptyMessageDelayed(AdHandler.MSG_SET_START_PLAY, 200);
     }
 
 
@@ -252,46 +250,69 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
     }
 
 
-    @SuppressLint("HandlerLeak")
-    Handler mHandler = new Handler() {
+    static class AdHandler extends Handler {
+        public static int MSG_SET_FIRST_FRAME = 1;
+        public static int MSG_SET_STOP_PLAY = 2;
+        public static int MSG_SET_START_PLAY = 3;
+        private WeakReference<AdContentImageFragment> mWfFragment;
+
+        public AdHandler(AdContentImageFragment pFragment) {
+            mWfFragment = new WeakReference<>(pFragment);
+        }
+
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            if (mWfFragment == null || mWfFragment.get() == null) {
+                return;
+            }
             if (msg.what == MSG_SET_STOP_PLAY) {
-                if (mDisplayView instanceof VideoView) {
-                    ((TextureVideoView) mDisplayView).stopPlayback();
-                }
+                mWfFragment.get().stopVideoPlay();
             }
 
             if (msg.what == MSG_SET_START_PLAY) {
-                if (mIvImg == null) {
-                    return;
-                }
-                mIvImg.setVisibility(View.GONE);
-                File file = new File(mFileName);
-                YxLog.i(TAG, "fileExist :  " + file.exists() + " filePath= " + file.getAbsolutePath());
-                if (file.exists()) {
-                    ((TextureVideoView) mDisplayView).setVideoPath(file.getAbsolutePath());
-                } else {
-                    ((TextureVideoView) mDisplayView).setVideoPath(mUrl);
-                }
-                ((TextureVideoView) mDisplayView).setOnPreparedListener(AdContentImageFragment.this);
-                ((TextureVideoView) mDisplayView).setOnCompletionListener(AdContentImageFragment.this);
+                mWfFragment.get().startVideoPlay();
             }
 
             if (msg.what == MSG_SET_FIRST_FRAME) {
-                if (mIvImg == null) {
-                    return;
-                }
-                mIvImg.setVisibility(View.VISIBLE);
-                if (mBitmap == null) {
-                    YxImage.load(R.drawable.ad_default, mIvImg);
-                } else {
-                    mIvImg.setImageBitmap(mBitmap);
-                }
+                mWfFragment.get().displayBitmap();
             }
         }
-    };
+    }
+
+    private void displayBitmap() {
+        if (mIvImg == null) {
+            return;
+        }
+        mIvImg.setVisibility(View.VISIBLE);
+        if (mBitmap == null) {
+            YxImage.load(R.drawable.ad_default, mIvImg);
+        } else {
+            mIvImg.setImageBitmap(mBitmap);
+        }
+    }
+
+    private void startVideoPlay() {
+        if (mIvImg == null) {
+            return;
+        }
+        mIvImg.setVisibility(View.GONE);
+        File file = new File(mFileName);
+        YxLog.i(TAG, "fileExist :  " + file.exists() + " filePath= " + file.getAbsolutePath());
+        if (file.exists()) {
+            ((TextureVideoView) mDisplayView).setVideoPath(file.getAbsolutePath());
+        } else {
+            ((TextureVideoView) mDisplayView).setVideoPath(mUrl);
+        }
+        ((TextureVideoView) mDisplayView).setOnPreparedListener(AdContentImageFragment.this);
+        ((TextureVideoView) mDisplayView).setOnCompletionListener(AdContentImageFragment.this);
+    }
+
+    private void stopVideoPlay() {
+        if (mDisplayView instanceof VideoView) {
+            ((TextureVideoView) mDisplayView).stopPlayback();
+        }
+    }
 
 
     @Override

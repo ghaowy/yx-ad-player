@@ -124,6 +124,10 @@ public class PlayerControlCenter implements IControl {
                 reset(NO_OPERATION_SCHEDULE_TIME);
                 updateUseFlag(true);
                 break;
+            case Constants.PLAY_NEXT:
+                // 接收到外部接口发来的指令轮播下一个
+                playNext();
+                break;
             default:
                 break;
         }
