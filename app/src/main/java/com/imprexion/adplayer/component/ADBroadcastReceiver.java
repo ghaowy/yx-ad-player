@@ -60,6 +60,7 @@ public class ADBroadcastReceiver extends BroadcastReceiver {
                 it.putExtra(Constants.Key.KEY_MESSAGE_TYPE, Constants.TYPE_COUNT_DOWN);
                 it.putExtra(Constants.Key.KEY_DATA, String.valueOf(timeout));
                 context.startService(it);
+                break;
             case Constants.Action.EVENT_PLAY_NEXT:
                 it.putExtra(Constants.Key.KEY_MESSAGE_TYPE, Constants.PLAY_NEXT);
                 context.startService(it);
