@@ -45,8 +45,8 @@ public class BaseResult<T> implements Serializable {
         return time;
     }
 
-    public boolean isSuccess(){
-        return code == 1000 || code == 0;
+    public boolean isSuccess() {
+        return (code == 1000 || code == 0) && data != null;
     }
 
 

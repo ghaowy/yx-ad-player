@@ -43,10 +43,14 @@ import java.util.function.Predicate;
 public class PlayerControlCenter implements IControl {
     private static final String TAG = "PlayerControlCenter";
     private static final int DEFAULT_PLAY_TIME = 10;
-    private static int NO_OPERATION_SCHEDULE_TIME = 60;
+    private static final int RETRY_TIME = 10;
+    private static int NO_OPERATION_SCHEDULE_TIME = 2 * 60 + 10;
     private static final int MSG_PLAY_NEXT = 1;
     private static final int MSG_SPECIAL_NEXT = 2;
-
+    // 当数据没有正常拉下来时 做一个数据拉取重试机制
+    private static final int MSG_DATA_LOAD = 3;
+    // 数据重新拉取次数
+    private int mRetryTime = 0;
     private long mEndL;
     private long mStartL;
     private int mPlaySize;
@@ -60,6 +64,8 @@ public class PlayerControlCenter implements IControl {
     private ADContentPlay mAdContentPlay;
     private WindowControl mViewControl;
     private volatile boolean mIsDataPrepared;
+    private ArrayList<ADContentInfo> mPreData;
+    private boolean mIsDataLoadedSuccess;
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
 
         @Override
@@ -74,7 +80,6 @@ public class PlayerControlCenter implements IControl {
             }
         }
     };
-    private ArrayList<ADContentInfo> mPreData;
 
     // 静态内部类实现单例
     public static class Holder {
@@ -98,7 +103,7 @@ public class PlayerControlCenter implements IControl {
                 if (Integer.parseInt(data) > 0) {
                     NO_OPERATION_SCHEDULE_TIME = Integer.parseInt(data);
                 } else {
-                    NO_OPERATION_SCHEDULE_TIME = 60;
+                    NO_OPERATION_SCHEDULE_TIME = 2 * 60 + 10;
                 }
                 reset(NO_OPERATION_SCHEDULE_TIME);
                 break;
@@ -239,6 +244,11 @@ public class PlayerControlCenter implements IControl {
 
     @Override
     public void loadData() {
+        mRetryTime++;
+        YxLog.i(TAG, "loadData--> mRetryTime= " + mRetryTime);
+        if (mRetryTime > RETRY_TIME || mIsDataLoadedSuccess) {
+            return;
+        }
         mPlayerModel.getAdDataServerAds(new PlayerModel.onPlayerDataListener<ADContentPlay>() {
             @Override
             public void onDataLoadSuccess(ADContentPlay data) {
@@ -249,6 +259,7 @@ public class PlayerControlCenter implements IControl {
                 } else {
                     stopScheduler();
                 }
+                mIsDataLoadedSuccess = true;
             }
 
             @Override
@@ -261,8 +272,18 @@ public class PlayerControlCenter implements IControl {
                 } else {
                     stopScheduler();
                 }
+                mIsDataLoadedSuccess = false;
+                sendRetryMessage();
             }
         });
+    }
+
+    private void sendRetryMessage() {
+        if (mHandler == null) {
+            return;
+        }
+        mHandler.removeMessages(MSG_DATA_LOAD);
+        mHandler.sendEmptyMessageDelayed(MSG_DATA_LOAD, 1000 * 60);
     }
 
     // 处理特别轮播消息
@@ -277,7 +298,7 @@ public class PlayerControlCenter implements IControl {
     // 处理 播放下一个逻辑
     @Override
     public synchronized void playNext() {
-        NO_OPERATION_SCHEDULE_TIME = 60;
+        NO_OPERATION_SCHEDULE_TIME = 2 * 60 + 10;
         // 当为第一次启动则不轮播
 //        if (SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_FIRST, false)) {
 //            SharedPreferenceUtils.putBoolean(Constants.Key.KEY_IS_FIRST, false);
@@ -519,6 +540,9 @@ public class PlayerControlCenter implements IControl {
                 case MSG_SPECIAL_NEXT:
                     mWfControl.get().playSpecialNext();
                     break;
+                case MSG_DATA_LOAD:
+                    mWfControl.get().loadData();
+                    break;
                 default:
                     break;
             }
@@ -543,6 +567,8 @@ public class PlayerControlCenter implements IControl {
             mViewControl.release();
             mViewControl = null;
         }
+
+        mRetryTime = 0;
 
     }
 }
