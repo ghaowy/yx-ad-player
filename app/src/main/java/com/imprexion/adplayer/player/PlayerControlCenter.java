@@ -44,7 +44,7 @@ public class PlayerControlCenter implements IControl {
     private static final String TAG = "PlayerControlCenter";
     private static final int DEFAULT_PLAY_TIME = 10;
     private static final int RETRY_TIME = 10;
-    private static int NO_OPERATION_SCHEDULE_TIME = 60;
+    private static int NO_OPERATION_SCHEDULE_TIME = 2 * 60 + 10;
     private static final int MSG_PLAY_NEXT = 1;
     private static final int MSG_SPECIAL_NEXT = 2;
     // 当数据没有正常拉下来时 做一个数据拉取重试机制
@@ -103,7 +103,7 @@ public class PlayerControlCenter implements IControl {
                 if (Integer.parseInt(data) > 0) {
                     NO_OPERATION_SCHEDULE_TIME = Integer.parseInt(data);
                 } else {
-                    NO_OPERATION_SCHEDULE_TIME = 60;
+                    NO_OPERATION_SCHEDULE_TIME = 2 * 60 + 10;
                 }
                 reset(NO_OPERATION_SCHEDULE_TIME);
                 break;
@@ -298,7 +298,7 @@ public class PlayerControlCenter implements IControl {
     // 处理 播放下一个逻辑
     @Override
     public synchronized void playNext() {
-        NO_OPERATION_SCHEDULE_TIME = 60;
+        NO_OPERATION_SCHEDULE_TIME = 2 * 60 + 10;
         // 当为第一次启动则不轮播
 //        if (SharedPreferenceUtils.getBoolean(Constants.Key.KEY_IS_FIRST, false)) {
 //            SharedPreferenceUtils.putBoolean(Constants.Key.KEY_IS_FIRST, false);
