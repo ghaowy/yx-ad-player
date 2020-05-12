@@ -52,12 +52,8 @@ public class HttpADManager {
                                public void accept(BaseResult<ADContentPlay> adContentPlayBaseResult) throws Exception {
                                    YxLog.i(TAG, "get ad data success. result= " + adContentPlayBaseResult);
                                    if (adContentPlayBaseResult != null && adContentPlayBaseResult.isSuccess()) {
-                                       if (mAdListener != null ) {
-                                           mAdListener.onDataLoadSuccess(adContentPlayBaseResult.getData());
-                                       }
-                                   } else if (adContentPlayBaseResult != null) {
                                        if (mAdListener != null) {
-                                           mAdListener.onDataLoadFailed(adContentPlayBaseResult.getCode(), adContentPlayBaseResult.getMsg());
+                                           mAdListener.onDataLoadSuccess(adContentPlayBaseResult.getData());
                                        }
                                    }
                                }
