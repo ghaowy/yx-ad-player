@@ -62,8 +62,10 @@ public class AnimWindowControl {
     private SVGAImageView mSivRedEnvelopes;
     private SVGAImageView mSivMainAnim;
 
+    private SVGAParser mSVGAParser;
     AnimWindowControl(Context context) {
         mContext = context;
+        mSVGAParser = new SVGAParser(mContext);
     }
 
     private View getWindowView(Context context) {
@@ -154,7 +156,7 @@ public class AnimWindowControl {
      * 播放按钮动画
      */
     private void playButtonAnimation() {
-        new SVGAParser(mContext).parse("anim_button.svga", new SVGAParser.ParseCompletion() {
+        mSVGAParser.parse("anim_button.svga", new SVGAParser.ParseCompletion() {
             @Override
             public void onComplete(SVGAVideoEntity mSVGAVideoEntity) {
                 mSivButton.setVisibility(View.VISIBLE);
@@ -180,7 +182,7 @@ public class AnimWindowControl {
      * 播放红包动画
      */
     private void playRedEnvelopestAnimation() {
-        new SVGAParser(mContext).parse("red_envelopes.svga", new SVGAParser.ParseCompletion() {
+        mSVGAParser.parse("red_envelopes.svga", new SVGAParser.ParseCompletion() {
             @Override
             public void onComplete(SVGAVideoEntity mSVGAVideoEntity) {
                 mSivRedEnvelopes.setVisibility(View.VISIBLE);
@@ -200,7 +202,7 @@ public class AnimWindowControl {
      * 播放启动动画
      */
     private void playStartAnimation() {
-        new SVGAParser(mContext).parse("anim_start.svga", new SVGAParser.ParseCompletion() {
+        mSVGAParser.parse("anim_start.svga", new SVGAParser.ParseCompletion() {
             @Override
             public void onComplete(SVGAVideoEntity mSVGAVideoEntity) {
                 SVGADrawable drawable = new SVGADrawable(mSVGAVideoEntity);
@@ -245,7 +247,7 @@ public class AnimWindowControl {
      */
     private void playRepeatAnimation() {
         YxLog.i(TAG, "--- playRepeatAnimation ---");
-        new SVGAParser(mContext).parse("anim_repeat.svga", new SVGAParser.ParseCompletion() {
+        mSVGAParser.parse("anim_repeat.svga", new SVGAParser.ParseCompletion() {
             @Override
             public void onComplete(SVGAVideoEntity mSVGAVideoEntity) {
                 SVGADrawable drawable = new SVGADrawable(mSVGAVideoEntity);
