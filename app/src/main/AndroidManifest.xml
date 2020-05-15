@@ -56,6 +56,11 @@
             </intent-filter>
         </service>
 
+        <service
+            android:name=".widget.UserAnimWidgetService">
+
+        </service>
+
         <receiver
             android:name=".component.ADBroadcastReceiver"
             android:exported="true">

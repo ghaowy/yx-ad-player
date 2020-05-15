@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.opensource.svgaplayer.SVGAImageView
+        android:id="@+id/siv_main_anim"
+        android:layout_width="800dp"
+        android:layout_height="800dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.opensource.svgaplayer.SVGAImageView
+        android:id="@+id/siv_btn"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginLeft="680dp"
+        android:layout_marginTop="360dp"
+        android:visibility="visible"
+        app:autoPlay="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.opensource.svgaplayer.SVGAImageView
+        android:id="@+id/siv_red_envelopes"
+        android:layout_width="750dp"
+        android:layout_height="1334dp"
+        android:layout_marginTop="110dp"
+        android:visibility="visible"
+        app:autoPlay="true"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
