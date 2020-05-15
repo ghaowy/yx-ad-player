@@ -142,6 +142,11 @@ public class AnimWindowControl {
         if (mWindowView != null && isAddWindow) {
             YxLog.i(TAG, "removeOverLayWindow --> isAddWindow" + isAddWindow);
             getWindowManager(mContext).removeView(mWindowView);
+
+            mSivMainAnim.stopAnimation();
+            mSivButton.stopAnimation();
+            mSivRedEnvelopes.stopAnimation();
+            mWindowView = null;
             isAddWindow = false;
         }
     }
