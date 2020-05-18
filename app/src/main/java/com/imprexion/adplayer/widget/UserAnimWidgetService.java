@@ -63,7 +63,7 @@ public class UserAnimWidgetService extends Service {
         YxLog.i(TAG, "onStartCommand --- mDetectEnable = " + mDetectEnable);
 
         if (mDetectEnable == false) {
-            mAnimWindowControl.removeOverLayWindow();
+        //    mAnimWindowControl.removeOverLayWindow();
         }
 
 
