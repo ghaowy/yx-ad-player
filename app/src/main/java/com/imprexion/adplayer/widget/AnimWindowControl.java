@@ -87,6 +87,7 @@ public class AnimWindowControl {
         getWindowManager(mContext).addView(mWindowView, getParams());
         isAddWindow = true;
 
+        isRepeatInit = false;
         mSVGAParser = new SVGAParser(mContext);
         playStartAnimation();
         playRepeatAnimation();
