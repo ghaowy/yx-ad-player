@@ -227,6 +227,8 @@ public class AnimWindowControl {
             @Override
             public void onComplete(SVGAVideoEntity mSVGAVideoEntity) {
                 SVGADrawable drawable = new SVGADrawable(mSVGAVideoEntity);
+                mSivMainAnim.setVisibility(View.GONE);
+                mSivMainAnimStart.setVisibility(View.VISIBLE);
                 mSivMainAnimStart.setImageDrawable(drawable);
                 mSivMainAnimStart.startAnimation();
                 mSivMainAnimStart.setCallback(new SVGACallback() {
