@@ -63,9 +63,10 @@ public class AnimWindowControl {
     private SVGAImageView mSivMainAnim;
 
     private SVGAParser mSVGAParser;
+
     AnimWindowControl(Context context) {
         mContext = context;
-        mSVGAParser = new SVGAParser(mContext);
+
     }
 
     private View getWindowView(Context context) {
@@ -83,6 +84,7 @@ public class AnimWindowControl {
         getWindowManager(mContext).addView(mWindowView, getParams());
         isAddWindow = true;
 
+        mSVGAParser = new SVGAParser(mContext);
         playStartAnimation();
         mSivButton.postDelayed(new Runnable() {
             @Override
@@ -120,6 +122,7 @@ public class AnimWindowControl {
                 @Override
                 public void onClick(View v) {
                     startCouponApp();
+                    removeOverLayWindow();
                 }
             });
         }
@@ -146,6 +149,10 @@ public class AnimWindowControl {
             mSivMainAnim.stopAnimation();
             mSivButton.stopAnimation();
             mSivRedEnvelopes.stopAnimation();
+            mSivMainAnim = null;
+            mSivButton = null;
+            mSivRedEnvelopes = null;
+            mSVGAParser = null;
             mWindowView = null;
             isAddWindow = false;
         }
@@ -155,6 +162,7 @@ public class AnimWindowControl {
         removeOverLayWindow();
         mContext = null;
         mWindowManager = null;
+
     }
 
     /**
