@@ -60,9 +60,12 @@ public class AnimWindowControl {
     private WindowManager.LayoutParams mParams;
     private SVGAImageView mSivButton;
     private SVGAImageView mSivRedEnvelopes;
+    private SVGAImageView mSivMainAnimStart;
     private SVGAImageView mSivMainAnim;
 
     private SVGAParser mSVGAParser;
+
+    private boolean isRepeatInit = false;
 
     AnimWindowControl(Context context) {
         mContext = context;
@@ -86,6 +89,7 @@ public class AnimWindowControl {
 
         mSVGAParser = new SVGAParser(mContext);
         playStartAnimation();
+        playRepeatAnimation();
         mSivButton.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -111,12 +115,14 @@ public class AnimWindowControl {
         if (mWindowView == null) {
             YxLog.i(TAG, "initWindowView --> ");
             mWindowView = getWindowView(context);
+            mSivMainAnimStart = mWindowView.findViewById(R.id.siv_main_anim_start);
             mSivMainAnim = mWindowView.findViewById(R.id.siv_main_anim);
             mSivButton = mWindowView.findViewById(R.id.siv_btn);
             mSivRedEnvelopes = mWindowView.findViewById(R.id.siv_red_envelopes);
 
             mSivButton.setVisibility(View.GONE);
             mSivRedEnvelopes.setVisibility(View.GONE);
+            mSivMainAnim.setVisibility(View.GONE);
 
             mSivButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -146,10 +152,12 @@ public class AnimWindowControl {
             YxLog.i(TAG, "removeOverLayWindow --> isAddWindow" + isAddWindow);
             getWindowManager(mContext).removeView(mWindowView);
 
+            mSivMainAnimStart.stopAnimation();
             mSivMainAnim.stopAnimation();
             mSivButton.stopAnimation();
             mSivRedEnvelopes.stopAnimation();
             mSivMainAnim = null;
+            mSivMainAnimStart = null;
             mSivButton = null;
             mSivRedEnvelopes = null;
             mSVGAParser = null;
@@ -219,9 +227,9 @@ public class AnimWindowControl {
             @Override
             public void onComplete(SVGAVideoEntity mSVGAVideoEntity) {
                 SVGADrawable drawable = new SVGADrawable(mSVGAVideoEntity);
-                mSivMainAnim.setImageDrawable(drawable);
-                mSivMainAnim.startAnimation();
-                mSivMainAnim.setCallback(new SVGACallback() {
+                mSivMainAnimStart.setImageDrawable(drawable);
+                mSivMainAnimStart.startAnimation();
+                mSivMainAnimStart.setCallback(new SVGACallback() {
                     @Override
                     public void onPause() {
 
@@ -236,7 +244,7 @@ public class AnimWindowControl {
                     @Override
                     public void onRepeat() {
                         YxLog.i(TAG, "--- onRepeat ---");
-                        mSivMainAnim.stopAnimation();
+                        mSivMainAnimStart.stopAnimation();
                         playRepeatAnimation();
 
                     }
@@ -260,20 +268,25 @@ public class AnimWindowControl {
      */
     private void playRepeatAnimation() {
         YxLog.i(TAG, "--- playRepeatAnimation ---");
-        mSVGAParser.parse("anim_repeat.svga", new SVGAParser.ParseCompletion() {
-            @Override
-            public void onComplete(SVGAVideoEntity mSVGAVideoEntity) {
-                SVGADrawable drawable = new SVGADrawable(mSVGAVideoEntity);
-                mSivMainAnim.setImageDrawable(drawable);
-                mSivMainAnim.startAnimation();
-                mSivMainAnim.setCallback(null);
-            }
+        if (isRepeatInit == false) {
+            mSVGAParser.parse("anim_repeat.svga", new SVGAParser.ParseCompletion() {
+                @Override
+                public void onComplete(SVGAVideoEntity mSVGAVideoEntity) {
+                    SVGADrawable drawable = new SVGADrawable(mSVGAVideoEntity);
+                    mSivMainAnim.setImageDrawable(drawable);
+                    isRepeatInit = true;
+                }
 
-            @Override
-            public void onError() {
+                @Override
+                public void onError() {
 
-            }
-        });
+                }
+            });
+        } else {
+            mSivMainAnim.startAnimation();
+            mSivMainAnim.setVisibility(View.VISIBLE);
+            mSivMainAnimStart.setVisibility(View.GONE);
+        }
     }
 
     /**
