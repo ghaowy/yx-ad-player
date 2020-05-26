@@ -62,10 +62,25 @@ public class AnimWindowControl {
     private SVGAImageView mSivRedEnvelopes;
     private SVGAImageView mSivMainAnimStart;
     private SVGAImageView mSivMainAnim;
+    private ImageView mBtnClose;
 
     private SVGAParser mSVGAParser;
 
     private boolean isRepeatInit = false;
+    private Runnable mPlayButtonAnimationRunnable = new Runnable() {
+        @Override
+        public void run() {
+            playButtonAnimation();
+        }
+    };
+
+    private Runnable mPlayRedEnvelopestAnimationRunnable = new Runnable() {
+        @Override
+        public void run() {
+            playRedEnvelopestAnimation();
+        }
+    };
+
 
     AnimWindowControl(Context context) {
         mContext = context;
@@ -91,18 +106,8 @@ public class AnimWindowControl {
         mSVGAParser = new SVGAParser(mContext);
         playStartAnimation();
         playRepeatAnimation();
-        mSivButton.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                playButtonAnimation();
-            }
-        }, 8000);
-        mSivRedEnvelopes.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                playRedEnvelopestAnimation();
-            }
-        }, 6000);
+        mSivButton.postDelayed(mPlayButtonAnimationRunnable, 8000);
+        mSivRedEnvelopes.postDelayed(mPlayRedEnvelopestAnimationRunnable, 6000);
     }
 
     private WindowManager getWindowManager(Context context) {
@@ -120,15 +125,24 @@ public class AnimWindowControl {
             mSivMainAnim = mWindowView.findViewById(R.id.siv_main_anim);
             mSivButton = mWindowView.findViewById(R.id.siv_btn);
             mSivRedEnvelopes = mWindowView.findViewById(R.id.siv_red_envelopes);
+            mBtnClose = mWindowView.findViewById(R.id.iv_close);
 
             mSivButton.setVisibility(View.GONE);
             mSivRedEnvelopes.setVisibility(View.GONE);
             mSivMainAnim.setVisibility(View.GONE);
+            mBtnClose.setVisibility(View.GONE);
 
             mSivButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startCouponApp();
+                    removeOverLayWindow();
+                }
+            });
+
+            mWindowView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     removeOverLayWindow();
                 }
             });
@@ -139,7 +153,7 @@ public class AnimWindowControl {
         if (mParams == null) {
             int flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             int type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-            mParams = new WindowManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, type, flags, PixelFormat.TRANSLUCENT);
+            mParams = new WindowManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, type, flags, PixelFormat.TRANSLUCENT);
             mParams.dimAmount = 0.7f;
             mParams.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         }
@@ -153,6 +167,9 @@ public class AnimWindowControl {
             YxLog.i(TAG, "removeOverLayWindow --> isAddWindow" + isAddWindow);
             getWindowManager(mContext).removeView(mWindowView);
 
+            mSivButton.removeCallbacks(mPlayButtonAnimationRunnable);
+            mSivRedEnvelopes.removeCallbacks(mPlayRedEnvelopestAnimationRunnable);
+      
             mSivMainAnimStart.stopAnimation();
             mSivMainAnim.stopAnimation();
             mSivButton.stopAnimation();
@@ -161,6 +178,7 @@ public class AnimWindowControl {
             mSivMainAnimStart = null;
             mSivButton = null;
             mSivRedEnvelopes = null;
+            mBtnClose = null;
             mSVGAParser = null;
             mWindowView = null;
             isAddWindow = false;
@@ -178,16 +196,29 @@ public class AnimWindowControl {
      * 播放按钮动画
      */
     private void playButtonAnimation() {
+        if (mSVGAParser == null) {
+            return;
+        }
         mSVGAParser.parse("anim_button.svga", new SVGAParser.ParseCompletion() {
             @Override
             public void onComplete(SVGAVideoEntity mSVGAVideoEntity) {
+                if (mSivButton == null) {
+                    return;
+                }
                 mSivButton.setVisibility(View.VISIBLE);
+                mBtnClose.setVisibility(View.VISIBLE);
                 SVGADrawable drawable = new SVGADrawable(mSVGAVideoEntity);
                 mSivButton.setImageDrawable(drawable);
                 mSivButton.startAnimation();
 
                 mSivButton.setAlpha(0f);
                 mSivButton.animate()
+                        .alpha(1f)
+                        .setDuration(1000)
+                        .setListener(null);
+
+                mBtnClose.setAlpha(0f);
+                mBtnClose.animate()
                         .alpha(1f)
                         .setDuration(1000)
                         .setListener(null);
@@ -204,9 +235,15 @@ public class AnimWindowControl {
      * 播放红包动画
      */
     private void playRedEnvelopestAnimation() {
+        if (mSVGAParser == null) {
+            return;
+        }
         mSVGAParser.parse("red_envelopes.svga", new SVGAParser.ParseCompletion() {
             @Override
             public void onComplete(SVGAVideoEntity mSVGAVideoEntity) {
+                if (mSivRedEnvelopes == null) {
+                    return;
+                }
                 mSivRedEnvelopes.setVisibility(View.VISIBLE);
                 SVGADrawable drawable = new SVGADrawable(mSVGAVideoEntity);
                 mSivRedEnvelopes.setImageDrawable(drawable);
@@ -224,9 +261,15 @@ public class AnimWindowControl {
      * 播放启动动画
      */
     private void playStartAnimation() {
+        if (mSVGAParser == null) {
+            return;
+        }
         mSVGAParser.parse("anim_start.svga", new SVGAParser.ParseCompletion() {
             @Override
             public void onComplete(SVGAVideoEntity mSVGAVideoEntity) {
+                if (mSivMainAnimStart == null) {
+                    return;
+                }
                 SVGADrawable drawable = new SVGADrawable(mSVGAVideoEntity);
                 mSivMainAnim.setVisibility(View.GONE);
                 mSivMainAnimStart.setVisibility(View.VISIBLE);
@@ -271,10 +314,16 @@ public class AnimWindowControl {
      */
     private void playRepeatAnimation() {
         YxLog.i(TAG, "--- playRepeatAnimation ---");
+        if (mSVGAParser == null) {
+            return;
+        }
         if (isRepeatInit == false) {
             mSVGAParser.parse("anim_repeat.svga", new SVGAParser.ParseCompletion() {
                 @Override
                 public void onComplete(SVGAVideoEntity mSVGAVideoEntity) {
+                    if (mSivMainAnim == null) {
+                        return;
+                    }
                     SVGADrawable drawable = new SVGADrawable(mSVGAVideoEntity);
                     mSivMainAnim.setImageDrawable(drawable);
                     isRepeatInit = true;
