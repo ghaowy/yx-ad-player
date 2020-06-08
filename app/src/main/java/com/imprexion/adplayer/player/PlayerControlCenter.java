@@ -255,7 +255,8 @@ public class PlayerControlCenter implements IControl {
                 boolean isNeedPlay = updateAdData(data);
                 YxLog.i(TAG, "onDataLoadSuccess isNeedPlay = " + isNeedPlay);
                 if (isNeedPlay) {
-                    playNext();
+                    startScheduler(NO_OPERATION_SCHEDULE_TIME);
+//                    playNext();
                 } else {
                     stopScheduler();
                 }
@@ -268,7 +269,8 @@ public class PlayerControlCenter implements IControl {
                 boolean isValidData = getLocalData();
                 YxLog.i(TAG, "getLocalData  isValidData = " + isValidData);
                 if (isValidData) {
-                    playNext();
+                    startScheduler(NO_OPERATION_SCHEDULE_TIME);
+//                    playNext();
                 } else {
                     stopScheduler();
                 }
