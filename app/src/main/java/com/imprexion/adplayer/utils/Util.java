@@ -252,4 +252,22 @@ public final class Util {
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     }
+
+    /**
+     * 发送切换应用的信息给AiBar，做状态切换
+     *
+     * @param packageName
+     * @param className
+     */
+    public static void sendBroadcastToAiBar(Context context, String packageName, String className) {
+        YxLog.d(TAG, "sendBroadcastToAiBar --- packageName = " + packageName + ", className = " + className);
+        Intent it = new Intent();
+        it.setPackage("com.imprexion.aibar");
+        it.setAction("com.imprexion.aibar.action.OPEN_APP");
+
+        it.putExtra("contentType", 2);
+        it.putExtra("packageName", packageName);
+        it.putExtra("className", className);
+        context.sendBroadcast(it);
+    }
 }

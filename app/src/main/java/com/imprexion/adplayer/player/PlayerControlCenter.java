@@ -16,11 +16,14 @@ import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
 import com.imprexion.adplayer.bean.SpecialLoopDataInfo;
 import com.imprexion.adplayer.report.AdPlayerReport;
+import com.imprexion.adplayer.service.AdPlayService;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.adplayer.utils.ActivityLaunchUtil;
 import com.imprexion.adplayer.utils.ActivityStackUtil;
 import com.imprexion.adplayer.utils.TimeUtil;
 import com.imprexion.adplayer.utils.Util;
+import com.imprexion.adplayer.widget.UserAnimWidgetService;
+import com.imprexion.adplayer.widget.face.WidgetConstants;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.util.ContextUtils;
 import com.imprexion.library.util.SharedPreferenceUtils;
@@ -128,6 +131,8 @@ public class PlayerControlCenter implements IControl {
                 //如果是点击屏幕操作事件，重置倒计时，调度playNext()；
                 reset(NO_OPERATION_SCHEDULE_TIME);
                 updateUseFlag(true);
+
+                setAnimWidgetEnable(false);
                 break;
             case Constants.PLAY_NEXT:
                 // 接收到外部接口发来的指令轮播下一个
@@ -345,6 +350,8 @@ public class PlayerControlCenter implements IControl {
             playTime = DEFAULT_PLAY_TIME;
         }
         startScheduler(playTime);
+
+        setAnimWidgetEnable(true);
     }
 
 
@@ -572,5 +579,15 @@ public class PlayerControlCenter implements IControl {
 
         mRetryTime = 0;
 
+    }
+
+    /**
+     * 发送是否当前轮播的状态
+     * @param isEnable
+     */
+    private void setAnimWidgetEnable(boolean isEnable) {
+        Intent it = new Intent(mContext, UserAnimWidgetService.class);
+        it.putExtra(WidgetConstants.KEY_ADPLAY_CONTROL_SCREEN, isEnable);
+        mContext.startService(it);
     }
 }
