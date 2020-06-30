@@ -3,42 +3,21 @@ package com.imprexion.adplayer.widget;
 import android.Manifest;
 import android.content.Context;
 import android.graphics.PixelFormat;
-import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.renderscript.RenderScript;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.airbnb.lottie.LottieAnimationView;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.gifdecoder.GifDecoder;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.google.android.exoplayer2.util.UriUtil;
 import com.imprexion.adplayer.R;
-import com.imprexion.adplayer.app.Constants;
-import com.imprexion.adplayer.player.PackageUtil;
-import com.imprexion.adplayer.utils.AnimUtil;
 import com.imprexion.adplayer.utils.Util;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.YxPermission;
-import com.imprexion.library.util.SharedPreferenceUtils;
 import com.opensource.svgaplayer.SVGACallback;
 import com.opensource.svgaplayer.SVGADrawable;
 import com.opensource.svgaplayer.SVGAImageView;
 import com.opensource.svgaplayer.SVGAParser;
 import com.opensource.svgaplayer.SVGAVideoEntity;
-
-import java.lang.ref.WeakReference;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * @author : yan
@@ -169,7 +148,7 @@ public class AnimWindowControl {
 
             mSivButton.removeCallbacks(mPlayButtonAnimationRunnable);
             mSivRedEnvelopes.removeCallbacks(mPlayRedEnvelopestAnimationRunnable);
-      
+
             mSivMainAnimStart.stopAnimation();
             mSivMainAnim.stopAnimation();
             mSivButton.stopAnimation();
@@ -346,7 +325,7 @@ public class AnimWindowControl {
      */
     private void startCouponApp() {
         YxLog.i(TAG, "--- startCouponApp ---");
-        Util.startApp(mContext, PACKAGE_NAME_COUPON);
+        Util.startApp(mContext, PACKAGE_NAME_COUPON, false);
         Util.sendBroadcastToAiBar(mContext, PACKAGE_NAME_COUPON, null);
     }
 
