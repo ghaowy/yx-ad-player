@@ -91,7 +91,7 @@ public final class Util {
         }
     }
 
-    public static boolean startApp(Context context, String pkgName) {
+    public static boolean startApp(Context context, String pkgName, boolean isLoop) {
         try {
             Intent intent = context.getPackageManager().getLaunchIntentForPackage(pkgName);
             if (intent != null) {
@@ -100,7 +100,10 @@ public final class Util {
                 intent.putExtra(Constants.Key.KEY_FROM, context.getPackageName());
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeCustomAnimation(context,
                         R.anim.right_in, R.anim.left_out);
-                intent.putExtra("from", ContextUtils.get().getPackageName());
+                // 只有輪播應用才加這個字段， 動畫打開優惠券不加這個字段
+                if (isLoop) {
+                    intent.putExtra("from", ContextUtils.get().getPackageName());
+                }
                 context.startActivity(intent, options.toBundle());
                 YxLog.i(TAG, "start app with packageName success");
                 return true;

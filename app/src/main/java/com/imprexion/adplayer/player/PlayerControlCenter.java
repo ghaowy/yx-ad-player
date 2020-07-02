@@ -16,7 +16,6 @@ import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
 import com.imprexion.adplayer.bean.SpecialLoopDataInfo;
 import com.imprexion.adplayer.report.AdPlayerReport;
-import com.imprexion.adplayer.service.AdPlayService;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.adplayer.utils.ActivityLaunchUtil;
 import com.imprexion.adplayer.utils.ActivityStackUtil;
@@ -260,7 +259,8 @@ public class PlayerControlCenter implements IControl {
                 boolean isNeedPlay = updateAdData(data);
                 YxLog.i(TAG, "onDataLoadSuccess isNeedPlay = " + isNeedPlay);
                 if (isNeedPlay) {
-                    playNext();
+                    startScheduler(NO_OPERATION_SCHEDULE_TIME);
+//                    playNext();
                 } else {
                     stopScheduler();
                 }
@@ -273,7 +273,8 @@ public class PlayerControlCenter implements IControl {
                 boolean isValidData = getLocalData();
                 YxLog.i(TAG, "getLocalData  isValidData = " + isValidData);
                 if (isValidData) {
-                    playNext();
+                    startScheduler(NO_OPERATION_SCHEDULE_TIME);
+//                    playNext();
                 } else {
                     stopScheduler();
                 }
@@ -370,7 +371,7 @@ public class PlayerControlCenter implements IControl {
             if (System.currentTimeMillis() >= mStartL && System.currentTimeMillis() <= mEndL) {
                 YxLog.i(TAG, "startApp --> " + specialData.getAppCode());
                 // 直接启动
-                if (Util.startApp(mContext, specialData.getAppCode())) {
+                if (Util.startApp(mContext, specialData.getAppCode() , true)) {
                     sendBroadcast(ADContentInfo.CONTENT_TYPE_APP, specialData.getAppCode());
                 }
                 // 特别轮播启动时 不需要倒计时
@@ -435,7 +436,7 @@ public class PlayerControlCenter implements IControl {
             return;
         }
         //如果成功需要发出一个广播；提供给导航栏高亮选中当前应用。
-        if (Util.startApp(mContext, packageName)) {
+        if (Util.startApp(mContext, packageName, true)) {
             AdPlayerReport.onLoopApp(packageName);
             sendBroadcast(adContentInfo.getContentType(), adContentInfo.getAppCode());
         }
@@ -581,6 +582,7 @@ public class PlayerControlCenter implements IControl {
 
     /**
      * 发送是否当前轮播的状态
+     *
      * @param isEnable
      */
     private void setAnimWidgetEnable(boolean isEnable) {
