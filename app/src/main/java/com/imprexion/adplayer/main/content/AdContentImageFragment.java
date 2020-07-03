@@ -230,7 +230,7 @@ public class AdContentImageFragment extends Fragment implements View.OnClickList
                 return;
             }
 
-            if (!Util.startApp(getContext(), mStartPackageName)) {
+            if (!Util.startApp(getContext(), mStartPackageName, false)) {
                 YxLog.e(TAG, "startAppError packageName = " + mStartPackageName);
             }
             AdPlayerReport.onClickAdPlayer(mAdFileName, mStartPackageName, mUrl);
