@@ -131,7 +131,7 @@ public class PlayerControlCenter implements IControl {
                 reset(NO_OPERATION_SCHEDULE_TIME);
                 updateUseFlag(true);
 
-                setAnimWidgetEnable(false);
+//                setAnimWidgetEnable(false);
                 break;
             case Constants.PLAY_NEXT:
                 // 接收到外部接口发来的指令轮播下一个
@@ -350,7 +350,7 @@ public class PlayerControlCenter implements IControl {
         }
         startScheduler(playTime);
 
-        setAnimWidgetEnable(true);
+//        setAnimWidgetEnable(true);
     }
 
 
