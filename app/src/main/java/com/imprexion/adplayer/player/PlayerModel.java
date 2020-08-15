@@ -1,27 +1,17 @@
 package com.imprexion.adplayer.player;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
-import com.imprexion.adplayer.net.NetService;
-import com.imprexion.adplayer.net.RetrofitFactory;
 import com.imprexion.adplayer.net.http.HttpADManager;
 import com.imprexion.adplayer.tools.Tools;
-import com.imprexion.library.YxLog;
 import com.imprexion.library.util.SharedPreferenceUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Author: Xianquan Feng
@@ -87,24 +77,6 @@ public class PlayerModel {
         HttpADManager.getInstance().release();
     }
 
-    public void onADCallback(ADContentPlay adContentPlay) {
-        Log.d(TAG, "onADCallback");
-        RequestBody requestBody = RequestBody.create(MediaType.parse("application/json"), JSON.toJSONString(adContentPlay));
-        RetrofitFactory.getInstanceForAD()
-                .create(NetService.class)
-                .onAdcontentCallback(requestBody)
-                .enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        YxLog.d(TAG, "adcallback=" + response.body());
-                    }
-
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                        YxLog.d(TAG, "onFailure  " + t.getMessage());
-                    }
-                });
-    }
 
     public interface onPlayerDataListener<T> {
         /**

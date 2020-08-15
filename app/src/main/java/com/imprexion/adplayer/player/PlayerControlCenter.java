@@ -15,6 +15,7 @@ import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.bean.ADContentInfo;
 import com.imprexion.adplayer.bean.ADContentPlay;
 import com.imprexion.adplayer.bean.SpecialLoopDataInfo;
+import com.imprexion.adplayer.net.http.HttpADManager;
 import com.imprexion.adplayer.report.AdPlayerReport;
 import com.imprexion.adplayer.tools.Tools;
 import com.imprexion.adplayer.utils.ActivityLaunchUtil;
@@ -119,7 +120,7 @@ public class PlayerControlCenter implements IControl {
             case Constants.TYPE_PUSH_DATA:
                 //收到push消息，更新广告数据,如果是需要马上播放，则停止当前计时，启动新计时；
                 ADContentPlay adContentPlay = PlayerModel.parseObject(data);
-                mPlayerModel.onADCallback(adContentPlay);
+                HttpADManager.getInstance().addCallback(adContentPlay);
                 if (updateAdData(adContentPlay)) {
                     startScheduler(DEFAULT_PLAY_TIME);
                 } else {
@@ -371,7 +372,7 @@ public class PlayerControlCenter implements IControl {
             if (System.currentTimeMillis() >= mStartL && System.currentTimeMillis() <= mEndL) {
                 YxLog.i(TAG, "startApp --> " + specialData.getAppCode());
                 // 直接启动
-                if (Util.startApp(mContext, specialData.getAppCode() , true)) {
+                if (Util.startApp(mContext, specialData.getAppCode(), true)) {
                     sendBroadcast(ADContentInfo.CONTENT_TYPE_APP, specialData.getAppCode());
                 }
                 // 特别轮播启动时 不需要倒计时
