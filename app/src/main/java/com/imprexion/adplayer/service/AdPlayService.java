@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 
 import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.player.PlayerControlCenter;
-import com.imprexion.library.YxConfig;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.util.SharedPreferenceUtils;
 
@@ -52,11 +51,11 @@ public class AdPlayService extends Service {
 
     @TargetApi(16)
     private Notification getStartNotification() {
-        com.imprexion.library.config.HttpConfig config = YxConfig.getPublic(com.imprexion.library.config.HttpConfig.class);
-        String env = "";
-        if (config != null) {
-            env = config.env.trim().toLowerCase();
-        }
+//        com.imprexion.library.config.HttpConfig config = YxConfig.getPublic(com.imprexion.library.config.HttpConfig.class);
+//        String env = "";
+//        if (config != null) {
+//            env = config.env.trim().toLowerCase();
+//        }
         //获取一个Notification构造器
         Notification.Builder builder = new Notification.Builder(this.getApplicationContext());
         Intent nfIntent = new Intent(this, this.getClass());
@@ -69,7 +68,7 @@ public class AdPlayService extends Service {
                 // 设置状态栏内的小图标
                 .setSmallIcon(android.R.mipmap.sym_def_app_icon)
                 // 设置上下文内容
-                .setContentText("ENV=" + env + " 正在运行。")
+                .setContentText(" 正在运行。")
                 // 设置该通知发生的时间
                 .setWhen(System.currentTimeMillis());
         return builder.build();
