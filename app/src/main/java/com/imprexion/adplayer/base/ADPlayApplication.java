@@ -20,7 +20,7 @@ public class ADPlayApplication extends BaseApplication {
         startADService();
         ActivityStackUtil.Holder.instance.init(this);
         if (!BuildConfig.DEBUG) {
-            CrashReport.initCrashReport(getApplicationContext(), "4e152a32a2", true);
+            CrashReport.initCrashReport(getApplicationContext(), "4c2c812c3f", false);
         }
     }
 
