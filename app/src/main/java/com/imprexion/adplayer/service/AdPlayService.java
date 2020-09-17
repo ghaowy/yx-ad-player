@@ -77,7 +77,7 @@ public class AdPlayService extends Service {
                 .setWhen(System.currentTimeMillis())
                 .build();
 
-        notificationManager.notify(123, builder.build());
+        startForeground(123, builder.build());
     }
 
     @Nullable
