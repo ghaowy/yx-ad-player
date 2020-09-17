@@ -1,11 +1,13 @@
 package com.imprexion.adplayer.service;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.IBinder;
 import android.text.TextUtils;
 
@@ -13,7 +15,6 @@ import androidx.annotation.Nullable;
 
 import com.imprexion.adplayer.app.Constants;
 import com.imprexion.adplayer.player.PlayerControlCenter;
-import com.imprexion.library.YxConfig;
 import com.imprexion.library.YxLog;
 import com.imprexion.library.util.SharedPreferenceUtils;
 
@@ -34,8 +35,9 @@ public class AdPlayService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Notification notification = getStartNotification();
-        startForeground(115, notification);// 开始前台服务
+        // 发送通知
+        startNotification();
+
         /**
          * 由广播接收者 {@code ADBroadcastReceiver} 回调过来的消息,或者首次启动Service的消息。
          */
@@ -50,29 +52,32 @@ public class AdPlayService extends Service {
         return START_STICKY;
     }
 
-    @TargetApi(16)
-    private Notification getStartNotification() {
-        com.imprexion.library.config.HttpConfig config = YxConfig.getPublic(com.imprexion.library.config.HttpConfig.class);
-        String env = "";
-        if (config != null) {
-            env = config.env.trim().toLowerCase();
-        }
-        //获取一个Notification构造器
-        Notification.Builder builder = new Notification.Builder(this.getApplicationContext());
+    private void startNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Intent nfIntent = new Intent(this, this.getClass());
-        /*设置PendingIntent*/
+        Notification.Builder builder = null;
+        // 针对8.0通知适配
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            //获取一个Notification构造器
+            builder = new Notification.Builder(this.getApplicationContext());
+        } else {
+            String id = "1";
+            String channelName = "adplayer channel";
+            NotificationChannel channel = new NotificationChannel(id, channelName, NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(channel);
+            builder = new Notification.Builder(getApplicationContext(), id);
+        }
+
         builder.setContentIntent(PendingIntent.getService(this, 0, nfIntent, 0))
-                // 设置下拉列表中的图标(大图标)
-                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), android.R.mipmap.sym_def_app_icon))
-                // 设置下拉列表里的标题
-                .setContentTitle(this.getClass().getSimpleName())
-                // 设置状态栏内的小图标
                 .setSmallIcon(android.R.mipmap.sym_def_app_icon)
-                // 设置上下文内容
-                .setContentText("ENV=" + env + " 正在运行。")
-                // 设置该通知发生的时间
-                .setWhen(System.currentTimeMillis());
-        return builder.build();
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), android.R.mipmap.sym_def_app_icon))
+                .setContentTitle(this.getClass().getSimpleName())
+                .setContentText("正在运行。")
+                .setAutoCancel(true)
+                .setWhen(System.currentTimeMillis())
+                .build();
+
+        startForeground(123, builder.build());
     }
 
     @Nullable

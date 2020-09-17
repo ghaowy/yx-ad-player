@@ -3,6 +3,7 @@ package com.imprexion.adplayer.component;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.text.TextUtils;
 
 import com.imprexion.adplayer.app.Constants;
@@ -19,27 +20,27 @@ public class ADBroadcastReceiver extends BroadcastReceiver {
         if (intent == null || TextUtils.isEmpty(intent.getAction())) {
             return;
         }
-
         YxLog.i(TAG, "onReceive action= " + intent.getAction());
         Intent it = new Intent(context, AdPlayService.class);
+        boolean isStart = false;
         switch (intent.getAction()) {
             case Constants.Action.LOOP_EVENT:
                 saveValue(intent);
                 break;
             case Intent.ACTION_BOOT_COMPLETED:
-                context.startService(it);
+                isStart = true;
                 break;
             case Constants.Action.EVENT_GESTURE:
                 it.putExtra(Constants.Key.KEY_MESSAGE_TYPE, Constants.TYPE_GETURE);
-                context.startService(it);
+                isStart = true;
                 break;
             case Constants.Action.EVENT_NO_OPERATION:
                 it.putExtra(Constants.Key.KEY_MESSAGE_TYPE, Constants.TYPE_NO_OPERATION);
-                context.startService(it);
+                isStart = true;
                 break;
             case Constants.Action.EVENT_TOUCH:
                 it.putExtra(Constants.Key.KEY_MESSAGE_TYPE, Constants.TYPE_TOUCH);
-                context.startService(it);
+                isStart = true;
                 break;
             case Constants.Action.PUSH_MESSAGE:
                 if (intent.getExtras() == null) {
@@ -49,7 +50,7 @@ public class ADBroadcastReceiver extends BroadcastReceiver {
                 YxLog.i(TAG, "receive push advertisement data. data = " + content);
                 it.putExtra(Constants.Key.KEY_MESSAGE_TYPE, Constants.TYPE_PUSH_DATA);
                 it.putExtra(Constants.Key.KEY_DATA, content);
-                context.startService(it);
+                isStart = true;
                 break;
             case Constants.Action.EVENT_COUNT_DOWN:
                 if (intent.getExtras() == null) {
@@ -59,14 +60,22 @@ public class ADBroadcastReceiver extends BroadcastReceiver {
                 YxLog.i(TAG, "receive push advertisement data. data = " + timeout);
                 it.putExtra(Constants.Key.KEY_MESSAGE_TYPE, Constants.TYPE_COUNT_DOWN);
                 it.putExtra(Constants.Key.KEY_DATA, String.valueOf(timeout));
-                context.startService(it);
+                isStart = true;
                 break;
             case Constants.Action.EVENT_PLAY_NEXT:
                 it.putExtra(Constants.Key.KEY_MESSAGE_TYPE, Constants.PLAY_NEXT);
-                context.startService(it);
+                isStart = true;
                 break;
             default:
                 break;
+        }
+
+        if (isStart) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                context.startService(it);
+            } else {
+                context.startForegroundService(it);
+            }
         }
     }
 

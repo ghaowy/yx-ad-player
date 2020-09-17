@@ -1,6 +1,7 @@
 package com.imprexion.adplayer.base;
 
 import android.content.Intent;
+import android.os.Build;
 
 import com.imprexion.adplayer.BuildConfig;
 import com.imprexion.adplayer.service.AdPlayService;
@@ -29,6 +30,11 @@ public class ADPlayApplication extends BaseApplication {
 
     private void startADService() {
         Intent it = new Intent(this, AdPlayService.class);
-        startService(it);
+        // 8.0之后 启动服务时 需要调用 启动前台服务
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            startService(it);
+        } else {
+            startForegroundService(it);
+        }
     }
 }
